@@ -43,7 +43,7 @@ export default function page() {
 
                 <Link href="/main/mypage/myRoute" className='w-[48%] block'>
                     <Card className='h-full cursor-pointer'>
-                        <h2>내가 기록한 경로</h2>
+                        <h2>내가 기록한 경로 브랜치 체크</h2>
                     </Card>
                 </Link>
             </div>
