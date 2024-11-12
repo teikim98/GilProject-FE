@@ -131,34 +131,23 @@ const KakaoMap = ({ isRecording = false, isEditing = false, width = "w-full",
                     timeout: Infinity
                 }
             );
-
-            // cleanup 함수도 확인
-            return () => {
-                console.log("cleanup 실행");
-                if (watchIdRef.current) {
-                    navigator.geolocation.clearWatch(watchIdRef.current);
-                    watchIdRef.current = null;
-                }
-            };
-        } else if (!isRecording) {
-            console.log("녹화 중지, 현재 path:", path);
-
-
+        } else if (!isRecording && watchIdRef.current) {
+            navigator.geolocation.clearWatch(watchIdRef.current);
+            watchIdRef.current = null;
 
             if (path.length > 0) {
-                console.log("경로 데이터 존재, 저장 시작");
                 const pathData = path.map(position => ({
                     latitude: position.getLat(),
                     longitude: position.getLng(),
                     timestamp: new Date().toISOString()
                 }));
 
+                // 경로와 마커 데이터를 함께 저장
                 const recordData = {
                     path: pathData,
-                    markers: markers
+                    markers: markers // 현재까지 찍은 마커들
                 };
 
-                console.log("저장할 데이터:", recordData);
                 localStorage.setItem('savedPath', JSON.stringify(recordData));
 
                 if (polyline) {
@@ -169,11 +158,6 @@ const KakaoMap = ({ isRecording = false, isEditing = false, width = "w-full",
             }
         }
     }, [isRecording, map]);
-
-    // path 상태가 변경될 때마다 확인
-    useEffect(() => {
-        console.log("path 상태 변경:", path);
-    }, [path]);
 
     useEffect(() => {
         if (isEditing && map) {
@@ -332,7 +316,7 @@ const KakaoMap = ({ isRecording = false, isEditing = false, width = "w-full",
     };
 
     return (
-        <div className="relative w-full h-[calc(100vh-16rem)]"> {/* 높이 수정 */}
+        <div className={`relative ${width} ${height}`}>
             <div
                 id="map"
                 className="w-full h-full rounded-lg"
