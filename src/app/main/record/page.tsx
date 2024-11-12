@@ -19,7 +19,7 @@ export default function page() {
     };
 
     return (
-        <div className='animate-fade-in flex flex-col relative min-h-screen'>
+        <div className='animate-fade-in flex flex-col relative h-full'>
             <div className={`relative flex items-center justify-between mb-4 ${isRecording ? 'border-2 border-red-500 rounded-lg p-2' : ''}`}>
                 <BackButton route='/main' />
                 <h2 className='absolute left-1/2 transform -translate-x-1/2 top-1/2 translate-y-[-50%] text-lg font-semibold'>
@@ -27,7 +27,7 @@ export default function page() {
                 </h2>
                 <div className="w-10"></div>
             </div>
-            <KakaoMap mapId='1' isRecording={isRecording} />
+            <KakaoMap mapId='1' isRecording={isRecording} height='h-96' />
             <div className="mt-auto mb-16 px-4">
                 <Button
                     className={`w-full ${isRecording ? 'bg-red-500 hover:bg-red-600' : ''}`}

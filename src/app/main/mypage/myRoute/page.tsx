@@ -6,7 +6,7 @@ import React from 'react'
 
 export default function page() {
     return (
-        <div className='animate-fade-in flex flex-col relative min-h-screen'>
+        <div className='animate-fade-in flex flex-col relative'>
             <BackHeader link='/main/mypage' content='내 경로기록' />
             <MyRouteCard id='1' />
             <MyRouteCard id='2' />

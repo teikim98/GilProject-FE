@@ -53,7 +53,7 @@ export default function RootLayout({
             <div className="animate-fade-in min-h-screen" />
           }
         >
-          <div className="min-h-screen animate-fade-in bg-gradient-to-b from-purple-400 to-purple-500 flex justify-center">
+          <div className="min-h-screen h-screen animate-fade-in bg-gradient-to-b from-purple-400 to-purple-500 flex justify-center">
             {children}
           </div>
         </Suspense>

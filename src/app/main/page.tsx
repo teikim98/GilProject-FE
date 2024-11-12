@@ -16,7 +16,7 @@ export default function page() {
 
 
     return (
-        <div className='w-full h-screen animate-fade-in '>
+        <div className='w-full  animate-fade-in flex flex-col'>
             <div className='flex flex-row justify-between mb-8'>
                 <Camera size={28} />
                 <Sidemenu />
@@ -33,17 +33,22 @@ export default function page() {
             <Separator className='my-4' />
             <PWAInstallButton />
 
-            <div className="flex flex-row justify-between h-1/4">
+            <div className="flex flex-row justify-between" style={{ height: '20vh' }}>
                 <Link href="/main/board" className='w-[48%] block'>
-                    <Card className='h-full cursor-pointer'>
-                        <h2>내 주변 산책로 보러가기</h2>
-                        <Image alt='animate-gif' src="/public/pubao.gif" width={200} height={200} unoptimized />
+                    <Card className='h-full cursor-pointer flex flex-col items-center justify-evenly relative overflow-hidden bg-[url("/pubao.gif")] bg-cover bg-center bg-no-repeat'>
+                        <div className="absolute inset-0 bg-black/30" />
+                        <div className="relative z-10 h-full p-4 flex items-center justify-center">
+                            <h2 className="text-white font-semibold text-lg ">내 주변 산책로 보러가기</h2>
+                        </div>
                     </Card>
                 </Link>
 
                 <Link href="/main/mypage/myRoute" className='w-[48%] block'>
-                    <Card className='h-full cursor-pointer'>
-                        <h2>내가 기록한 경로 브랜치 체크</h2>
+                    <Card className='h-full cursor-pointer flex flex-col items-center justify-evenly relative overflow-hidden bg-[url("/bird.gif")] bg-cover bg-center bg-no-repeat'>
+                        <div className="absolute inset-0 bg-black/30" />
+                        <div className="relative z-10 h-full p-4 flex items-center justify-center">
+                            <h2 className="text-white font-semibold text-lg ">내가 기록한 <br /> 산책로 보러가기</h2>
+                        </div>
                     </Card>
                 </Link>
             </div>

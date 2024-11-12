@@ -147,7 +147,7 @@ export default function KakaoMap({
                 }
             }
         }
-    }, [isRecording, pathPositions.length, markers])
+    }, [isRecording])
 
     useEffect(() => {
         if (isEditing) {

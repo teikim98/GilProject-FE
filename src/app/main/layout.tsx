@@ -9,8 +9,8 @@ interface LayoutProps {
 
 export default function Layout({ children, hideBottomNav = false }: LayoutProps) {
     return (
-        <div className='w-full h-screen max-w-screen-md p-5 space-y-4 bg-white overflow-auto no-scrollbar'>
-            <div>
+        <div className='w-full max-w-screen-md p-5 bg-white overflow-auto no-scrollbar'>
+            <div className='w-full h-full'>
                 {children}
             </div>
             <Toaster />
