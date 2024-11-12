@@ -37,7 +37,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <Script
+          src={`//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_MAP_API_KEY}&autoload=false`}
+          strategy="beforeInteractive"
+        />
         <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
+
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
@@ -52,10 +57,7 @@ export default function RootLayout({
             {children}
           </div>
         </Suspense>
-        <Script
-          src={`//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_MAP_API_KEY}&libraries=services,clusterer`}
-          strategy="beforeInteractive"
-        />
+
       </body>
     </html>
   );

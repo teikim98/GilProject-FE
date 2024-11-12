@@ -1,8 +1,5 @@
 'use client';
 
-
-
-import Layout from '../layout'
 import KakaoMap from '@/app/providers/KakaoMap'
 import BackButton from '@/components/layout/BackIcon'
 import { Button } from '@/components/ui/button'
