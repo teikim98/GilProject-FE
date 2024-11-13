@@ -23,7 +23,7 @@ export default function page() {
             </div>
             <Card className='flex items-center flex-col p-4'>
                 <CardContent className='w-full px-0'>
-                    <KakaoMap width='w-full' height='h-48' mapId='1' />
+                    <KakaoMap width='w-full' height='h-48' />
                 </CardContent>
                 <div className='w-full flex flex-row justify-between'>
                     <h2>지금 경로 녹화 하러가기</h2>

@@ -8,6 +8,7 @@ import { useState, useEffect, useRef } from 'react'
 import MarkerForm from '../../components/MarkerForm'
 import { MarkerData } from '../../types/types'
 import { useRecordStore } from '@/store/useRecordStore'
+import { LocationSmoother } from '@/util/locationSmoother'
 
 
 declare global {
@@ -98,6 +99,7 @@ export default function KakaoMap({
     const watchIdRef = useRef<number | null>(null)
     const [isGettingLocation, setIsGettingLocation] = useState(false);
     const [userPosition, setUserPosition] = useState<Position | null>(null);
+    const [locationSmoother] = useState(() => new LocationSmoother());
 
 
     // Zustand store에서 필요한 상태와 액션들을 가져옴
@@ -165,31 +167,43 @@ export default function KakaoMap({
 
     // 경로 기록 처리
     useEffect(() => {
+        const locationSmoother = new LocationSmoother(20, 5, 3); // 정확도, 최소거리, 버퍼크기
+
         if (isRecording) {
             watchIdRef.current = navigator.geolocation.watchPosition(
                 (position) => {
                     const newPosition = {
                         lat: position.coords.latitude,
                         lng: position.coords.longitude,
+                    };
+
+                    // 위치 데이터 스무딩 적용
+                    const smoothedPosition = locationSmoother.smooth(
+                        newPosition,
+                        position.coords.accuracy
+                    );
+
+                    // 유효한 위치일 경우에만 저장 및 중앙 이동
+                    if (smoothedPosition) {
+                        addPathPosition(smoothedPosition);  // store의 액션 사용
+                        setCenter(smoothedPosition);
                     }
-                    addPathPosition(newPosition)  // store의 액션 사용
-                    setCenter(newPosition)
                 },
                 (error) => console.error("위치 추적 오류:", error),
                 {
                     enableHighAccuracy: true,
                     maximumAge: 0,
-                    timeout: Infinity
+                    timeout: 5000, // Infinity 대신 적절한 timeout 설정
                 }
-            )
+            );
         }
 
         return () => {
             if (watchIdRef.current) {
-                navigator.geolocation.clearWatch(watchIdRef.current)
+                navigator.geolocation.clearWatch(watchIdRef.current);
             }
-        }
-    }, [isRecording, addPathPosition])
+        };
+    }, [isRecording, addPathPosition]);
 
     // 편집 모드일 때 저장된 경로 불러오기
     useEffect(() => {
