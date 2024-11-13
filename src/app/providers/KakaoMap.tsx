@@ -97,6 +97,8 @@ export default function KakaoMap({
     const [visibleOverlays, setVisibleOverlays] = useState<Set<string>>(new Set())
     const watchIdRef = useRef<number | null>(null)
     const [isGettingLocation, setIsGettingLocation] = useState(false);
+    const [userPosition, setUserPosition] = useState<Position | null>(null);
+
 
     // Zustand store에서 필요한 상태와 액션들을 가져옴
     const {
@@ -123,6 +125,43 @@ export default function KakaoMap({
             )
         }
     }, [])
+
+    useEffect(() => {
+        if (navigator.geolocation) {
+            // 현재 위치 한 번 가져오기
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    setUserPosition({
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude,
+                    });
+                },
+                (error) => console.error("Error getting location:", error)
+            );
+
+            // 위치 실시간 추적 (필요한 경우)
+            const watchId = navigator.geolocation.watchPosition(
+                (position) => {
+                    setUserPosition({
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude,
+                    });
+                },
+                (error) => console.error("Error watching location:", error),
+                {
+                    enableHighAccuracy: true,
+                    maximumAge: 0,
+                    timeout: Infinity
+                }
+            );
+
+            return () => {
+                if (watchId) {
+                    navigator.geolocation.clearWatch(watchId);
+                }
+            };
+        }
+    }, []);
 
     // 경로 기록 처리
     useEffect(() => {
@@ -261,6 +300,21 @@ export default function KakaoMap({
                         strokeStyle={'solid'}
                     />
                 )}
+                {isRecording && userPosition && (
+                    <>
+                        <CustomOverlayMap
+                            position={userPosition}
+                            yAnchor={1}
+                        >
+                            <div className="relative">
+                                {/* 파란 점 */}
+                                <div className="w-4 h-4 bg-blue-500 rounded-full" />
+                                {/* 펄스 효과 */}
+                                <div className="absolute top-0 left-0 w-4 h-4 bg-blue-500 rounded-full animate-ping opacity-75" />
+                            </div>
+                        </CustomOverlayMap>
+                    </>
+                )}
             </Map>
 
             {isRecording && (
@@ -287,6 +341,8 @@ export default function KakaoMap({
                     </Button>
                 </div>
             )}
+
+
 
             {showMarkerForm && selectedPosition && (isEditing || isRecording) && (
                 <div className="absolute bottom-4 left-4 z-10">
