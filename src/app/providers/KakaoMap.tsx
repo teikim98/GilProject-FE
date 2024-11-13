@@ -89,7 +89,6 @@ export default function KakaoMap({
     isEditing = false,
     width = "w-full",
     height = "h-72",
-    mapId
 }: KakaoMapProps) {
     const [markers, setMarkers] = useState<MarkerData[]>([])
     const [selectedPosition, setSelectedPosition] = useState<Position | null>(null)
