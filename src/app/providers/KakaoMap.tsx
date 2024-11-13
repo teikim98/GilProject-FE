@@ -7,6 +7,8 @@ import { MapPin, X } from 'lucide-react'
 import { useState, useEffect, useRef } from 'react'
 import MarkerForm from '../../components/MarkerForm'
 import { MarkerData } from '../../types/types'
+import { useRecordStore } from '@/store/useRecordStore'
+
 
 declare global {
     interface Window {
@@ -74,7 +76,6 @@ const MarkerOverlay = ({ content, image, markerId, position, visible, onClose }:
 interface KakaoMapProps {
     isRecording?: boolean;
     isEditing?: boolean;
-    mapId: string;
     width?: string;
     height?: string;
 }
@@ -90,14 +91,22 @@ export default function KakaoMap({
     width = "w-full",
     height = "h-72",
 }: KakaoMapProps) {
-    const [markers, setMarkers] = useState<MarkerData[]>([])
     const [selectedPosition, setSelectedPosition] = useState<Position | null>(null)
     const [showMarkerForm, setShowMarkerForm] = useState(false)
-    const [pathPositions, setPathPositions] = useState<Position[]>([])
-    const watchIdRef = useRef<number | null>(null)
     const [center, setCenter] = useState<Position>({ lat: 37.5665, lng: 126.9780 })
     const [visibleOverlays, setVisibleOverlays] = useState<Set<string>>(new Set())
+    const watchIdRef = useRef<number | null>(null)
 
+    // Zustand store에서 필요한 상태와 액션들을 가져옴
+    const {
+        pathPositions,
+        markers,
+        addPathPosition,
+        addMarker,
+        loadSavedPath
+    } = useRecordStore()
+
+    // 초기 위치 설정
     useEffect(() => {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
@@ -114,6 +123,7 @@ export default function KakaoMap({
         }
     }, [])
 
+    // 경로 기록 처리
     useEffect(() => {
         if (isRecording) {
             watchIdRef.current = navigator.geolocation.watchPosition(
@@ -122,7 +132,7 @@ export default function KakaoMap({
                         lat: position.coords.latitude,
                         lng: position.coords.longitude,
                     }
-                    setPathPositions(prev => [...prev, newPosition])
+                    addPathPosition(newPosition)  // store의 액션 사용
                     setCenter(newPosition)
                 },
                 (error) => console.error("위치 추적 오류:", error),
@@ -137,30 +147,19 @@ export default function KakaoMap({
         return () => {
             if (watchIdRef.current) {
                 navigator.geolocation.clearWatch(watchIdRef.current)
-                if (pathPositions.length > 0) {
-                    const recordData = {
-                        path: pathPositions,
-                        markers: markers
-                    }
-                    localStorage.setItem('savedPath', JSON.stringify(recordData))
-                }
             }
         }
-    }, [isRecording])
+    }, [isRecording, addPathPosition])
 
+    // 편집 모드일 때 저장된 경로 불러오기
     useEffect(() => {
         if (isEditing) {
-            const savedData = localStorage.getItem('savedPath')
-            if (savedData) {
-                const { path, markers: savedMarkers } = JSON.parse(savedData)
-                setPathPositions(path)
-                setMarkers(savedMarkers)
-                if (path.length > 0) {
-                    setCenter(path[0])
-                }
+            loadSavedPath()  // store의 액션 사용
+            if (pathPositions.length > 0) {
+                setCenter(pathPositions[0])
             }
         }
-    }, [isEditing])
+    }, [isEditing, loadSavedPath])
 
     const handleMapClick = (_map: any, mouseEvent: any) => {
         if (!isRecording) {
@@ -172,18 +171,17 @@ export default function KakaoMap({
         }
     }
 
-    // 오버레이 표시/숨김 토글
     const toggleOverlay = (markerId: string) => {
         setVisibleOverlays(prev => {
-            const next = new Set(prev);
+            const next = new Set(prev)
             if (next.has(markerId)) {
-                next.delete(markerId);
+                next.delete(markerId)
             } else {
-                next.add(markerId);
+                next.add(markerId)
             }
-            return next;
-        });
-    };
+            return next
+        })
+    }
 
     const handleAddCurrentLocationMarker = () => {
         if (navigator.geolocation) {
@@ -211,7 +209,7 @@ export default function KakaoMap({
                 image,
                 id: `marker-${Date.now()}`
             }
-            setMarkers(prev => [...prev, newMarker])
+            addMarker(newMarker)  // store의 액션 사용
         }
         setShowMarkerForm(false)
         setSelectedPosition(null)
@@ -238,7 +236,7 @@ export default function KakaoMap({
                             markerId={marker.id}
                             position={marker.position}
                             onClose={() => toggleOverlay(marker.id)}
-                            visible={visibleOverlays.has(marker.id)} // 수정된 부분
+                            visible={visibleOverlays.has(marker.id)}
                         />
                     </div>
                 ))}

@@ -5,37 +5,54 @@ import BackButton from '@/components/layout/BackIcon'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/navigation';
+import { useRecordStore } from '@/store/useRecordStore';
+
+interface RouteData {
+    title: string;
+    description: string;
+    pathData: {
+        path: Array<{ lat: number; lng: number }>;
+        markers: any[];
+    };
+    createdAt: string;
+}
 
 export default function SaveRoutePage() {
     const router = useRouter();
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
 
+    // store에서 경로와 마커 데이터 가져오기
+    const { pathPositions, markers, resetRecord } = useRecordStore();
+
     const handleSave = () => {
-        // 여기에 저장 로직 추가
-        const savedPath = localStorage.getItem('savedPath');
-        if (savedPath) {
-            const pathData = JSON.parse(savedPath);
-            const routeData = {
-                title,
-                description,
-                pathData,
-                createdAt: new Date().toISOString()
-            };
-
-            // 기존 저장된 경로들 가져오기
-            const savedRoutes = JSON.parse(localStorage.getItem('savedRoutes') || '[]');
-            savedRoutes.push(routeData);
-            localStorage.setItem('savedRoutes', JSON.stringify(savedRoutes));
-
-            // 임시 저장된 경로 삭제
-            localStorage.removeItem('savedPath');
-
-            // 저장 후 메인 페이지로 이동
-            router.push('/main');
+        if (pathPositions.length === 0) {
+            alert('저장할 경로가 없습니다.');
+            return;
         }
+
+        const routeData: RouteData = {
+            title,
+            description,
+            pathData: {
+                path: pathPositions,
+                markers: markers
+            },
+            createdAt: new Date().toISOString()
+        };
+
+        // 기존 저장된 경로들 가져오기
+        const savedRoutes: RouteData[] = JSON.parse(localStorage.getItem('savedRoutes') || '[]');
+        savedRoutes.push(routeData);
+        localStorage.setItem('savedRoutes', JSON.stringify(savedRoutes));
+
+        // store 상태 초기화
+        resetRecord();
+
+        // 저장 후 메인 페이지로 이동
+        router.push('/main');
     };
 
     return (
@@ -48,7 +65,7 @@ export default function SaveRoutePage() {
                 <div className="w-10"></div>
             </div>
 
-            <KakaoMap mapId='1' isEditing={true} />
+            <KakaoMap isEditing={true} />
 
             <div className="mt-4 space-y-4">
                 <div>
@@ -81,6 +98,7 @@ export default function SaveRoutePage() {
                 <Button
                     className="w-full"
                     onClick={handleSave}
+                    disabled={!title || pathPositions.length === 0}
                 >
                     <h2>경로 저장하기</h2>
                 </Button>
