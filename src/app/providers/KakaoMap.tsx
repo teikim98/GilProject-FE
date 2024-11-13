@@ -162,7 +162,7 @@ export default function KakaoMap({
     }, [isEditing, loadSavedPath])
 
     const handleMapClick = (_map: any, mouseEvent: any) => {
-        if (!isRecording) {
+        if (isEditing) {
             setSelectedPosition({
                 lat: mouseEvent.latLng.getLat(),
                 lng: mouseEvent.latLng.getLng(),

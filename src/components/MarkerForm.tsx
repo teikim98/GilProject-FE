@@ -147,7 +147,7 @@ const MarkerForm = ({ onSubmit, onCancel }: MarkerFormProps) => {
                         <img
                             src={image}
                             alt="Preview"
-                            className="w-full h-32 object-cover rounded"
+                            className="w-full h-32 sm:h-16 object-cover rounded"
                         />
                         <button
                             onClick={() => setImage('')}
