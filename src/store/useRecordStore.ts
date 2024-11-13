@@ -10,6 +10,8 @@ interface RecordState {
   isRecording: boolean;
   pathPositions: Position[];
   markers: MarkerData[];
+  recordStartTime: number | null;
+  //시작 시간은 로컬에서만 사용
 
   startRecording: () => void;
   stopRecording: () => void;
@@ -23,8 +25,13 @@ export const useRecordStore = create<RecordState>((set, get) => ({
   isRecording: false,
   pathPositions: [],
   markers: [],
+  recordStartTime: null,
 
-  startRecording: () => set({ isRecording: true }),
+  startRecording: () =>
+    set({
+      isRecording: true,
+      recordStartTime: Date.now(),
+    }),
 
   stopRecording: () => {
     const { pathPositions, markers } = get();

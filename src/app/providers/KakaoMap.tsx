@@ -79,6 +79,9 @@ interface KakaoMapProps {
     isEditing?: boolean;
     width?: string;
     height?: string;
+    initialPath?: Array<{ lat: number; lng: number }>;
+    initialMarkers?: any[];
+
 }
 
 interface Position {
@@ -91,6 +94,8 @@ export default function KakaoMap({
     isEditing = false,
     width = "w-full",
     height = "h-72",
+    initialPath = [],
+    initialMarkers = [],
 }: KakaoMapProps) {
     const [selectedPosition, setSelectedPosition] = useState<Position | null>(null)
     const [showMarkerForm, setShowMarkerForm] = useState(false)
@@ -215,6 +220,13 @@ export default function KakaoMap({
         }
     }, [isEditing, loadSavedPath])
 
+    // 초기 경로가 있을 경우 중앙 위치 설정
+    useEffect(() => {
+        if (initialPath.length > 0) {
+            setCenter(initialPath[0]);
+        }
+    }, [initialPath]);
+
     const handleMapClick = (_map: any, mouseEvent: any) => {
         if (isEditing) {
             setSelectedPosition({
@@ -303,6 +315,26 @@ export default function KakaoMap({
                             visible={visibleOverlays.has(marker.id)}
                         />
                     </div>
+                ))}
+
+                {/* 초기 경로 표시 */}
+                {initialPath.length > 0 && (
+                    <Polyline
+                        path={initialPath}
+                        strokeWeight={5}
+                        strokeColor="#0000FF"
+                        strokeOpacity={0.7}
+                        strokeStyle={'solid'}
+                    />
+                )}
+
+                {/* 초기 마커 표시 */}
+                {initialMarkers.map((marker) => (
+                    <MapMarker
+                        key={marker.id}
+                        position={marker.position}
+                        onClick={() => toggleOverlay(marker.id)}
+                    />
                 ))}
 
                 {pathPositions.length > 0 && (

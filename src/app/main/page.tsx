@@ -8,7 +8,6 @@ import KakaoMap from '../providers/KakaoMap'
 import PWAInstallButton from '@/components/layout/PwaInstallBtn';
 import Sidemenu from '@/components/layout/Sidemenu'
 import Link from 'next/link'
-import Image from 'next/image'
 
 
 
@@ -27,7 +26,9 @@ export default function page() {
                 </CardContent>
                 <div className='w-full flex flex-row justify-between'>
                     <h2>지금 경로 녹화 하러가기</h2>
-                    <Pencil />
+                    <Link href="/main/record">
+                        <Pencil className="cursor-pointer hover:text-gray-600" />
+                    </Link>
                 </div>
             </Card>
             <Separator className='my-4' />

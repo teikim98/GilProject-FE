@@ -16,6 +16,7 @@ interface RouteData {
         path: Array<{ lat: number; lng: number }>;
         markers: any[];
     };
+    recordedTime: number;
     createdAt: string;
 }
 
@@ -25,13 +26,17 @@ export default function SaveRoutePage() {
     const [description, setDescription] = useState('');
 
     // store에서 경로와 마커 데이터 가져오기
-    const { pathPositions, markers, resetRecord } = useRecordStore();
+    const { pathPositions, markers, recordStartTime, resetRecord } = useRecordStore();
 
     const handleSave = () => {
         if (pathPositions.length === 0) {
             alert('저장할 경로가 없습니다.');
             return;
         }
+
+        const recordedTime = recordStartTime
+            ? Math.round((Date.now() - recordStartTime) / (1000 * 60))
+            : 0;
 
         const routeData: RouteData = {
             title,
@@ -40,6 +45,7 @@ export default function SaveRoutePage() {
                 path: pathPositions,
                 markers: markers
             },
+            recordedTime,
             createdAt: new Date().toISOString()
         };
 

@@ -1,25 +1,153 @@
+// components/layout/MyRouteCard.tsx
+'use client'
 import KakaoMap from '@/app/providers/KakaoMap'
-import React from 'react'
+import React, { useState } from 'react'
 import { Card } from '../ui/card'
 import { Separator } from '../ui/separator'
+import { ChevronDown, ChevronUp } from 'lucide-react'
 
-interface MapProps {
-    id: string;
+interface RouteData {
+    title: string;
+    description: string;
+    pathData: {
+        path: Array<{ lat: number; lng: number }>;
+        markers: any[];
+    };
+    recordedTime: number;
+    createdAt: string;
 }
 
-export default function MyRouteCard({ id }: MapProps) {
+interface RouteCardProps {
+    route: RouteData;
+}
+
+function formatRecordedTime(minutes: number) {
+    if (minutes < 60) {
+        return `${minutes}분`;
+    }
+    const hours = Math.floor(minutes / 60);
+    const remainingMinutes = minutes % 60;
+    return `${hours}시간 ${remainingMinutes}분`;
+}
+
+function RouteCard({ route }: RouteCardProps) {
+    const [isExpanded, setIsExpanded] = useState(false);
+
     return (
         <div className="">
-            <Card className='flex p-4 max-h-40'>
-                <div className="min-w-32 h-32 mr-4">
-                    <KakaoMap mapId={id} width='w-full' height='h-full' />
+            <Card
+                className={`p-4 transition-all duration-300 ${isExpanded ? 'mb-4' : ''}`}
+                onClick={() => setIsExpanded(!isExpanded)}
+            >
+                <div className="flex cursor-pointer">
+                    <div className={`min-w-32 h-32 mr-4 ${isExpanded ? 'hidden' : ''}`}>
+                        <KakaoMap
+                            width='w-full'
+                            height='h-full'
+                            initialPath={route.pathData.path}
+                            initialMarkers={route.pathData.markers}
+                        />
+                    </div>
+                    <div className="flex flex-col flex-1">
+                        <div className="flex justify-between items-start">
+                            <h2 className='font-semibold'>{route.title}</h2>
+                            {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+                        </div>
+                        <p className='text-slate-500 text-sm overflow-hidden line-clamp-3'>
+                            {route.description}
+                        </p>
+                        <span className='text-xs text-gray-400 mt-auto'>
+                            {new Date(route.createdAt).toLocaleDateString()}
+                        </span>
+                    </div>
                 </div>
-                <div className="flex flex-col">
-                    <h2 className='font-semibold'>어쩌구 저쩌구</h2>
-                    <p className='text-slate-500 text-sm overflow-hidden'>나는 감정을 지배할수있따 Lorem ipsum dolor sit amet consectetur adipisicing elit. Ea repellendus nostrum aliquid velit consectetur. Doloremque est totam cum sit, debitis officia corporis nemo saepe vero autem? Aliquid quasi officiis tenetur!</p>
-                </div>
+
+                {/* 확장된 지도 뷰 */}
+                {isExpanded && (
+                    <div className="mt-4">
+                        <div className="h-[400px] w-full">
+                            <KakaoMap
+                                width='w-full'
+                                height='h-full'
+                                initialPath={route.pathData.path}
+                                initialMarkers={route.pathData.markers}
+                            />
+                        </div>
+                        <div className="mt-4 grid grid-cols-2 gap-4">
+                            <div className="bg-gray-50 p-3 rounded">
+                                <h3 className="text-sm text-gray-500">총 거리</h3>
+                                <p className="font-semibold">
+                                    {calculateDistance(route.pathData.path)}km
+                                </p>
+                            </div>
+                            <div className="bg-gray-50 p-3 rounded">
+                                <h3 className="text-sm text-gray-500">소요 시간</h3>
+                                <p className="font-semibold">
+                                    {formatRecordedTime(route.recordedTime)}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </Card>
-            <Separator className=' my-4' />
+            <Separator className='my-4' />
         </div>
     )
+}
+
+// 경로 거리 계산 함수
+function calculateDistance(path: Array<{ lat: number; lng: number }>): string {
+    let distance = 0;
+    for (let i = 0; i < path.length - 1; i++) {
+        const start = path[i];
+        const end = path[i + 1];
+        distance += getDistanceFromLatLonInKm(start.lat, start.lng, end.lat, end.lng);
+    }
+    return distance.toFixed(2);
+}
+
+function getDistanceFromLatLonInKm(lat1: number, lon1: number, lat2: number, lon2: number) {
+    const R = 6371; // 지구의 반지름 (km)
+    const dLat = deg2rad(lat2 - lat1);
+    const dLon = deg2rad(lon2 - lon1);
+    const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+}
+
+function deg2rad(deg: number) {
+    return deg * (Math.PI / 180);
+}
+
+export default function MyRouteList() {
+    const [routes, setRoutes] = React.useState<RouteData[]>([]);
+
+    React.useEffect(() => {
+        const savedRoutes = localStorage.getItem('savedRoutes');
+        if (savedRoutes) {
+            const parsedRoutes = JSON.parse(savedRoutes);
+            setRoutes(parsedRoutes.sort((a: RouteData, b: RouteData) =>
+                new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+            ));
+        }
+    }, []);
+
+    if (routes.length === 0) {
+        return (
+            <div className="text-center py-8 text-gray-500">
+                저장된 경로가 없습니다.
+            </div>
+        );
+    }
+
+    return (
+        <div className="space-y-4">
+            {routes.map((route, index) => (
+                <RouteCard key={route.createdAt + index} route={route} />
+            ))}
+        </div>
+    );
 }
