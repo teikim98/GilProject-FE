@@ -7,7 +7,7 @@ interface SearchPageProps {
     onClose: () => void
 }
 
-export default function SearchPage({ }: SearchPageProps) {
+export default function SearchPage({ onClose }: SearchPageProps) {
     return (
         <div className="flex flex-col h-full">
             {/* 검색 헤더 */}
@@ -18,6 +18,11 @@ export default function SearchPage({ }: SearchPageProps) {
                     className="flex-1 border-none focus-visible:ring-0"
                     autoFocus
                 />
+                <button
+                    className=' w-0 h-0'
+                    onClick={onClose}
+                >
+                </button>
             </div>
 
             {/* 검색 결과 영역 */}
