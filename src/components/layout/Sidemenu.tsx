@@ -7,7 +7,6 @@ import {
 } from "@/components/ui/sheet";
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
-import React, { useState } from 'react'
 import { cn } from "@/lib/utils";
 import { HamburgerMenuIcon } from '@radix-ui/react-icons'
 import { Bell } from 'lucide-react'

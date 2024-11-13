@@ -5,13 +5,14 @@ import React, { useState } from 'react'
 import { Card } from '../ui/card'
 import { Separator } from '../ui/separator'
 import { ChevronDown, ChevronUp } from 'lucide-react'
+import { MarkerData } from '@/types/types'
 
 interface RouteData {
     title: string;
     description: string;
     pathData: {
         path: Array<{ lat: number; lng: number }>;
-        markers: any[];
+        markers: MarkerData[];
     };
     recordedTime: number;
     createdAt: string;

@@ -4,7 +4,6 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 interface BackButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     className?: string,

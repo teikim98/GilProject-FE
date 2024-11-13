@@ -80,7 +80,7 @@ interface KakaoMapProps {
     width?: string;
     height?: string;
     initialPath?: Array<{ lat: number; lng: number }>;
-    initialMarkers?: any[];
+    initialMarkers?: MarkerData[];
 }
 
 interface Position {
@@ -103,7 +103,7 @@ export default function KakaoMap({
     const watchIdRef = useRef<number | null>(null)
     const [isGettingLocation, setIsGettingLocation] = useState(false);
     const [userPosition, setUserPosition] = useState<Position | null>(null);
-    const [locationSmoother] = useState(() => new LocationSmoother());
+    // const [locationSmoother] = useState(() => new LocationSmoother());
 
 
     // Zustand store에서 필요한 상태와 액션들을 가져옴
@@ -226,7 +226,7 @@ export default function KakaoMap({
         }
     }, [initialPath]);
 
-    const handleMapClick = (_map: any, mouseEvent: any) => {
+    const handleMapClick = (_map: kakao.maps.Map, mouseEvent: kakao.maps.event.MouseEvent) => {
         if (isEditing) {
             setSelectedPosition({
                 lat: mouseEvent.latLng.getLat(),
