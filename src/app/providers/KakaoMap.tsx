@@ -96,6 +96,7 @@ export default function KakaoMap({
     const [center, setCenter] = useState<Position>({ lat: 37.5665, lng: 126.9780 })
     const [visibleOverlays, setVisibleOverlays] = useState<Set<string>>(new Set())
     const watchIdRef = useRef<number | null>(null)
+    const [isGettingLocation, setIsGettingLocation] = useState(false);
 
     // Zustand store에서 필요한 상태와 액션들을 가져옴
     const {
@@ -185,19 +186,27 @@ export default function KakaoMap({
 
     const handleAddCurrentLocationMarker = () => {
         if (navigator.geolocation) {
+            setIsGettingLocation(true); // 위치 가져오기 시작
             navigator.geolocation.getCurrentPosition(
                 (position) => {
                     setSelectedPosition({
                         lat: position.coords.latitude,
                         lng: position.coords.longitude,
-                    })
-                    setShowMarkerForm(true)
+                    });
+                    setShowMarkerForm(true);
+                    setIsGettingLocation(false); // 위치 가져오기 완료
                 },
                 (error) => {
-                    console.error("Error getting current location:", error)
-                    alert("현재 위치를 가져올 수 없습니다.")
+                    console.error("Error getting current location:", error);
+                    alert("현재 위치를 가져올 수 없습니다.");
+                    setIsGettingLocation(false); // 에러 발생시에도 상태 리셋
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 5000, // 5초 제한
+                    maximumAge: 0
                 }
-            )
+            );
         }
     }
 
@@ -214,6 +223,8 @@ export default function KakaoMap({
         setShowMarkerForm(false)
         setSelectedPosition(null)
     }
+
+
 
     return (
         <div className={`relative ${width} ${height}`}>
@@ -257,16 +268,27 @@ export default function KakaoMap({
                     <Button
                         variant="secondary"
                         size="sm"
-                        className="flex items-center gap-2 bg-white shadow-md"
+                        className={`flex items-center gap-2 bg-white shadow-md ${isGettingLocation ? 'opacity-75 cursor-not-allowed' : ''
+                            }`}
                         onClick={handleAddCurrentLocationMarker}
+                        disabled={isGettingLocation}
                     >
-                        <MapPin className="w-4 h-4" />
-                        핀 찍기
+                        {isGettingLocation ? (
+                            <>
+                                <div className="w-4 h-4 border-2 border-purple-500 border-t-transparent rounded-full animate-spin" />
+                                위치 확인 중...
+                            </>
+                        ) : (
+                            <>
+                                <MapPin className="w-4 h-4" />
+                                핀 찍기
+                            </>
+                        )}
                     </Button>
                 </div>
             )}
 
-            {showMarkerForm && selectedPosition && (
+            {showMarkerForm && selectedPosition && (isEditing || isRecording) && (
                 <div className="absolute bottom-4 left-4 z-10">
                     <MarkerForm
                         onSubmit={handleMarkerSubmit}
