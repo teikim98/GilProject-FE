@@ -1,6 +1,6 @@
 'use client'
 
-import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 
 import { Camera, Pencil } from 'lucide-react'
@@ -11,7 +11,7 @@ import Link from 'next/link'
 
 
 
-export default function page() {
+export default function Page() {
 
 
     return (

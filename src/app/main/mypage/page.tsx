@@ -6,7 +6,7 @@ import { Separator } from '@/components/ui/separator';
 import BackButton from '@/components/layout/BackIcon';
 import MypageBtn from '@/components/layout/MypageBtn';
 
-export default function page() {
+export default function Page() {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {

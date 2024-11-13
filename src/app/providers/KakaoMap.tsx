@@ -13,7 +13,7 @@ import { LocationSmoother } from '@/util/locationSmoother'
 
 declare global {
     interface Window {
-        kakao: any;
+        kakao: typeof kakao;
     }
 }
 
@@ -26,7 +26,7 @@ interface OverlayProps {
     onClose: () => void;
 }
 
-const MarkerOverlay = ({ content, image, markerId, position, visible, onClose }: OverlayProps) => {
+const MarkerOverlay = ({ content, image, position, visible, onClose }: OverlayProps) => {
     if (!visible) return null;
 
     return (
@@ -81,7 +81,6 @@ interface KakaoMapProps {
     height?: string;
     initialPath?: Array<{ lat: number; lng: number }>;
     initialMarkers?: any[];
-
 }
 
 interface Position {

@@ -8,13 +8,14 @@ import { Textarea } from '@/components/ui/textarea'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation';
 import { useRecordStore } from '@/store/useRecordStore';
+import { MarkerData } from '@/types/types';
 
 interface RouteData {
     title: string;
     description: string;
     pathData: {
         path: Array<{ lat: number; lng: number }>;
-        markers: any[];
+        markers: MarkerData[];
     };
     recordedTime: number;
     createdAt: string;

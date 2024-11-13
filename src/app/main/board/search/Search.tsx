@@ -1,14 +1,13 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Search, X } from 'lucide-react'
+import { Search } from 'lucide-react'
 
 interface SearchPageProps {
     onClose: () => void
 }
 
-export default function SearchPage({ onClose }: SearchPageProps) {
+export default function SearchPage({ }: SearchPageProps) {
     return (
         <div className="flex flex-col h-full">
             {/* 검색 헤더 */}
