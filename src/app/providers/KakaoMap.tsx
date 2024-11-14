@@ -286,7 +286,9 @@ export default function KakaoMap({
                     <div key={marker.id}>
                         <MapMarker
                             position={marker.position}
-                            onClick={() => toggleOverlay(marker.id)}
+                            onClick={() => {
+                                toggleOverlay(marker.id);
+                            }}
                         />
                         <MarkerOverlay
                             content={marker.content}
@@ -312,11 +314,22 @@ export default function KakaoMap({
 
                 {/* 초기 마커 표시 */}
                 {initialMarkers.map((marker) => (
-                    <MapMarker
-                        key={marker.id}
-                        position={marker.position}
-                        onClick={() => toggleOverlay(marker.id)}
-                    />
+                    <div key={marker.id}>
+                        <MapMarker
+                            position={marker.position}
+                            onClick={() => {
+                                toggleOverlay(marker.id);
+                            }}
+                        />
+                        <MarkerOverlay
+                            content={marker.content}
+                            image={marker.image}
+                            markerId={marker.id}
+                            position={marker.position}
+                            onClose={() => toggleOverlay(marker.id)}
+                            visible={visibleOverlays.has(marker.id)}
+                        />
+                    </div>
                 ))}
 
                 {pathPositions.length > 0 && (
