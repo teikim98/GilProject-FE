@@ -27,8 +27,8 @@ export default function BoardList() {
             },
             author: {
                 id: 123,
-                name: "러너",
-                profileImage: "/icons/icon-192x192.png"
+                name: "김대리",
+                profileImage: "/icons/icon-192x192.jpg"
             },
             stats: {
                 commentCount: 5,
@@ -159,8 +159,8 @@ export default function BoardList() {
             },
             author: {
                 id: 123,
-                name: "러너",
-                profileImage: "/icons/icon-192x192.png"
+                name: "김대리",
+                profileImage: "/icons/icon-192x192.jpg"
             },
             stats: {
                 commentCount: 5,
