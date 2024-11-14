@@ -37,6 +37,138 @@ export default function BoardList() {
             },
             createdAt: "2024-01-15T09:30:00Z"
         },
+        {
+            id: 2,
+            title: "한강 러닝 코스",
+            routeData: {
+                path: [
+                    { lat: 37.5113, lng: 127.0980 },
+                    { lat: 37.5114, lng: 127.0985 },
+                ],
+                markers: [
+                    {
+                        id: "marker-1",
+                        position: { lat: 37.5113, lng: 127.0980 },
+                        content: "시작점 - 잠실한강공원",
+                        image: "/icons/icon-192x192.png"
+                    },
+                ],
+                recordedTime: 45,
+                distance: 5.2,
+                startAddress: "서울특별시 송파구 잠실동 한강공원",
+                startLocation: { lat: 37.5113, lng: 127.0980 }
+            },
+            author: {
+                id: 123,
+                name: "러너",
+                profileImage: "/icons/icon-192x192.png"
+            },
+            stats: {
+                commentCount: 5,
+                likeCount: 10,
+                distanceFromUser: 2.3
+            },
+            createdAt: "2024-01-15T09:30:00Z"
+        },
+        {
+            id: 3,
+            title: "한강 러닝 코스",
+            routeData: {
+                path: [
+                    { lat: 37.5113, lng: 127.0980 },
+                    { lat: 37.5114, lng: 127.0985 },
+                ],
+                markers: [
+                    {
+                        id: "marker-1",
+                        position: { lat: 37.5113, lng: 127.0980 },
+                        content: "시작점 - 잠실한강공원",
+                        image: "/icons/icon-192x192.png"
+                    },
+                ],
+                recordedTime: 45,
+                distance: 5.2,
+                startAddress: "서울특별시 송파구 잠실동 한강공원",
+                startLocation: { lat: 37.5113, lng: 127.0980 }
+            },
+            author: {
+                id: 123,
+                name: "러너",
+                profileImage: "/icons/icon-192x192.png"
+            },
+            stats: {
+                commentCount: 5,
+                likeCount: 10,
+                distanceFromUser: 2.3
+            },
+            createdAt: "2024-01-15T09:30:00Z"
+        },
+        {
+            id: 1,
+            title: "한강 러닝 코스",
+            routeData: {
+                path: [
+                    { lat: 37.5113, lng: 127.0980 },
+                    { lat: 37.5114, lng: 127.0985 },
+                ],
+                markers: [
+                    {
+                        id: "marker-1",
+                        position: { lat: 37.5113, lng: 127.0980 },
+                        content: "시작점 - 잠실한강공원",
+                        image: "/icons/icon-192x192.png"
+                    },
+                ],
+                recordedTime: 45,
+                distance: 5.2,
+                startAddress: "서울특별시 송파구 잠실동 한강공원",
+                startLocation: { lat: 37.5113, lng: 127.0980 }
+            },
+            author: {
+                id: 123,
+                name: "러너",
+                profileImage: "/icons/icon-192x192.png"
+            },
+            stats: {
+                commentCount: 5,
+                likeCount: 10,
+                distanceFromUser: 2.3
+            },
+            createdAt: "2024-01-15T09:30:00Z"
+        },
+        {
+            id: 4,
+            title: "한강 러닝 코스",
+            routeData: {
+                path: [
+                    { lat: 37.5113, lng: 127.0980 },
+                    { lat: 37.5114, lng: 127.0985 },
+                ],
+                markers: [
+                    {
+                        id: "marker-1",
+                        position: { lat: 37.5113, lng: 127.0980 },
+                        content: "시작점 - 잠실한강공원",
+                        image: "/icons/icon-192x192.png"
+                    },
+                ],
+                recordedTime: 45,
+                distance: 5.2,
+                startAddress: "서울특별시 송파구 잠실동 한강공원",
+                startLocation: { lat: 37.5113, lng: 127.0980 }
+            },
+            author: {
+                id: 123,
+                name: "러너",
+                profileImage: "/icons/icon-192x192.png"
+            },
+            stats: {
+                commentCount: 5,
+                likeCount: 10,
+                distanceFromUser: 2.3
+            },
+            createdAt: "2024-01-15T09:30:00Z"
+        },
     ]);
     const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
 
@@ -92,7 +224,7 @@ export default function BoardList() {
     }
 
     return (
-        <div className="space-y-4">
+        <div className="space-y-4 mt-4">
             {posts.map((post) => (
                 <BoardCard key={post.id} post={post} />
             ))}

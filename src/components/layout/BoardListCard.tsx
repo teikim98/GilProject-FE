@@ -4,7 +4,7 @@
 import { Post } from '@/types/types';
 import Image from 'next/image';
 import KakaoMap from '@/app/providers/KakaoMap';
-import { Heart, MessageCircle } from 'lucide-react';
+import { Heart, MapPin, MessageCircle } from 'lucide-react';
 import { Card } from '../ui/card';
 
 interface BoardCardProps {
@@ -31,55 +31,49 @@ function formatDate(dateString: string): string {
 export default function BoardCard({ post }: BoardCardProps) {
     return (
         <Card className="p-4 hover:shadow-lg transition-shadow">
-            <div className="flex items-center gap-3 mb-3">
-                <Image
-                    src={post.author.profileImage}
-                    alt={post.author.name}
-                    width={40}
-                    height={40}
-                    className="rounded-full"
-                />
-                <div>
-                    <h3 className="font-semibold">{post.author.name}</h3>
-                    <p className="text-sm text-gray-500">
-                        {formatDate(post.createdAt)}
-                    </p>
-                </div>
-            </div>
-
-            <h2 className="text-xl font-bold mb-2">{post.title}</h2>
-
-            <div className="h-48 mb-3">
+            <div className="flex gap-4">
                 <KakaoMap
                     initialPath={post.routeData.path}
                     initialMarkers={post.routeData.markers}
-                    height="h-full"
+                    width='w-3/4'
+                    height="h-36"
                 />
-            </div>
-
-            <div className="flex justify-between items-center">
-                <div className="flex gap-4">
-                    <div className="flex items-center gap-1 text-gray-600">
-                        <Heart size={18} />
-                        <span>{post.stats.likeCount}</span>
+                <div className="flex flex-col gap-2 w-full">
+                    <div className="flex flex-row justify-between items-end">
+                        <h2 className='font-semibold text-lg'>{post.title}</h2>
+                        <p className=' text-slate-500 text-xs'>소요시간 <br /> {post.routeData.recordedTime}분 </p>
                     </div>
-                    <div className="flex items-center gap-1 text-gray-600">
-                        <MessageCircle size={18} />
-                        <span>{post.stats.commentCount}</span>
+                    <div className=" flex flex-col text-xs text-slate-500">
+                        <div className='flex'>
+                            <MapPin size={14} />
+                            {post.stats.distanceFromUser}km  {formatDate(post.createdAt)}
+                        </div>
+                        <div>
+                            {post.routeData.startAddress}
+                        </div>
+
+                    </div>
+                    <div className='flex gap-2'>
+                        <Image
+                            src={post.author.profileImage}
+                            alt={post.author.name}
+                            width={28}
+                            height={28}
+                            className="rounded-full"
+                        />
+                        <h2>{post.author.name}</h2>
+                    </div>
+                    <div className='flex gap-4 justify-end'>
+                        <div className="flex items-center gap-1 text-gray-600">
+                            <Heart size={18} />
+                            <span>{post.stats.likeCount}</span>
+                        </div>
+                        <div className="flex items-center gap-1 text-gray-600">
+                            <MessageCircle size={18} />
+                            <span>{post.stats.commentCount}</span>
+                        </div>
                     </div>
                 </div>
-
-                <div className="flex gap-3 text-sm text-gray-500">
-                    <span>{post.routeData.distance}km</span>
-                    <span>{post.routeData.recordedTime}분</span>
-                    {post.stats.distanceFromUser !== undefined && (
-                        <span>현재 위치에서 {post.stats.distanceFromUser}km</span>
-                    )}
-                </div>
-            </div>
-
-            <div className="mt-2 text-sm text-gray-500">
-                {post.routeData.startAddress}
             </div>
         </Card>
     );
