@@ -4,7 +4,7 @@
 import { Map, MapMarker, Polyline, CustomOverlayMap } from 'react-kakao-maps-sdk'
 import { Button } from '@/components/ui/button'
 import { MapPin, X } from 'lucide-react'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import MarkerForm from '../../components/MarkerForm'
 import { MarkerData, OverlayProps, KakaoMapProps, Position } from '../../types/types'
 import { useRecordStore } from '@/store/useRecordStore'
@@ -81,7 +81,6 @@ export default function KakaoMap({
     const [showMarkerForm, setShowMarkerForm] = useState(false)
     const [center, setCenter] = useState<Position>({ lat: 37.5665, lng: 126.9780 })
     const [visibleOverlays, setVisibleOverlays] = useState<Set<string>>(new Set())
-    const watchIdRef = useRef<number | null>(null)
     const [isGettingLocation, setIsGettingLocation] = useState(false);
     const [userPosition, setUserPosition] = useState<Position | null>(null);
     // const [locationSmoother] = useState(() => new LocationSmoother());
