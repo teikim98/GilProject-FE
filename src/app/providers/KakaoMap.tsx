@@ -9,6 +9,7 @@ import MarkerForm from '../../components/MarkerForm'
 import { MarkerData, OverlayProps, KakaoMapProps, Position } from '../../types/types'
 import { useRecordStore } from '@/store/useRecordStore'
 import { LocationSmoother } from '@/util/locationSmoother'
+import { createPinMarker } from '@/components/CustomMarkerIcon'
 
 
 declare global {
@@ -252,7 +253,7 @@ export default function KakaoMap({
         setSelectedPosition(null)
     }
 
-
+    const markerIcon = createPinMarker();
 
     return (
         <div className={`relative ${width} ${height}`}>
@@ -269,6 +270,19 @@ export default function KakaoMap({
                             position={marker.position}
                             onClick={() => {
                                 toggleOverlay(marker.id);
+                            }}
+                            image={{
+                                src: markerIcon,
+                                size: {
+                                    width: 24,
+                                    height: 28,
+                                },
+                                options: {
+                                    offset: {
+                                        x: 20,
+                                        y: 48,
+                                    },
+                                },
                             }}
                         />
                         <MarkerOverlay
@@ -300,6 +314,19 @@ export default function KakaoMap({
                             position={marker.position}
                             onClick={() => {
                                 toggleOverlay(marker.id);
+                            }}
+                            image={{
+                                src: markerIcon,
+                                size: {
+                                    width: 24,
+                                    height: 28,
+                                },
+                                options: {
+                                    offset: {
+                                        x: 20,
+                                        y: 48,
+                                    },
+                                },
                             }}
                         />
                         <MarkerOverlay
