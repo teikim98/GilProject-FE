@@ -5,22 +5,9 @@ import React, { useState } from 'react'
 import { Card } from '../ui/card'
 import { Separator } from '../ui/separator'
 import { ChevronDown, ChevronUp } from 'lucide-react'
-import { MarkerData } from '@/types/types'
+import { RouteCardProps, RouteData } from '@/types/types'
 
-interface RouteData {
-    title: string;
-    description: string;
-    pathData: {
-        path: Array<{ lat: number; lng: number }>;
-        markers: MarkerData[];
-    };
-    recordedTime: number;
-    createdAt: string;
-}
 
-interface RouteCardProps {
-    route: RouteData;
-}
 
 function formatRecordedTime(minutes: number) {
     if (minutes < 60) {
@@ -41,7 +28,7 @@ function RouteCard({ route }: RouteCardProps) {
                 onClick={() => setIsExpanded(!isExpanded)}
             >
                 <div className="flex cursor-pointer">
-                    <div className={`min-w-32 h-32 mr-4 ${isExpanded ? 'hidden' : ''}`}>
+                    <div onClick={(e) => { e.stopPropagation() }} className={`min-w-32 h-32 mr-4 ${isExpanded ? 'hidden' : ''}`}>
                         <KakaoMap
                             width='w-full'
                             height='h-full'
@@ -66,7 +53,7 @@ function RouteCard({ route }: RouteCardProps) {
                 {/* 확장된 지도 뷰 */}
                 {isExpanded && (
                     <div className="mt-4">
-                        <div className="h-[400px] w-full">
+                        <div onClick={(e) => { e.stopPropagation() }} className="h-[400px] w-full">
                             <KakaoMap
                                 width='w-full'
                                 height='h-full'

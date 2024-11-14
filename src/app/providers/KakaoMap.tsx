@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { MapPin, X } from 'lucide-react'
 import { useState, useEffect, useRef } from 'react'
 import MarkerForm from '../../components/MarkerForm'
-import { MarkerData } from '../../types/types'
+import { MarkerData, OverlayProps, KakaoMapProps, Position } from '../../types/types'
 import { useRecordStore } from '@/store/useRecordStore'
 import { LocationSmoother } from '@/util/locationSmoother'
 
@@ -17,14 +17,7 @@ declare global {
     }
 }
 
-interface OverlayProps {
-    content: string;
-    image?: string;
-    markerId: string;
-    position: { lat: number; lng: number };
-    visible: boolean;
-    onClose: () => void;
-}
+
 
 const MarkerOverlay = ({ content, image, position, visible, onClose }: OverlayProps) => {
     if (!visible) return null;
@@ -74,19 +67,7 @@ const MarkerOverlay = ({ content, image, position, visible, onClose }: OverlayPr
     )
 }
 
-interface KakaoMapProps {
-    isRecording?: boolean;
-    isEditing?: boolean;
-    width?: string;
-    height?: string;
-    initialPath?: Array<{ lat: number; lng: number }>;
-    initialMarkers?: MarkerData[];
-}
 
-interface Position {
-    lat: number;
-    lng: number;
-}
 
 export default function KakaoMap({
     isRecording = false,
@@ -226,6 +207,7 @@ export default function KakaoMap({
         }
     }, [initialPath]);
 
+    //맵 클릭 허용 설정 
     const handleMapClick = (_map: kakao.maps.Map, mouseEvent: kakao.maps.event.MouseEvent) => {
         if (isEditing) {
             setSelectedPosition({
@@ -236,6 +218,7 @@ export default function KakaoMap({
         }
     }
 
+    //저장된 마커 팝업 토글
     const toggleOverlay = (markerId: string) => {
         setVisibleOverlays(prev => {
             const next = new Set(prev)
