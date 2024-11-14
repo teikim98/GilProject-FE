@@ -28,7 +28,8 @@ function RouteCard({ route }: RouteCardProps) {
                 onClick={() => setIsExpanded(!isExpanded)}
             >
                 <div className="flex cursor-pointer">
-                    <div onClick={(e) => { e.stopPropagation() }} className={`min-w-32 h-32 mr-4 ${isExpanded ? 'hidden' : ''}`}>
+                    <div onClick={(e) => { e.stopPropagation() }}
+                        className={`min-w-32 h-32 mr-4 ${isExpanded ? 'hidden' : ''}`}>
                         <KakaoMap
                             width='w-full'
                             height='h-full'
@@ -53,7 +54,10 @@ function RouteCard({ route }: RouteCardProps) {
                 {/* 확장된 지도 뷰 */}
                 {isExpanded && (
                     <div className="mt-4">
-                        <div onClick={(e) => { e.stopPropagation() }} className="h-[400px] w-full">
+                        <div
+                            className="mt-4"
+                            onClick={(e) => e.stopPropagation()}  // 여기도 동일하게
+                        >
                             <KakaoMap
                                 width='w-full'
                                 height='h-full'
