@@ -60,7 +60,7 @@ function RouteCard({ route }: RouteCardProps) {
                         >
                             <KakaoMap
                                 width='w-full'
-                                height='h-full'
+                                height='h-[400px]'
                                 initialPath={route.pathData.path}
                                 initialMarkers={route.pathData.markers}
                             />

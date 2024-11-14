@@ -113,82 +113,64 @@ export default function KakaoMap({
         }
     }, [])
 
+    //현재위치 추적 및 경로 기록
     useEffect(() => {
-        if (navigator.geolocation) {
-            // 현재 위치 한 번 가져오기
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    setUserPosition({
-                        lat: position.coords.latitude,
-                        lng: position.coords.longitude,
-                    });
-                },
-                (error) => console.error("Error getting location:", error)
-            );
+        if (!navigator.geolocation) return;
 
-            // 위치 실시간 추적 (필요한 경우)
-            const watchId = navigator.geolocation.watchPosition(
-                (position) => {
-                    setUserPosition({
-                        lat: position.coords.latitude,
-                        lng: position.coords.longitude,
-                    });
-                },
-                (error) => console.error("Error watching location:", error),
-                {
-                    enableHighAccuracy: true,
-                    maximumAge: 0,
-                    timeout: Infinity
-                }
-            );
+        const locationSmoother = new LocationSmoother(20, 5, 3);
 
-            return () => {
-                if (watchId) {
-                    navigator.geolocation.clearWatch(watchId);
-                }
-            };
-        }
-    }, []);
+        // 초기 위치 한 번 가져오기
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const newPosition = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude,
+                };
+                setUserPosition(newPosition);
+                setCenter(newPosition);
+            },
+            (error) => console.error("Error getting initial location:", error)
+        );
 
-    // 경로 기록 처리
-    useEffect(() => {
-        const locationSmoother = new LocationSmoother(20, 5, 3); // 정확도, 최소거리, 버퍼크기
+        // 위치 추적 통합
+        const watchId = navigator.geolocation.watchPosition(
+            (position) => {
+                const newPosition = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude,
+                };
 
-        if (isRecording) {
-            watchIdRef.current = navigator.geolocation.watchPosition(
-                (position) => {
-                    const newPosition = {
-                        lat: position.coords.latitude,
-                        lng: position.coords.longitude,
-                    };
+                // 현재 위치 업데이트
+                setUserPosition(newPosition);
 
-                    // 위치 데이터 스무딩 적용
+                // 기록 중일 때만 경로에 추가
+                if (isRecording) {
                     const smoothedPosition = locationSmoother.smooth(
                         newPosition,
                         position.coords.accuracy
                     );
-
-                    // 유효한 위치일 경우에만 저장 및 중앙 이동
                     if (smoothedPosition) {
-                        addPathPosition(smoothedPosition);  // store의 액션 사용
+                        addPathPosition(smoothedPosition);
                         setCenter(smoothedPosition);
                     }
-                },
-                (error) => console.error("위치 추적 오류:", error),
-                {
-                    enableHighAccuracy: true,
-                    maximumAge: 0,
-                    timeout: 5000, // Infinity 대신 적절한 timeout 설정
                 }
-            );
-        }
+            },
+            (error) => console.error("Error watching location:", error),
+            {
+                enableHighAccuracy: true,
+                maximumAge: 0,
+                timeout: 5000
+            }
+        );
 
         return () => {
-            if (watchIdRef.current) {
-                navigator.geolocation.clearWatch(watchIdRef.current);
+            if (watchId) {
+                navigator.geolocation.clearWatch(watchId);
             }
         };
     }, [isRecording, addPathPosition]);
+
+
 
     // 편집 모드일 때 저장된 경로 불러오기
     useEffect(() => {
@@ -341,7 +323,7 @@ export default function KakaoMap({
                         strokeStyle={'solid'}
                     />
                 )}
-                {isRecording && userPosition && (
+                {userPosition && (
                     <>
                         <CustomOverlayMap
                             position={userPosition}
