@@ -5,11 +5,11 @@ import { Map, MapMarker, Polyline, CustomOverlayMap } from 'react-kakao-maps-sdk
 import { Button } from '@/components/ui/button'
 import { MapPin, X } from 'lucide-react'
 import { useState, useEffect } from 'react'
-import MarkerForm from '../../components/MarkerForm'
 import { MarkerData, OverlayProps, KakaoMapProps, Position } from '../../types/types'
 import { useRecordStore } from '@/store/useRecordStore'
 import { LocationSmoother } from '@/util/locationSmoother'
 import { createPinMarker } from '@/components/map/CustomMarkerIcon'
+import MarkerForm from '@/components/map/MarkerForm'
 
 
 declare global {
