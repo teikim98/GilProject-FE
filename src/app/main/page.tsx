@@ -8,6 +8,7 @@ import PWAInstallButton from '@/components/layout/PwaInstallBtn';
 import Sidemenu from '@/components/layout/Sidemenu'
 import Link from 'next/link'
 import { DarkModeToggle } from '@/components/layout/DarkModeToggle'
+import { CurrentLocationMap } from '@/components/map/CurrentLocationMap'
 
 
 
@@ -24,7 +25,7 @@ export default function Page() {
 
             <Card className='flex items-center flex-col p-4 bg-white dark:bg-gray-800'>
                 <CardContent className='w-full px-0'>
-                    <KakaoMap width='w-full' height='h-48' />
+                    <CurrentLocationMap width='w-full' height='h-48' />
                 </CardContent>
                 <div className='w-full flex flex-row justify-between'>
                     <h2 className='text-gray-900 dark:text-white'>

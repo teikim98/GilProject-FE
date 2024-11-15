@@ -1,9 +1,12 @@
-import { Position } from "@/types/types";
+import { Position, SizeProps } from "@/types/types";
 import { useState, useEffect } from "react";
 import { BaseKakaoMap } from "./BaseKakaoMap";
 import { CurrentLocationMarker } from "./CurrentLocationMarker";
 
-export function CurrentLocationMap() {
+
+
+
+export function CurrentLocationMap({ width, height }: SizeProps) {
     const [center, setCenter] = useState<Position>({ lat: 37.5665, lng: 126.9780 });
     const [userPosition, setUserPosition] = useState<Position | null>(null);
 
@@ -49,7 +52,7 @@ export function CurrentLocationMap() {
     }, []);
 
     return (
-        <BaseKakaoMap center={center}>
+        <BaseKakaoMap width={width} height={height} center={center}>
             {userPosition && <CurrentLocationMarker position={userPosition} />}
         </BaseKakaoMap>
     );

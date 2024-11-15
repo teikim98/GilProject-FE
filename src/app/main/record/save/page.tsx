@@ -9,6 +9,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation';
 import { useRecordStore } from '@/store/useRecordStore';
 import { MarkerData } from '@/types/types';
+import { EditingMap } from '@/components/map/EditingMapProps';
 
 interface RouteData {
     title: string;
@@ -73,7 +74,12 @@ export default function SaveRoutePage() {
                 <div className="w-10"></div>
             </div>
 
-            <KakaoMap isEditing={true} />
+            <EditingMap
+                initialPath={pathPositions}
+                initialMarkers={markers}
+                width="w-full"
+                height="h-72"
+            />
 
             <div className="mt-4 space-y-4">
                 <div>

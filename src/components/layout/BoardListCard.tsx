@@ -6,6 +6,7 @@ import Image from 'next/image';
 import KakaoMap from '@/app/providers/KakaoMap';
 import { Heart, MapPin, MessageCircle } from 'lucide-react';
 import { Card } from '../ui/card';
+import { ViewingMap } from '../map/ViewingMapProps';
 
 interface BoardCardProps {
     post: Post;
@@ -50,9 +51,12 @@ export default function BoardCard({ post }: BoardCardProps) {
             <h2 className="text-xl font-bold mb-2">{post.title}</h2>
 
             <div className="h-48 mb-3">
-                <KakaoMap
-                    initialPath={post.routeData.path}
-                    initialMarkers={post.routeData.markers}
+                <ViewingMap
+                    route={{
+                        path: post.routeData.path,
+                        markers: post.routeData.markers
+                    }}
+                    width="w-full"
                     height="h-full"
                 />
             </div>

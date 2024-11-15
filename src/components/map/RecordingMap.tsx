@@ -1,6 +1,6 @@
 "use client"
 import { useRecordStore } from "@/store/useRecordStore";
-import { MarkerData, Position } from "@/types/types";
+import { MarkerData, Position, SizeProps } from "@/types/types";
 import { getCurrentPosition } from "@/util/getCurrentPosition";
 import { LocationSmoother } from "@/util/locationSmoother";
 import { useState, useEffect } from "react";
@@ -10,7 +10,7 @@ import MarkerForm from "./MarkerForm";
 import { PinButton } from "./PinButtonProps";
 import { RoutePolyline } from "./RoutePolyline";
 
-export function RecordingMap() {
+export function RecordingMap({ width, height }: SizeProps) {
     const { pathPositions, addPathPosition, addMarker } = useRecordStore();
     const [userPosition, setUserPosition] = useState<Position | null>(null);
     const [center, setCenter] = useState<Position>({ lat: 37.5665, lng: 126.9780 });
@@ -96,7 +96,7 @@ export function RecordingMap() {
     };
 
     return (
-        <BaseKakaoMap center={center}>
+        <BaseKakaoMap width={width} height={height} center={center}>
             {userPosition && <CurrentLocationMarker position={userPosition} />}
             {pathPositions.length > 0 && <RoutePolyline path={pathPositions} isRecording />}
             <PinButton onPinClick={handleAddMarker} isLoading={isGettingLocation} />

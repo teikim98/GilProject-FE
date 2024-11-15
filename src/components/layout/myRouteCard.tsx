@@ -6,6 +6,7 @@ import { Card } from '../ui/card'
 import { Separator } from '../ui/separator'
 import { ChevronDown, ChevronUp } from 'lucide-react'
 import { RouteCardProps, RouteData } from '@/types/types'
+import { ViewingMap } from '../map/ViewingMapProps'
 
 
 
@@ -36,6 +37,16 @@ function RouteCard({ route }: RouteCardProps) {
                             initialPath={route.pathData.path}
                             initialMarkers={route.pathData.markers}
                         />
+                        <ViewingMap width='w-full'
+                            height='h-full'
+                            route={
+                                {
+                                    path: route.pathData.path,
+                                    markers: route.pathData.markers
+                                }
+                            }
+                        />
+
                     </div>
                     <div className="flex flex-col flex-1">
                         <div className="flex justify-between items-start">

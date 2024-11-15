@@ -37,6 +37,11 @@ export interface KakaoMapProps {
   initialMarkers?: MarkerData[];
 }
 
+export interface SizeProps {
+  width?: string;
+  height?: string;
+}
+
 export interface Position {
   lat: number;
   lng: number;

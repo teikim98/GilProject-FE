@@ -5,6 +5,7 @@ import BackButton from '@/components/layout/BackIcon'
 import { Button } from '@/components/ui/button'
 import { useRouter } from 'next/navigation';
 import { useRecordStore } from '@/store/useRecordStore';
+import { RecordingMap } from '@/components/map/RecordingMap';
 
 export default function RecordPage() {
     const router = useRouter();
@@ -30,10 +31,8 @@ export default function RecordPage() {
                 <div className="w-10"></div>
             </div>
 
-            <KakaoMap
-                isRecording={isRecording}
-                height='h-96'
-            />
+            <RecordingMap width="w-full" height="h-96" />
+
 
             <div className="mt-auto mb-16 px-4">
                 <Button

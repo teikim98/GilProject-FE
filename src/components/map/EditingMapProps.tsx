@@ -10,15 +10,17 @@ import { RoutePolyline } from "./RoutePolyline";
 interface EditingMapProps {
     initialPath: Position[];
     initialMarkers: MarkerData[];
+    width?: string;
+    height?: string;
 }
 
-export function EditingMap({ initialPath, initialMarkers }: EditingMapProps) {
+export function EditingMap({ initialPath, initialMarkers, width, height }: EditingMapProps) {
     const [center] = useState(initialPath[0] ?? { lat: 37.5665, lng: 126.9780 });
     const { markers, addMarker } = useRecordStore();
     const [selectedPosition, setSelectedPosition] = useState<Position | null>(null);
     const [showMarkerForm, setShowMarkerForm] = useState(false);
 
-    const handleMapClick = (map: kakao.maps.Map, e: kakao.maps.event.MouseEvent) => {
+    const handleMapClick = (_map: kakao.maps.Map, e: kakao.maps.event.MouseEvent) => {
         setSelectedPosition({
             lat: e.latLng.getLat(),
             lng: e.latLng.getLng(),
@@ -41,10 +43,13 @@ export function EditingMap({ initialPath, initialMarkers }: EditingMapProps) {
     };
 
     return (
-        <BaseKakaoMap center={center} onClick={handleMapClick}>
+        <BaseKakaoMap width={width} height={height} center={center} onClick={handleMapClick}>
             <RoutePolyline path={initialPath} />
-            {markers.map(marker => (
-                <MarkerWithOverlay key={marker.id} marker={marker} />
+            {[...markers, ...initialMarkers].map(marker => (
+                <MarkerWithOverlay
+                    key={marker.id}
+                    marker={marker}
+                />
             ))}
             {showMarkerForm && selectedPosition && (
                 <div className="absolute bottom-4 left-4 z-10">

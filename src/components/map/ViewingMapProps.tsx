@@ -6,17 +6,19 @@ import { MarkerWithOverlay } from "./MarkerWithOverlay";
 import { RoutePolyline } from "./RoutePolyline";
 
 interface ViewingMapProps {
+    width?: string;
+    height?: string;
     route: {
         path: Position[];
         markers: MarkerData[];
     };
 }
 
-export function ViewingMap({ route }: ViewingMapProps) {
+export function ViewingMap({ route, width, height }: ViewingMapProps) {
     const [center] = useState(route.path[0] ?? { lat: 37.5665, lng: 126.9780 });
 
     return (
-        <BaseKakaoMap center={center}>
+        <BaseKakaoMap width={width} height={height} center={center}>
             <RoutePolyline path={route.path} />
             {route.markers.map(marker => (
                 <MarkerWithOverlay key={marker.id} marker={marker} />
