@@ -51,6 +51,7 @@ export default function SaveRoutePage() {
         };
 
         // 기존 저장된 경로들 가져오기
+        console.log(localStorage.getItem('savedRoutes'))
         const savedRoutes: RouteData[] = JSON.parse(localStorage.getItem('savedRoutes') || '[]');
         savedRoutes.push(routeData);
         localStorage.setItem('savedRoutes', JSON.stringify(savedRoutes));

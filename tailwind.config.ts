@@ -9,6 +9,9 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sebang: ["SEBANG_Gothic_Bold", "sans-serif"],
+      },
       keyframes: {
         "slide-up": {
           "0%": { transform: "translateY(100%)", opacity: "0" },

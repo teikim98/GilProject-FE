@@ -66,14 +66,14 @@ function RouteCard({ route }: RouteCardProps) {
                             />
                         </div>
                         <div className="mt-4 grid grid-cols-2 gap-4">
-                            <div className="bg-gray-50 p-3 rounded">
-                                <h3 className="text-sm text-gray-500">총 거리</h3>
+                            <div className="bg-gray-50 dark:bg-slate-500 p-3 rounded">
+                                <h3 className="text-sm text-gray-500 dark:text-white">총 거리</h3>
                                 <p className="font-semibold">
                                     {calculateDistance(route.pathData.path)}km
                                 </p>
                             </div>
-                            <div className="bg-gray-50 p-3 rounded">
-                                <h3 className="text-sm text-gray-500">소요 시간</h3>
+                            <div className="bg-gray-50 dark:bg-slate-500 p-3 rounded">
+                                <h3 className="text-sm  text-gray-500 dark:text-white">소요 시간</h3>
                                 <p className="font-semibold">
                                     {formatRecordedTime(route.recordedTime)}
                                 </p>
