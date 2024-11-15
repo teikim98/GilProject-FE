@@ -17,6 +17,17 @@ export interface OverlayProps {
   onClose: () => void;
 }
 
+export interface BaseKakaoMapProps {
+  center: Position;
+  width?: string;
+  height?: string;
+  onClick?: (
+    map: kakao.maps.Map,
+    mouseEvent: kakao.maps.event.MouseEvent
+  ) => void;
+  children?: React.ReactNode;
+}
+
 export interface KakaoMapProps {
   isRecording?: boolean;
   isEditing?: boolean;

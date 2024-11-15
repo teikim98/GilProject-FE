@@ -9,7 +9,7 @@ import MarkerForm from '../../components/MarkerForm'
 import { MarkerData, OverlayProps, KakaoMapProps, Position } from '../../types/types'
 import { useRecordStore } from '@/store/useRecordStore'
 import { LocationSmoother } from '@/util/locationSmoother'
-import { createPinMarker } from '@/components/CustomMarkerIcon'
+import { createPinMarker } from '@/components/map/CustomMarkerIcon'
 
 
 declare global {

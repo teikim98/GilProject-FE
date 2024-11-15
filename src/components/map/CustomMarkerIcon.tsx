@@ -1,4 +1,3 @@
-// utils/markerIcons.ts
 
 // 기본 핀 마커
 export const createPinMarker = (color: string = '#6366F1') => {
