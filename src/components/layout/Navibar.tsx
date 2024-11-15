@@ -24,7 +24,7 @@ const BottomNav = ({ isVisible = true }: BottomNavProps) => {
                     onClick={() => router.push('/main')}
                 >
                     <Home className="h-5 w-5" />
-                    <span className="text-xs">홈</span>
+                    <span className="text-xs">홈🏠</span>
                 </Button>
 
                 <Button

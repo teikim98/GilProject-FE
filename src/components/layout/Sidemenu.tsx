@@ -42,7 +42,7 @@ export default function Sidemenu() {
                                     <Link
                                         href={item.href}
                                         className={cn(
-                                            "block px-4 py-2 text-lg rounded-md transition-colors hover:bg-gray-100",
+                                            "block px-4 py-2 text-lg rounded-md transition-colors hover:bg-gray-100 dark:hover:bg-gray-600",
                                             pathname === item.href && "bg-gray-100 font-medium"
                                         )}
                                     >
