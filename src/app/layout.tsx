@@ -34,10 +34,7 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/icons/icon-192x192.j" />
 
       </head>
-      <body
-        className='bg-white dark:bg-slate-800'
-      >
-
+      <body>
         <Suspense
           fallback={
             <div className="animate-fade-in min-h-screen " />
