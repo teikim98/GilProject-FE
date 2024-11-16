@@ -8,7 +8,7 @@ import { RouteData } from "@/types/types"
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import ViewingMap from "@/components/map/ViewingMapProps";
+import { ViewingMap } from "@/components/map/ViewingMapProps";
 
 export default function PostPage() {
     const [isRouteListOpen, setIsRouteListOpen] = useState(false);
