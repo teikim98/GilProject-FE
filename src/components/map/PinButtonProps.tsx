@@ -12,7 +12,7 @@ export function PinButton({ onPinClick, isLoading = false }: PinButtonProps) {
             <Button
                 variant="secondary"
                 size="sm"
-                className={`flex items-center gap-2 bg-white shadow-md ${isLoading ? 'opacity-75 cursor-not-allowed' : ''
+                className={`flex items-center gap-2 bg-white dark:bg-gray-600 shadow-md ${isLoading ? 'opacity-75 cursor-not-allowed' : ''
                     }`}
                 onClick={onPinClick}
                 disabled={isLoading}

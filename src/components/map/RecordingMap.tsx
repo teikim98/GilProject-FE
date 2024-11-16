@@ -7,11 +7,12 @@ import { useState, useEffect } from "react";
 import { BaseKakaoMap } from "./BaseKakaoMap";
 import { CurrentLocationMarker } from "./CurrentLocationMarker";
 import MarkerForm from "./MarkerForm";
+import { MarkerWithOverlay } from "./MarkerWithOverlay";
 import { PinButton } from "./PinButtonProps";
 import { RoutePolyline } from "./RoutePolyline";
 
 export function RecordingMap({ width, height }: SizeProps) {
-    const { pathPositions, addPathPosition, addMarker } = useRecordStore();
+    const { pathPositions, markers, addPathPosition, addMarker } = useRecordStore();
     const [userPosition, setUserPosition] = useState<Position | null>(null);
     const [center, setCenter] = useState<Position>({ lat: 37.5665, lng: 126.9780 });
     const [selectedPosition, setSelectedPosition] = useState<Position | null>(null);
@@ -99,6 +100,12 @@ export function RecordingMap({ width, height }: SizeProps) {
         <BaseKakaoMap width={width} height={height} center={center}>
             {userPosition && <CurrentLocationMarker position={userPosition} />}
             {pathPositions.length > 0 && <RoutePolyline path={pathPositions} isRecording />}
+            {markers.map(marker => (
+                <MarkerWithOverlay
+                    key={marker.id}
+                    marker={marker}
+                />
+            ))}
             <PinButton onPinClick={handleAddMarker} isLoading={isGettingLocation} />
             {showMarkerForm && selectedPosition && (
                 <div className="absolute bottom-4 left-4 z-10">

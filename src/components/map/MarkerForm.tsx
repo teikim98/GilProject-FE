@@ -105,13 +105,13 @@ const MarkerForm = ({ onSubmit, onCancel }: MarkerFormProps) => {
     };
 
     return (
-        <Card className="relative p-4 bg-white rounded-lg shadow-lg w-[300px]">
+        <Card className="relative p-4 bg-white dark:bg-gray-800 rounded-lg shadow-lg w-[300px]">
             <button
                 onClick={handleCancel}
-                className="absolute top-2 right-2 p-1 hover:bg-gray-100 rounded-full transition-colors"
+                className="absolute top-2 right-2 p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
                 aria-label="Close form"
             >
-                <X size={16} />
+                <X size={16} className="dark:text-gray-300" />
             </button>
 
             <div className="space-y-4">
@@ -120,7 +120,7 @@ const MarkerForm = ({ onSubmit, onCancel }: MarkerFormProps) => {
                         value={content}
                         onChange={(e) => setContent(e.target.value)}
                         placeholder="마커에 대한 설명을 입력하세요"
-                        className="resize-none"
+                        className="resize-none dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
                         rows={4}
                     />
                 </div>
@@ -135,7 +135,7 @@ const MarkerForm = ({ onSubmit, onCancel }: MarkerFormProps) => {
                     />
                     <label
                         htmlFor="image-upload"
-                        className="flex items-center gap-2 cursor-pointer p-2 border rounded hover:bg-gray-50"
+                        className="flex items-center gap-2 cursor-pointer p-2 border dark:border-gray-600 rounded hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-white"
                     >
                         <ImagePlus size={20} />
                         <span>이미지 추가</span>
@@ -151,16 +151,16 @@ const MarkerForm = ({ onSubmit, onCancel }: MarkerFormProps) => {
                         />
                         <button
                             onClick={() => setImage('')}
-                            className="absolute top-1 right-1 p-1 bg-white rounded-full shadow hover:bg-gray-100"
+                            className="absolute top-1 right-1 p-1 bg-white dark:bg-gray-800 rounded-full shadow hover:bg-gray-100 dark:hover:bg-gray-700"
                             aria-label="Remove image"
                         >
-                            <X size={16} />
+                            <X size={16} className="dark:text-gray-300" />
                         </button>
                     </div>
                 )}
 
                 {error && (
-                    <p className="text-red-500 text-sm">{error}</p>
+                    <p className="text-red-500 dark:text-red-400 text-sm">{error}</p>
                 )}
 
                 <div className="flex gap-2">
@@ -174,7 +174,7 @@ const MarkerForm = ({ onSubmit, onCancel }: MarkerFormProps) => {
                     <Button
                         variant="outline"
                         onClick={handleCancel}
-                        className="flex-1"
+                        className="flex-1 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
                     >
                         취소
                     </Button>

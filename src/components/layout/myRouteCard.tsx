@@ -1,6 +1,4 @@
-// components/layout/MyRouteCard.tsx
 'use client'
-import KakaoMap from '@/app/providers/KakaoMap'
 import React, { useState } from 'react'
 import { Card } from '../ui/card'
 import { Separator } from '../ui/separator'
@@ -31,12 +29,6 @@ function RouteCard({ route }: RouteCardProps) {
                 <div className="flex cursor-pointer">
                     <div onClick={(e) => { e.stopPropagation() }}
                         className={`min-w-32 h-32 mr-4 ${isExpanded ? 'hidden' : ''}`}>
-                        <KakaoMap
-                            width='w-full'
-                            height='h-full'
-                            initialPath={route.pathData.path}
-                            initialMarkers={route.pathData.markers}
-                        />
                         <ViewingMap width='w-full'
                             height='h-full'
                             route={
@@ -69,11 +61,14 @@ function RouteCard({ route }: RouteCardProps) {
                             className="mt-4"
                             onClick={(e) => e.stopPropagation()}  // 여기도 동일하게
                         >
-                            <KakaoMap
-                                width='w-full'
+                            <ViewingMap width='w-full'
                                 height='h-[400px]'
-                                initialPath={route.pathData.path}
-                                initialMarkers={route.pathData.markers}
+                                route={
+                                    {
+                                        path: route.pathData.path,
+                                        markers: route.pathData.markers
+                                    }
+                                }
                             />
                         </div>
                         <div className="mt-4 grid grid-cols-2 gap-4">

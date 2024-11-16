@@ -1,11 +1,11 @@
 'use client';
 
-import KakaoMap from '@/app/providers/KakaoMap'
 import BackButton from '@/components/layout/BackIcon'
 import { Button } from '@/components/ui/button'
 import { useRouter } from 'next/navigation';
 import { useRecordStore } from '@/store/useRecordStore';
 import { RecordingMap } from '@/components/map/RecordingMap';
+import { CurrentLocationMap } from '@/components/map/CurrentLocationMap';
 
 export default function RecordPage() {
     const router = useRouter();
@@ -31,7 +31,17 @@ export default function RecordPage() {
                 <div className="w-10"></div>
             </div>
 
-            <RecordingMap width="w-full" height="h-96" />
+            {isRecording ? (
+                <RecordingMap
+                    width="w-full"
+                    height="h-96"
+                />
+            ) : (
+                < CurrentLocationMap
+                    width="w-full"
+                    height="h-96"
+                />
+            )}
 
 
             <div className="mt-auto mb-16 px-4">
@@ -39,7 +49,7 @@ export default function RecordPage() {
                     className={`w-full ${isRecording ? 'bg-red-500 hover:bg-red-600' : ''}`}
                     onClick={handleRecording}
                 >
-                    <h2>{isRecording ? '경로 녹화 중지하기' : '경로 녹화 시작하기'}</h2>
+                    <h2>{isRecording ? '경로 기록 중지하기' : '경로 기록 시작하기'}</h2>
                 </Button>
             </div>
         </div>
