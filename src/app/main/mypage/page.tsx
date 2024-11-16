@@ -10,10 +10,9 @@ export default function Page() {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        // Simulate loading time, replace with actual data fetching or loading logic
         setTimeout(() => {
             setIsLoading(false);
-        }, 500); // Adjust delay as needed
+        }, 500);
     }, []);
 
     if (isLoading) {

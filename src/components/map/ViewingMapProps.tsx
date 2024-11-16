@@ -14,7 +14,7 @@ interface ViewingMapProps {
     };
 }
 
-export function ViewingMap({ route, width, height }: ViewingMapProps) {
+export default function ViewingMap({ route, width, height }: ViewingMapProps) {
     const [center] = useState(route.path[0] ?? { lat: 37.5665, lng: 126.9780 });
 
     return (
