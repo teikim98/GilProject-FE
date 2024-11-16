@@ -2,12 +2,14 @@ import { Position, SizeProps } from "@/types/types";
 import { useState, useEffect } from "react";
 import { BaseKakaoMap } from "./BaseKakaoMap";
 import { CurrentLocationMarker } from "./CurrentLocationMarker";
+import { Card } from "../ui/card";
+import { Skeleton } from "../ui/skeleton";
 
 
 
 
 export function CurrentLocationMap({ width, height }: SizeProps) {
-    const [center, setCenter] = useState<Position>({ lat: 37.5665, lng: 126.9780 });
+    const [center, setCenter] = useState<Position | null>(null);
     const [userPosition, setUserPosition] = useState<Position | null>(null);
 
     useEffect(() => {
@@ -50,6 +52,21 @@ export function CurrentLocationMap({ width, height }: SizeProps) {
             }
         };
     }, []);
+
+    if (!center) {
+        return (
+            <Card className="flex items-center justify-center p-4" style={{ width, height }}>
+                <div className="space-y-4 w-full">
+                    <Skeleton className="h-4 w-[60%] mx-auto" />
+                    <Skeleton className="h-[200px] w-full" />
+                    <div className="flex justify-center gap-2">
+                        <Skeleton className="h-8 w-8 rounded-full" />
+                        <Skeleton className="h-8 w-[200px]" />
+                    </div>
+                </div>
+            </Card>
+        );
+    }
 
     return (
         <BaseKakaoMap width={width} height={height} center={center}>
