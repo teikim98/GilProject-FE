@@ -1,4 +1,3 @@
-import BottomNav from '@/components/layout/Navibar';
 import React from 'react';
 
 interface LayoutProps {
@@ -11,7 +10,6 @@ export default function Layout({ children }: LayoutProps) {
             <div className='w-full h-full'>
                 {children}
             </div>
-            <BottomNav />
         </div>
     );
 }

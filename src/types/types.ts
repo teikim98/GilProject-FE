@@ -8,6 +8,13 @@ export interface MarkerData {
   image?: string;
 }
 
+export type NavigationState =
+  | "isRecording"
+  | "isEditing"
+  | "isWriting"
+  | "isSaving"
+  | "none";
+
 export interface OverlayProps {
   content: string;
   image?: string;

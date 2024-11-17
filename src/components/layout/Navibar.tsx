@@ -16,7 +16,7 @@ const BottomNav = ({ isVisible = true }: BottomNavProps) => {
     if (!isVisible) return null;
 
     return (
-        <div className={`fixed max-w-screen-md bottom-0 left-0 right-0 border-t bg-background mx-auto ${!isVisible ? 'hidden' : ''}`}>
+        <div className={`fixed z-50 max-w-screen-md bottom-0 left-0 right-0 border-t bg-background mx-auto ${!isVisible ? 'hidden' : ''}`}>
             <div className="flex justify-between items-center h-16 max-w-md mx-auto">
                 <Button
                     variant={pathname === '/' ? 'default' : 'ghost'}
@@ -30,7 +30,7 @@ const BottomNav = ({ isVisible = true }: BottomNavProps) => {
                 <Button
                     variant={pathname === '/navigation' ? 'default' : 'ghost'}
                     className="flex-1 flex flex-col items-center gap-1 h-full rounded-none"
-                    onClick={() => router.push('/main/record')}
+                    onClick={() => router.push('/record')}
                 >
                     <Navigation className="h-5 w-5" />
                     <span className="text-xs">경로</span>

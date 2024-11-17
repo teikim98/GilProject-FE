@@ -5,7 +5,7 @@ import React from 'react'
 export default function Page() {
     return (
         <div className='animate-fade-in flex flex-col relative'>
-            <BackHeader link='/main/mypage' content='내 경로기록' />
+            <BackHeader content='내 경로기록' />
             <MyRouteList />
         </div>
     )

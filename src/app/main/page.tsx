@@ -31,7 +31,7 @@ export default function Page() {
                     <h2 className='text-gray-900 dark:text-white'>
                         지금 경로 녹화 하러가기
                     </h2>
-                    <Link href="/main/record">
+                    <Link href="/record">
                         <Pencil className="cursor-pointer hover:text-gray-600 dark:text-gray-300 dark:hover:text-gray-100" />
                     </Link>
                 </div>

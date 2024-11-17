@@ -10,7 +10,6 @@ export function DarkModeToggle() {
     return (
         <Button
             variant="ghost"
-            size="icon"
             onClick={toggleDarkMode}
             className="ml-auto"
         >

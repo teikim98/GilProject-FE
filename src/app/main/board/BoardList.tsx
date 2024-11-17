@@ -224,7 +224,7 @@ export default function BoardList() {
     }
 
     return (
-        <div className="space-y-4 mt-4">
+        <div className="space-y-4 mt-4 mb-16">
             {posts.map((post) => (
                 <BoardCard key={post.id} post={post} />
             ))}

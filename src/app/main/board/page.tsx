@@ -1,4 +1,5 @@
 "use client"
+import BackHeader from "@/components/layout/BackHeader";
 import LocationSelector from "@/components/layout/LocationSelector";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
@@ -13,6 +14,7 @@ export default function Board() {
 
     return (
         <div className="flex flex-col animate-fade-in ">
+            <BackHeader content="산책길 목록" />
             <div className="w-full h-full flex justify-between">
                 <LocationSelector />
                 <Button

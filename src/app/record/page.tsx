@@ -1,11 +1,11 @@
 'use client';
 
-import BackButton from '@/components/layout/BackIcon'
 import { Button } from '@/components/ui/button'
 import { useRouter } from 'next/navigation';
 import { useRecordStore } from '@/store/useRecordStore';
 import { RecordingMap } from '@/components/map/RecordingMap';
 import { CurrentLocationMap } from '@/components/map/CurrentLocationMap';
+import BackHeader from '@/components/layout/BackHeader';
 
 export default function RecordPage() {
     const router = useRouter();
@@ -14,37 +14,35 @@ export default function RecordPage() {
     const handleRecording = () => {
         if (isRecording) {
             stopRecording();  // 녹화 중지 및 데이터 저장
-            router.push('/main/record/save');
+            router.push('/record/save');
         } else {
             startRecording();  // 녹화 시작
         }
     };
-
     return (
         <div className='animate-fade-in flex flex-col relative h-full'>
-            <div className={`relative flex items-center justify-between mb-4 ${isRecording ? 'border-2 border-red-500 rounded-lg p-2' : ''
-                }`}>
-                <BackButton />
-                <h2 className='absolute left-1/2 transform -translate-x-1/2 top-1/2 translate-y-[-50%] text-lg font-semibold'>
-                    {isRecording ? '경로 기록중...' : '경로 기록하기'}
-                </h2>
-                <div className="w-10"></div>
+            <BackHeader
+                content={isRecording ? '경로 기록중...' : '경로 기록하기'}
+                navigationState={isRecording ? 'isRecording' : 'none'}
+                className={isRecording ? 'border-2 border-red-500 rounded-lg p-2' : ''}
+            />
+            <div className='px-4 h-full'>
+                {isRecording ? (
+                    <RecordingMap
+                        width="w-full"
+                        height="h-[90%]"
+                    />
+                ) : (
+                    < CurrentLocationMap
+                        width="w-full"
+                        height="h-[90%]"
+                    />
+                )}
             </div>
 
-            {isRecording ? (
-                <RecordingMap
-                    width="w-full"
-                    height="h-96"
-                />
-            ) : (
-                < CurrentLocationMap
-                    width="w-full"
-                    height="h-96"
-                />
-            )}
 
 
-            <div className="mt-auto mb-16 px-4">
+            <div className="mt-auto px-4">
                 <Button
                     className={`w-full ${isRecording ? 'bg-red-500 hover:bg-red-600' : ''}`}
                     onClick={handleRecording}
