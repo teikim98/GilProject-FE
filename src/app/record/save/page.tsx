@@ -24,12 +24,8 @@ export default function SaveRoutePage() {
     const isFormModified = title.trim() !== '' || description.trim() !== '';
 
     useEffect(() => {
-        if (title || description) {
-            setIsSaving(true);
-        } else {
-            setIsSaving(false);
-        }
-    }, [title, description]);
+        setIsSaving(isFormModified);
+    }, [isFormModified]);
 
     const handleSave = () => {
         if (pathPositions.length === 0) {
