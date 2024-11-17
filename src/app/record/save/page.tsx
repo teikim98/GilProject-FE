@@ -1,34 +1,35 @@
 'use client';
 
-import KakaoMap from '@/app/providers/KakaoMap'
 import BackButton from '@/components/layout/BackIcon'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation';
 import { useRecordStore } from '@/store/useRecordStore';
-import { MarkerData } from '@/types/types';
+import { RouteData } from '@/types/types';
 import { EditingMap } from '@/components/map/EditingMapProps';
+import BackHeader from '@/components/layout/BackHeader';
 
-interface RouteData {
-    title: string;
-    description: string;
-    pathData: {
-        path: Array<{ lat: number; lng: number }>;
-        markers: MarkerData[];
-    };
-    recordedTime: number;
-    createdAt: string;
-}
 
 export default function SaveRoutePage() {
     const router = useRouter();
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
+    const [isSaving, setIsSaving] = useState(false);  // 추가
 
     // store에서 경로와 마커 데이터 가져오기
     const { pathPositions, markers, recordStartTime, resetRecord } = useRecordStore();
+
+    const isFormModified = title.trim() !== '' || description.trim() !== '';
+
+    useEffect(() => {
+        if (title || description) {
+            setIsSaving(true);
+        } else {
+            setIsSaving(false);
+        }
+    }, [title, description]);
 
     const handleSave = () => {
         if (pathPositions.length === 0) {
@@ -66,13 +67,15 @@ export default function SaveRoutePage() {
 
     return (
         <div className='animate-fade-in flex flex-col relative min-h-screen'>
-            <div className="relative flex items-center justify-between mb-4">
-                <BackButton />
-                <h2 className='absolute left-1/2 transform -translate-x-1/2 top-1/2 translate-y-[-50%] text-lg font-semibold'>
-                    경로 저장하기
-                </h2>
-                <div className="w-10"></div>
-            </div>
+            <BackHeader
+                content="경로 저장하기"
+                navigationState={isSaving ? 'isSaving' : 'none'}
+                onStateReset={() => {
+                    setTitle('');
+                    setDescription('');
+                    setIsSaving(false);
+                }}
+            />
 
             <EditingMap
                 initialPath={pathPositions}
