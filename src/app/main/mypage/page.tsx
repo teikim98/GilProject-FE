@@ -3,8 +3,8 @@ import React, { useEffect, useState } from 'react'
 import Loading from '@/app/loading';
 import Profile from '@/components/user/profile';
 import { Separator } from '@/components/ui/separator';
-import BackButton from '@/components/layout/BackIcon';
 import MypageBtn from '@/components/layout/MypageBtn';
+import BackHeader from '@/components/layout/BackHeader';
 
 export default function Page() {
     const [isLoading, setIsLoading] = useState(true);
@@ -20,7 +20,7 @@ export default function Page() {
     }
     return (
         <div className='animate-fade-in flex flex-col'>
-            <BackButton route='/main' />
+            <BackHeader content='마이 페이지' />
             <h2 className='mt-4 mb-4'>프로필</h2>
             <Profile />
             <Separator className='my-4' />

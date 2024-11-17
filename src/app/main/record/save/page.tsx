@@ -67,7 +67,7 @@ export default function SaveRoutePage() {
     return (
         <div className='animate-fade-in flex flex-col relative min-h-screen'>
             <div className="relative flex items-center justify-between mb-4">
-                <BackButton route='/main/record' />
+                <BackButton />
                 <h2 className='absolute left-1/2 transform -translate-x-1/2 top-1/2 translate-y-[-50%] text-lg font-semibold'>
                     경로 저장하기
                 </h2>

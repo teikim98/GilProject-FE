@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { ViewingMap } from "@/components/map/ViewingMapProps";
+import BackHeader from "@/components/layout/BackHeader";
 
 export default function PostPage() {
     const [isRouteListOpen, setIsRouteListOpen] = useState(false);
@@ -29,6 +30,7 @@ export default function PostPage() {
 
     return (
         <div className="w-full p-4">
+            <BackHeader content={"글 쓰기"} />
             <button
                 onClick={() => setIsRouteListOpen(true)}
                 className="w-full h-24 border-2 border-dashed rounded-lg hover:bg-accent flex items-center justify-center"

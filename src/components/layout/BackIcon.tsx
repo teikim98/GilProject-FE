@@ -6,19 +6,18 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 
 interface BackButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-    className?: string,
-    route: string;
+    className?: string;
 }
 
-const BackButton = ({ className, route, ...props }: BackButtonProps) => {
+const BackButton = ({ className, ...props }: BackButtonProps) => {
     const router = useRouter();
 
     return (
         <Button
             variant="ghost"
             size="icon"
-            onClick={() => router.push(route)}
-            className={` w-fit p-2 group flex items-center gap-1 hover:gap-2 transition-all ${className}`}
+            onClick={() => router.back()}
+            className={`w-fit p-2 group flex items-center gap-1 hover:gap-2 transition-all ${className}`}
             {...props}
         >
             <ArrowLeft size={32} />

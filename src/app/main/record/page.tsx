@@ -24,7 +24,7 @@ export default function RecordPage() {
         <div className='animate-fade-in flex flex-col relative h-full'>
             <div className={`relative flex items-center justify-between mb-4 ${isRecording ? 'border-2 border-red-500 rounded-lg p-2' : ''
                 }`}>
-                <BackButton route='/main' />
+                <BackButton />
                 <h2 className='absolute left-1/2 transform -translate-x-1/2 top-1/2 translate-y-[-50%] text-lg font-semibold'>
                     {isRecording ? '경로 기록중...' : '경로 기록하기'}
                 </h2>
