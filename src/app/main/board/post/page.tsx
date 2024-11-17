@@ -29,7 +29,7 @@ export default function PostPage() {
     };
 
     return (
-        <div className="w-full p-4">
+        <div className="w-full">
             <BackHeader content={"글 쓰기"} />
             <button
                 onClick={() => setIsRouteListOpen(true)}
