@@ -128,15 +128,12 @@ export default function PostPage({ params }: PostPageProps) {
                             <span>{post.postWishListsNum}</span>
                         </Button>
                     </div>
-                    <Button variant="ghost" size="sm">
-                        <Share2 className="w-5 h-5" />
-                    </Button>
                 </div>
             </Card>
 
             <Separator className="my-4" />
 
-            {/* 댓글 섹션 (예시) */}
+
             <div className="space-y-4">
                 <h3 className="font-semibold">댓글 {post.repliesNum}개</h3>
                 {/* 댓글 목록 컴포넌트 */}
