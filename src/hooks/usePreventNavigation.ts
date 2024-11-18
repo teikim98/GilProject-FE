@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
+//뒤로가기시 이벤트 막기
 export const usePreventNavigation = (shouldPrevent: boolean) => {
   const router = useRouter();
   const [showAlert, setShowAlert] = useState(false);

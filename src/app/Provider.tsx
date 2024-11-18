@@ -18,6 +18,15 @@ export default function Provider({
         }
     }, [isDarkMode]);
 
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            if (process.env.NEXT_PUBLIC_API_MOCKING === "enabled") {
+                require("@/mocks/browser");
+            }
+        }
+    }, []);
+
+
     return (
         <div className="min-h-screen h-screen animate-fade-in bg-gradient-to-b from-purple-400 to-purple-500 flex justify-center">
             {children}

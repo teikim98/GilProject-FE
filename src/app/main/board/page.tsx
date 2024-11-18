@@ -6,7 +6,7 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Search } from "lucide-react";
 import { useState } from "react";
 import BoardList from "./BoardList";
-import SearchPage from "./search/Search";
+import SearchPage from "../../../components/layout/Search";
 
 export default function Board() {
 

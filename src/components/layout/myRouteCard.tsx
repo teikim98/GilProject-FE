@@ -59,29 +59,28 @@ function RouteCard({ route }: RouteCardProps) {
                     <div className="mt-4">
                         <div
                             className="mt-4"
-                            onClick={(e) => e.stopPropagation()}  // 여기도 동일하게
+                            onClick={(e) => e.stopPropagation()}
                         >
-                            <ViewingMap width='w-full'
+                            <ViewingMap
+                                width='w-full'
                                 height='h-[400px]'
-                                route={
-                                    {
-                                        path: route.pathData.path,
-                                        markers: route.pathData.markers
-                                    }
-                                }
+                                route={{
+                                    path: route.pathData.path,
+                                    markers: route.pathData.markers
+                                }}
                             />
                         </div>
                         <div className="mt-4 grid grid-cols-2 gap-4">
                             <div className="bg-gray-50 dark:bg-slate-500 p-3 rounded">
                                 <h3 className="text-sm text-gray-500 dark:text-white">총 거리</h3>
                                 <p className="font-semibold">
-                                    {calculateDistance(route.pathData.path)}km
+                                    {route.pathData.distance}km
                                 </p>
                             </div>
                             <div className="bg-gray-50 dark:bg-slate-500 p-3 rounded">
-                                <h3 className="text-sm  text-gray-500 dark:text-white">소요 시간</h3>
+                                <h3 className="text-sm text-gray-500 dark:text-white">소요 시간</h3>
                                 <p className="font-semibold">
-                                    {formatRecordedTime(route.recordedTime)}
+                                    {formatRecordedTime(route.pathData.recordedTime)}
                                 </p>
                             </div>
                         </div>
@@ -93,32 +92,6 @@ function RouteCard({ route }: RouteCardProps) {
     )
 }
 
-// 경로 거리 계산 함수
-function calculateDistance(path: Array<{ lat: number; lng: number }>): string {
-    let distance = 0;
-    for (let i = 0; i < path.length - 1; i++) {
-        const start = path[i];
-        const end = path[i + 1];
-        distance += getDistanceFromLatLonInKm(start.lat, start.lng, end.lat, end.lng);
-    }
-    return distance.toFixed(2);
-}
-
-function getDistanceFromLatLonInKm(lat1: number, lon1: number, lat2: number, lon2: number) {
-    const R = 6371; // 지구의 반지름 (km)
-    const dLat = deg2rad(lat2 - lat1);
-    const dLon = deg2rad(lon2 - lon1);
-    const a =
-        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-        Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
-        Math.sin(dLon / 2) * Math.sin(dLon / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return R * c;
-}
-
-function deg2rad(deg: number) {
-    return deg * (Math.PI / 180);
-}
 
 export default function MyRouteList() {
     const [routes, setRoutes] = React.useState<RouteData[]>([]);

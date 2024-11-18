@@ -1,175 +1,14 @@
+'use client'
+
 import { useEffect, useState } from 'react';
 import { Post } from '@/types/types';
 import BoardCard from '@/components/layout/BoardListCard';
+import { getPosts } from '@/api/post';
 
 export default function BoardList() {
-    const [posts, setPosts] = useState<Post[]>([
-        {
-            id: 1,
-            title: "한강 러닝 코스",
-            routeData: {
-                path: [
-                    { lat: 37.5113, lng: 127.0980 },
-                    { lat: 37.5114, lng: 127.0985 },
-                ],
-                markers: [
-                    {
-                        id: "marker-1",
-                        position: { lat: 37.5113, lng: 127.0980 },
-                        content: "시작점 - 잠실한강공원",
-                        image: "/icons/icon-192x192.png"
-                    },
-                ],
-                recordedTime: 45,
-                distance: 5.2,
-                startAddress: "서울특별시 송파구 잠실동 한강공원",
-                startLocation: { lat: 37.5113, lng: 127.0980 }
-            },
-            author: {
-                id: 123,
-                name: "김대리",
-                profileImage: "/icons/icon-192x192.jpg"
-            },
-            stats: {
-                commentCount: 5,
-                likeCount: 10,
-                distanceFromUser: 2.3
-            },
-            createdAt: "2024-01-15T09:30:00Z"
-        },
-        {
-            id: 2,
-            title: "한강 러닝 코스",
-            routeData: {
-                path: [
-                    { lat: 37.5113, lng: 127.0980 },
-                    { lat: 37.5114, lng: 127.0985 },
-                ],
-                markers: [
-                    {
-                        id: "marker-1",
-                        position: { lat: 37.5113, lng: 127.0980 },
-                        content: "시작점 - 잠실한강공원",
-                        image: "/icons/icon-192x192.png"
-                    },
-                ],
-                recordedTime: 45,
-                distance: 5.2,
-                startAddress: "서울특별시 송파구 잠실동 한강공원",
-                startLocation: { lat: 37.5113, lng: 127.0980 }
-            },
-            author: {
-                id: 123,
-                name: "러너",
-                profileImage: "/icons/icon-192x192.png"
-            },
-            stats: {
-                commentCount: 5,
-                likeCount: 10,
-                distanceFromUser: 2.3
-            },
-            createdAt: "2024-01-15T09:30:00Z"
-        },
-        {
-            id: 3,
-            title: "한강 러닝 코스",
-            routeData: {
-                path: [
-                    { lat: 37.5113, lng: 127.0980 },
-                    { lat: 37.5114, lng: 127.0985 },
-                ],
-                markers: [
-                    {
-                        id: "marker-1",
-                        position: { lat: 37.5113, lng: 127.0980 },
-                        content: "시작점 - 잠실한강공원",
-                        image: "/icons/icon-192x192.png"
-                    },
-                ],
-                recordedTime: 45,
-                distance: 5.2,
-                startAddress: "서울특별시 송파구 잠실동 한강공원",
-                startLocation: { lat: 37.5113, lng: 127.0980 }
-            },
-            author: {
-                id: 123,
-                name: "러너",
-                profileImage: "/icons/icon-192x192.png"
-            },
-            stats: {
-                commentCount: 5,
-                likeCount: 10,
-                distanceFromUser: 2.3
-            },
-            createdAt: "2024-01-15T09:30:00Z"
-        },
-        {
-            id: 1,
-            title: "한강 러닝 코스",
-            routeData: {
-                path: [
-                    { lat: 37.5113, lng: 127.0980 },
-                    { lat: 37.5114, lng: 127.0985 },
-                ],
-                markers: [
-                    {
-                        id: "marker-1",
-                        position: { lat: 37.5113, lng: 127.0980 },
-                        content: "시작점 - 잠실한강공원",
-                        image: "/icons/icon-192x192.png"
-                    },
-                ],
-                recordedTime: 45,
-                distance: 5.2,
-                startAddress: "서울특별시 송파구 잠실동 한강공원",
-                startLocation: { lat: 37.5113, lng: 127.0980 }
-            },
-            author: {
-                id: 123,
-                name: "러너",
-                profileImage: "/icons/icon-192x192.png"
-            },
-            stats: {
-                commentCount: 5,
-                likeCount: 10,
-                distanceFromUser: 2.3
-            },
-            createdAt: "2024-01-15T09:30:00Z"
-        },
-        {
-            id: 4,
-            title: "한강 러닝 코스",
-            routeData: {
-                path: [
-                    { lat: 37.5113, lng: 127.0980 },
-                    { lat: 37.5114, lng: 127.0985 },
-                ],
-                markers: [
-                    {
-                        id: "marker-1",
-                        position: { lat: 37.5113, lng: 127.0980 },
-                        content: "시작점 - 잠실한강공원",
-                        image: "/icons/icon-192x192.png"
-                    },
-                ],
-                recordedTime: 45,
-                distance: 5.2,
-                startAddress: "서울특별시 송파구 잠실동 한강공원",
-                startLocation: { lat: 37.5113, lng: 127.0980 }
-            },
-            author: {
-                id: 123,
-                name: "김대리",
-                profileImage: "/icons/icon-192x192.jpg"
-            },
-            stats: {
-                commentCount: 5,
-                likeCount: 10,
-                distanceFromUser: 2.3
-            },
-            createdAt: "2024-01-15T09:30:00Z"
-        },
-    ]);
+    const [posts, setPosts] = useState<Post[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
     const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
 
     // 현재 위치 가져오기
@@ -187,38 +26,57 @@ export default function BoardList() {
         }
     }, []);
 
-    // 게시글 데이터 가져오기 (임시로 로컬스토리지에서)
+    // API로 게시글 데이터 가져오기
     useEffect(() => {
-        const fetchPosts = () => {
-            const savedPosts = localStorage.getItem('posts');
-            if (savedPosts) {
-                const parsedPosts = JSON.parse(savedPosts);
-                // 사용자 위치가 있다면 거리 계산하여 추가
+        const fetchPosts = async () => {
+            try {
+                setLoading(true);
+                const fetchedPosts = await getPosts();
+
+                // 사용자 위치가 있다면 시작점과의 거리 계산
                 if (userLocation) {
-                    const postsWithDistance = parsedPosts.map((post: Post) => ({
+                    const postsWithDistance = fetchedPosts.map((post: Post) => ({
                         ...post,
-                        stats: {
-                            ...post.stats,
-                            distanceFromUser: calculateDistance(
-                                userLocation,
-                                post.routeData.startLocation
-                            )
-                        }
+                        distanceFromUser: calculateDistance(
+                            userLocation,
+                            { lat: post.startLat, lng: post.startLong }
+                        )
                     }));
                     setPosts(postsWithDistance);
                 } else {
-                    setPosts(parsedPosts);
+                    setPosts(fetchedPosts);
                 }
+            } catch (err) {
+                console.error('게시글 로딩 실패:', err);
+                setError('게시글을 불러오는데 실패했습니다.');
+            } finally {
+                setLoading(false);
             }
         };
 
         fetchPosts();
     }, [userLocation]);
 
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center h-40">
+                <p className="text-gray-500">로딩 중...</p>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="flex justify-center items-center h-40">
+                <p className="text-red-500">{error}</p>
+            </div>
+        );
+    }
+
     if (!posts.length) {
         return (
             <div className="flex justify-center items-center h-40">
-                <p className="text-gray-500">아직 등록된 게시글이 없습니다.</p>
+                <p className="text-gray-500 dark:text-gray-400">아직 등록된 게시글이 없습니다.</p>
             </div>
         );
     }
@@ -245,5 +103,5 @@ function calculateDistance(
         Math.cos(point1.lat * Math.PI / 180) * Math.cos(point2.lat * Math.PI / 180) *
         Math.sin(dLon / 2) * Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return Math.round(R * c * 10) / 10; // 소수점 첫째자리까지
+    return Math.round(R * c * 10) / 10;
 }

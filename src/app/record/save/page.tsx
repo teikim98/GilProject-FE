@@ -10,6 +10,7 @@ import { useRecordStore } from '@/store/useRecordStore';
 import { RouteData } from '@/types/types';
 import { EditingMap } from '@/components/map/EditingMapProps';
 import BackHeader from '@/components/layout/BackHeader';
+import { calculatePathDistance } from '@/util/calculateDistance';
 
 
 export default function SaveRoutePage() {
@@ -37,14 +38,18 @@ export default function SaveRoutePage() {
             ? Math.round((Date.now() - recordStartTime) / (1000 * 60))
             : 0;
 
+        const distance = calculatePathDistance(pathPositions);
+
+
         const routeData: RouteData = {
             title,
             description,
             pathData: {
                 path: pathPositions,
-                markers: markers
+                markers: markers,
+                recordedTime,
+                distance
             },
-            recordedTime,
             createdAt: new Date().toISOString()
         };
 

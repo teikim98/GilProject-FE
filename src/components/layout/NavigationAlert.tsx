@@ -16,8 +16,8 @@ interface NavigationAlertProps {
     isOpen: boolean;
     onConfirm: () => void;
     onCancel: () => void;
-    title: string;           // 추가
-    description: string;     // 추가
+    title: string;
+    description: string;
 }
 
 export function NavigationAlert({

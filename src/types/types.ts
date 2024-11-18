@@ -60,8 +60,9 @@ export interface RouteData {
   pathData: {
     path: Array<{ lat: number; lng: number }>;
     markers: MarkerData[];
+    recordedTime: number;
+    distance: number;
   };
-  recordedTime: number;
   createdAt: string;
 }
 
@@ -71,41 +72,62 @@ export interface RouteCardProps {
 
 export interface Post {
   id: number; // 글 ID
+  userNickName: string; // 작성자 닉네임
+  pathId: number; // 경로 ID
+  startLat: number; // 시작 위치 위도
+  startLong: number; // 시작 위치 경도
+  state: number; // 게시글 상태
   title: string; // 글 제목
-  routeData: {
+  content: string; // 글 내용
+  tag: string; // 태그
+  writeDate: string; // 작성일
+  updateDate: string; // 수정일
+  readNum: number; // 조회수
+  postLikesUsers: number[]; // 좋아요한 유저 ID 배열
+  postLikesNum: number; // 좋아요 수
+  repliesUsers: number[]; // 댓글 작성한 유저 ID 배열
+  repliesNum: number; // 댓글 수
+  postWishListsUsers: number[]; // 찜한 유저 ID 배열
+  postWishListsNum: number; // 찜 수
+
+  routeData?: {
+    // 선택적으로 경로 데이터 포함
     path: Array<{
-      // 경로 좌표들
       lat: number;
       lng: number;
     }>;
     markers: Array<{
-      // 경로 상의 마커들
       id: string;
       position: {
         lat: number;
         lng: number;
       };
-      content: string; // 마커 설명
-      image?: string; // 마커에 첨부된 이미지
+      content: string;
+      image?: string;
     }>;
-    recordedTime: number; // 소요 시간(분)
-    distance: number; // 총 거리(km)
-    startAddress: string; // 출발지 주소
-    startLocation: {
-      // 출발지 좌표
-      lat: number;
-      lng: number;
-    };
+    recordedTime: number;
+    distance: number;
   };
-  author: {
-    id: number; // 작성자 ID
-    name: string; // 작성자 이름
-    profileImage: string; // 프로필 이미지 URL
+}
+
+export interface CreatePostRequest {
+  userNickName: string;
+  pathId: number;
+  startLat: number;
+  startLong: number;
+  state: number;
+  title: string;
+  content: string;
+  tag: string;
+  routeData?: {
+    path: Array<{ lat: number; lng: number }>;
+    markers: Array<{
+      id: string;
+      position: { lat: number; lng: number };
+      content: string;
+      image?: string;
+    }>;
+    recordedTime: number;
+    distance: number;
   };
-  stats: {
-    commentCount: number; // 댓글 수
-    likeCount: number; // 추천 수
-    distanceFromUser?: number; // 사용자와의 거리 (km) - 클라이언트에서 계산
-  };
-  createdAt: string; // 작성 시간 ISO 문자열
 }
