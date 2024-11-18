@@ -1,4 +1,4 @@
-import { CreatePostRequest, Post , PostImage } from "@/types/types";
+import { CreatePostRequest, Post, PostImage } from "@/types/types";
 import { http, HttpResponse } from "msw";
 import { dummyPosts } from "./dummyData"; // 아까 만든 더미 데이터
 
@@ -22,26 +22,26 @@ export const handlers = [
 
   http.post("/api/posts", async ({ request }) => {
     const formData = await request.formData();
-    const postDataString = formData.get('postData');
-    
-    if (!postDataString || typeof postDataString !== 'string') {
+    const postDataString = formData.get("postData");
+
+    if (!postDataString || typeof postDataString !== "string") {
       return new HttpResponse(null, {
         status: 400,
-        statusText: 'Bad Request: Missing or invalid postData',
+        statusText: "Bad Request: Missing or invalid postData",
       });
     }
-  
+
     const postData = JSON.parse(postDataString) as CreatePostRequest;
-    const imageFiles = formData.getAll('images') as File[];
-    
+    const imageFiles = formData.getAll("images") as File[];
+
     // 실제 서버에서는 이미지를 저장하고 URL을 반환하겠지만,
     // MSW에서는 임시 URL을 생성
     const images: PostImage[] = imageFiles.map((_, index) => ({
       id: index + 1,
       url: `/api/placeholder/400/300`, // 실제 환경에서는 실제 이미지 URL
-      fileName: `image-${index + 1}.jpg`
+      fileName: `image-${index + 1}.jpg`,
     }));
-  
+
     const post: Post = {
       ...postData,
       id: dummyPosts.length + 1,
@@ -52,14 +52,21 @@ export const handlers = [
       state: 1,
       images: imageFiles.map((_, index) => ({
         id: index + 1,
-        url: `/api/placeholder/400/300`
+        url: `/api/placeholder/400/300`,
       })),
-      createdAt: new Date().toISOString()
+      writeDate: new Date().toISOString(),
+      updateDate: "",
+      readNum: 0,
+      postLikesUsers: [],
+      postLikesNum: 0,
+      repliesUsers: [],
+      repliesNum: 0,
+      postWishListsUsers: [],
+      postWishListsNum: 0,
     };
 
-    console.log(post)
-  
+    console.log(post);
+
     return HttpResponse.json(post);
   }),
-]
-  
+];

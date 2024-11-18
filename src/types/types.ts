@@ -113,7 +113,7 @@ export interface Post {
     recordedTime: number;
     distance: number;
   };
-  images: {
+  images?: {
     id: number;
     url: string;
   }[];
