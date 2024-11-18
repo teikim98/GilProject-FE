@@ -13,11 +13,10 @@ import { Bell } from 'lucide-react'
 
 
 const navigationItems = [
-    { name: '홈', href: '/' },
-    { name: '프로필', href: '/profile' },
-    { name: '설정', href: '/settings' },
+    { name: '마이 페이지', href: '/main/mypage' },
+    { name: '내 경로', href: '/main/mypage/myRoute' },
     { name: '알림', href: '/notifications' },
-    { name: '로그아웃', href: '/logout' },
+    { name: '산책길 목록', href: '/main/board' },
 ];
 
 export default function Sidemenu() {
