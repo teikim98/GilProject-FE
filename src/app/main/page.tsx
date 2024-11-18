@@ -14,7 +14,7 @@ import { CurrentLocationMap } from '@/components/map/CurrentLocationMap'
 
 export default function Page() {
     return (
-        <div className='w-full animate-fade-in flex flex-col bg-white dark:bg-gray-900'>
+        <div className='w-full animate-fade-in flex flex-col bg-white dark:bg-gray-900 pb-20'>
             <div className='flex flex-row justify-between mb-8'>
                 <h2 className='font-sebang text-3xl font-semibold text-purple-800 dark:text-purple-400'>
                     길따라

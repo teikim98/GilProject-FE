@@ -19,7 +19,7 @@ export default function Page() {
         return <Loading />;
     }
     return (
-        <div className='animate-fade-in flex flex-col'>
+        <div className='animate-fade-in flex flex-col pb-20'>
             <BackHeader content='마이 페이지' />
             <h2 className='mt-4 mb-4'>프로필</h2>
             <Profile />

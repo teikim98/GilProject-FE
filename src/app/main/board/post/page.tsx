@@ -100,7 +100,7 @@ export default function PostPage() {
     };
 
     return (
-        <div className="w-full animate-fade-in">
+        <div className="w-full animate-fade-in pb-20">
             <BackHeader
                 content="글 쓰기"
                 navigationState={isWriting ? 'isWriting' : 'none'}

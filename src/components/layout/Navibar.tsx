@@ -16,7 +16,7 @@ const BottomNav = ({ isVisible = true }: BottomNavProps) => {
     if (!isVisible) return null;
 
     return (
-        <div className={`fixed z-50 max-w-screen-md bottom-0 left-0 right-0 border-t bg-background mx-auto ${!isVisible ? 'hidden' : ''}`}>
+        <div className='fixed z-50 max-w-screen-md bottom-0 left-0 right-0 border-t bg-background mx-auto' >
             <div className="flex justify-between items-center h-16 max-w-md mx-auto">
                 <Button
                     variant={pathname === '/' ? 'default' : 'ghost'}

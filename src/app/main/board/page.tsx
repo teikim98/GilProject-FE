@@ -13,7 +13,7 @@ export default function Board() {
     const [isSearchOpen, setIsSearchOpen] = useState(false)
 
     return (
-        <div className="flex flex-col animate-fade-in ">
+        <div className="flex flex-col animate-fade-in pb-20">
             <BackHeader content="산책길 목록" />
             <div className="w-full h-full flex justify-between">
                 <LocationSelector />

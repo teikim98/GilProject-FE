@@ -37,7 +37,7 @@ export default function PostPage({ params }: PostPageProps) {
         }
 
         fetchPost()
-    }, [params.id])
+    }, [])
 
     if (loading) return <div>로딩 중...</div>
     if (error) return <div>{error}</div>
@@ -53,26 +53,11 @@ export default function PostPage({ params }: PostPageProps) {
         })
     }
     return (
-        <div className="animate-fade-in flex flex-col min-h-screen p-4">
+        <div className="animate-fade-in flex flex-col min-h-screen pb-16">
             <BackHeader
                 content={post.title}
             />
 
-            {/* 작성자 정보 */}
-            <div className="flex items-center gap-3 mb-4">
-                <Avatar>
-                    <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${post.userNickName}`} />
-                    <AvatarFallback>{post.userNickName[0]}</AvatarFallback>
-                </Avatar>
-                <div>
-                    <p className="font-semibold">{post.userNickName}</p>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
-                        {formatDate(post.writeDate)}
-                    </p>
-                </div>
-            </div>
-
-            {/* 경로 지도 */}
             {post.routeData && (
                 <Card className="mb-4">
                     <div className="h-[300px]">
@@ -97,6 +82,22 @@ export default function PostPage({ params }: PostPageProps) {
                     </div>
                 </Card>
             )}
+
+            {/* 작성자 정보 */}
+            <div className="flex items-center gap-3 mb-4">
+                <Avatar>
+                    <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${post.userNickName}`} />
+                    <AvatarFallback>{post.userNickName[0]}</AvatarFallback>
+                </Avatar>
+                <div>
+                    <p className="font-semibold">{post.userNickName}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                        {formatDate(post.writeDate)}
+                    </p>
+                </div>
+            </div>
+
+
 
             {/* 본문 내용 */}
             <Card className="p-4 mb-4">
