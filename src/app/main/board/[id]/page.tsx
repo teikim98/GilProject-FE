@@ -5,7 +5,7 @@ import { Post } from '@/types/types'
 import { Card } from '@/components/ui/card';
 import { ViewingMap } from '@/components/map/ViewingMapProps';
 import { Button } from '@/components/ui/button';
-import { Bookmark, Heart, MessageCircle, Share2 } from 'lucide-react';
+import { Bookmark, Heart, MessageCircle } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import BackHeader from '@/components/layout/BackHeader';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';

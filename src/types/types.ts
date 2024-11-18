@@ -74,7 +74,7 @@ export interface PostImage {
   id: number;
   url: string;
   fileName?: string;
-  order?: number; 
+  order?: number;
 }
 
 export interface Post {
@@ -87,6 +87,15 @@ export interface Post {
   title: string;
   content: string;
   tag: string;
+  writeDate: string; // 작성일
+  updateDate: string; // 수정일
+  readNum: number; // 조회수
+  postLikesUsers: number[]; // 좋아요한 유저 ID 배열
+  postLikesNum: number; // 좋아요 수
+  repliesUsers: number[]; // 댓글 작성한 유저 ID 배열
+  repliesNum: number; // 댓글 수
+  postWishListsUsers: number[]; // 찜한 유저 ID 배열
+  postWishListsNum: number; // 찜 수
   routeData: {
     path: Array<{
       lat: number;
@@ -108,8 +117,6 @@ export interface Post {
     id: number;
     url: string;
   }[];
-  createdAt?: string;
-  updatedAt?: string;  // 필요한 경우
 }
 
 export interface CreatePostRequest {
