@@ -3,7 +3,6 @@
 import { Card, CardContent } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import { Pencil } from 'lucide-react'
-import KakaoMap from '../providers/KakaoMap'
 import PWAInstallButton from '@/components/layout/PwaInstallBtn';
 import Sidemenu from '@/components/layout/Sidemenu'
 import Link from 'next/link'

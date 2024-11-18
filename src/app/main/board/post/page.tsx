@@ -3,16 +3,18 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Card } from "@/components/ui/card"
 import { useState, useEffect } from "react"
-import { Plus } from 'lucide-react';
+import { Plus, ImagePlus, X } from 'lucide-react';
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import BackHeader from "@/components/layout/BackHeader";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { createPost } from "@/api/post";
 import { ViewingMap } from "@/components/map/ViewingMapProps";
 import { CreatePostRequest } from "@/types/types";
+import dynamic from 'next/dynamic';
+const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
+import 'react-quill/dist/quill.snow.css';
 
 interface SavedRoute {
     title: string;
@@ -45,10 +47,38 @@ export default function PostPage() {
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
     const [isWriting, setIsWriting] = useState(false);
+    const [images, setImages] = useState<File[]>([]);
+    const [previews, setPreviews] = useState<string[]>([]);
 
     useEffect(() => {
         const savedRoutes = localStorage.getItem('savedRoutes');
-        if (savedRoutes) {
+        if (!savedRoutes) {
+            // 테스트용 더미 데이터
+            const testRoute: SavedRoute = {
+                title: "테스트 산책로",
+                description: "테스트용 산책 경로입니다",
+                pathData: {
+                    path: [
+                        { lat: 37.5665, lng: 126.9780 },  // 서울시청 좌표
+                        { lat: 37.5668, lng: 126.9785 },
+                        { lat: 37.5671, lng: 126.9790 }
+                    ],
+                    markers: [
+                        {
+                            id: "1",
+                            position: { lat: 37.5665, lng: 126.9780 },
+                            content: "시작점",
+                        }
+                    ],
+                    recordedTime: 30,
+                    distance: 2.5
+                },
+                createdAt: new Date().toISOString()
+            };
+
+            localStorage.setItem('savedRoutes', JSON.stringify([testRoute]));
+            setRoutes([testRoute]);
+        } else {
             setRoutes(JSON.parse(savedRoutes));
         }
     }, []);
@@ -67,6 +97,49 @@ export default function PostPage() {
         setIsRouteListOpen(false);
     };
 
+
+
+    const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = Array.from(e.target.files || []);
+        if (files.length > 0) {
+            setImages(prev => [...prev, ...files]);
+
+            files.forEach(file => {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    setPreviews(prev => [...prev, reader.result as string]);
+                    // 에디터에 이미지 삽입
+                    const imageUrl = reader.result as string;
+                    setContent(prev => prev + `<img src="${imageUrl}" alt="uploaded image" />`);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+    };
+
+    const removeImage = (index: number) => {
+        // 기존 이미지 배열에서 제거
+        setImages(prev => prev.filter((_, i) => i !== index));
+
+        // 미리보기 URL 가져오기
+        const imageUrlToRemove = previews[index];
+        setPreviews(prev => prev.filter((_, i) => i !== index));
+
+        // DOM parser를 사용하여 에디터 내용에서 이미지 제거
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = content;
+        const images = tempDiv.getElementsByTagName('img');
+
+        // HTMLCollection을 배열로 변환하여 역순으로 순회
+        Array.from(images).reverse().forEach(img => {
+            if (img.src === imageUrlToRemove) {
+                img.remove();
+            }
+        });
+
+        setContent(tempDiv.innerHTML);
+    };
+
     const handleSubmit = async () => {
         if (!selectedRoute || !title.trim()) {
             alert("필수 정보를 모두 입력해주세요.");
@@ -74,13 +147,10 @@ export default function PostPage() {
         }
 
         try {
+            const formData = new FormData();
+
             const postData: CreatePostRequest = {
-                userNickName: "현재 로그인한 사용자",
-                pathId: 1,
-                startLat: selectedRoute.pathData.path[0].lat,
-                startLong: selectedRoute.pathData.path[0].lng,
-                state: 1,
-                title: title,
+                title: title.trim(),
                 content: content,
                 tag: "산책",
                 routeData: {
@@ -91,7 +161,14 @@ export default function PostPage() {
                 }
             };
 
-            await createPost(postData);
+            formData.append('postData', JSON.stringify(postData));
+
+            // 이미지 파일들 추가
+            images.forEach((image) => {
+                formData.append('images', image);
+            });
+
+            await createPost(formData);
             router.push('/main/board');
         } catch (error) {
             console.error("게시글 작성 실패:", error);
@@ -178,13 +255,43 @@ export default function PostPage() {
                 </div>
                 <div className="grid w-full gap-2">
                     <Label htmlFor="content">내용</Label>
-                    <Textarea
-                        id="content"
+                    <ReactQuill
                         value={content}
-                        onChange={(e) => setContent(e.target.value)}
-                        placeholder="내용을 입력하세요"
-                        className="min-h-[200px]"
+                        onChange={setContent}
+                        className="h-[300px] mb-12"
+                        theme="snow"
                     />
+                </div>
+                <div className="grid w-full gap-2 pt-4">
+                    <div className="flex flex-wrap gap-2">
+                        <label className="w-24 h-24 border-2 border-dashed rounded-lg hover:bg-accent flex items-center justify-center cursor-pointer">
+                            <input
+                                type="file"
+                                accept="image/*"
+                                multiple
+                                className="hidden"
+                                onChange={handleImageUpload}
+                            />
+                            <ImagePlus className="w-6 h-6" />
+                        </label>
+
+                        {/* 이미지 미리보기 */}
+                        {previews.map((preview, index) => (
+                            <div key={index} className="relative w-24 h-24">
+                                <img
+                                    src={preview}
+                                    alt={`preview ${index}`}
+                                    className="w-full h-full object-cover rounded-lg"
+                                />
+                                <button
+                                    onClick={() => removeImage(index)}
+                                    className="absolute -top-2 -right-2 p-1 bg-background border rounded-full"
+                                >
+                                    <X className="w-4 h-4" />
+                                </button>
+                            </div>
+                        ))}
+                    </div>
                 </div>
                 <Button
                     onClick={handleSubmit}

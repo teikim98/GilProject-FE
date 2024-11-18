@@ -16,10 +16,16 @@ export const getPost = async (id: number): Promise<Post> => {
   return response.data;
 };
 
-export const createPost = async (
-  postData: Omit<CreatePostRequest, "id">
-): Promise<CreatePostRequest> => {
-  const response = await api.post("/posts", postData);
-  console.log(response.data);
-  return response.data;
+export const createPost = async (formData: FormData) => {
+    try {
+        const response = await axios.post('/api/posts', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+        console.log(formData)
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
 };

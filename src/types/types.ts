@@ -70,28 +70,24 @@ export interface RouteCardProps {
   route: RouteData;
 }
 
-export interface Post {
-  id: number; // 글 ID
-  userNickName: string; // 작성자 닉네임
-  pathId: number; // 경로 ID
-  startLat: number; // 시작 위치 위도
-  startLong: number; // 시작 위치 경도
-  state: number; // 게시글 상태
-  title: string; // 글 제목
-  content: string; // 글 내용
-  tag: string; // 태그
-  writeDate: string; // 작성일
-  updateDate: string; // 수정일
-  readNum: number; // 조회수
-  postLikesUsers: number[]; // 좋아요한 유저 ID 배열
-  postLikesNum: number; // 좋아요 수
-  repliesUsers: number[]; // 댓글 작성한 유저 ID 배열
-  repliesNum: number; // 댓글 수
-  postWishListsUsers: number[]; // 찜한 유저 ID 배열
-  postWishListsNum: number; // 찜 수
+export interface PostImage {
+  id: number;
+  url: string;
+  fileName?: string;
+  order?: number; 
+}
 
-  routeData?: {
-    // 선택적으로 경로 데이터 포함
+export interface Post {
+  id: number;
+  userNickName: string;
+  pathId: number;
+  startLat: number;
+  startLong: number;
+  state: number;
+  title: string;
+  content: string;
+  tag: string;
+  routeData: {
     path: Array<{
       lat: number;
       lng: number;
@@ -108,22 +104,29 @@ export interface Post {
     recordedTime: number;
     distance: number;
   };
+  images: {
+    id: number;
+    url: string;
+  }[];
+  createdAt?: string;
+  updatedAt?: string;  // 필요한 경우
 }
 
 export interface CreatePostRequest {
-  userNickName: string;
-  pathId: number;
-  startLat: number;
-  startLong: number;
-  state: number;
   title: string;
   content: string;
   tag: string;
-  routeData?: {
-    path: Array<{ lat: number; lng: number }>;
+  routeData: {
+    path: Array<{
+      lat: number;
+      lng: number;
+    }>;
     markers: Array<{
       id: string;
-      position: { lat: number; lng: number };
+      position: {
+        lat: number;
+        lng: number;
+      };
       content: string;
       image?: string;
     }>;
