@@ -80,7 +80,7 @@ export default function SearchPage({ onClose }: SearchPageProps) {
                                                     onClick={() => removeHistoryItem(item)}
                                                     variant="ghost"
                                                     size="sm"
-                                                    className="opacity-0 group-hover:opacity-100"
+                                                    className="opacity-50 group-hover:opacity-100"
                                                 >
                                                     <X className="h-4 w-4" />
                                                 </Button>
