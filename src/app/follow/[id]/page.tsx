@@ -10,6 +10,7 @@ import { Post, Position } from '@/types/types';
 import { calculatePathDistance } from '@/util/calculatePathDistance';
 import { Navigation, AlertCircle } from 'lucide-react';
 import { ProgressDisplay } from '@/components/layout/ProgressDisplay';
+import BackHeader from '@/components/layout/BackHeader';
 
 interface PostPageProps {
     params: {
@@ -120,9 +121,8 @@ export default function FollowPage({ params }: PostPageProps) {
 
     return (
         <div className='animate-fade-in flex flex-col relative h-full'>
+            <BackHeader content='따라걷기' />
             <div className='px-4 space-y-4'>
-
-
                 <FollowMap
                     route={route}
                     width="w-full"
@@ -130,20 +130,20 @@ export default function FollowPage({ params }: PostPageProps) {
                 />
 
                 <div className='grid grid-cols-2 gap-4'>
-                    <div className='p-4 rounded-lg bg-gray-100'>
-                        <h3 className='text-sm text-gray-500'>남은 거리</h3>
+                    <div className='p-4 rounded-lg'>
+                        <h3 className='text-sm'>남은 거리</h3>
                         <p className='text-lg font-bold'>{remainingDistance.toFixed(1)}m</p>
                     </div>
-                    <div className='p-4 rounded-lg bg-gray-100'>
-                        <h3 className='text-sm text-gray-500'>현재 속도</h3>
+                    <div className='p-4 rounded-lg'>
+                        <h3 className='text-sm'>현재 속도</h3>
                         <p className='text-lg font-bold'>{currentSpeed.toFixed(1)}m/s</p>
                     </div>
-                    <div className='p-4 rounded-lg bg-gray-100'>
-                        <h3 className='text-sm text-gray-500'>경과 시간</h3>
+                    <div className='p-4 rounded-lg'>
+                        <h3 className='text-sm'>경과 시간</h3>
                         <p className='text-lg font-bold'>{formatTime(elapsedTime)}</p>
                     </div>
-                    <div className='p-4 rounded-lg bg-gray-100'>
-                        <h3 className='text-sm text-gray-500'>이동 거리</h3>
+                    <div className='p-4 rounded-lg'>
+                        <h3 className='text-sm'>이동 거리</h3>
                         <p className='text-lg font-bold'>{currentDistance.toFixed(1)}m</p>
                     </div>
                 </div>

@@ -72,22 +72,37 @@ export const handlers = [
 
   http.get("/api/routes/:id", ({ params }) => {
     const { id } = params;
-    const post = dummyPosts.find((post) => post.id === Number(id));
 
+    // id가 999인 경우 (테스트 경로)
+    if (id === "999") {
+      // window 객체가 있는지 확인 (브라우저 환경인지 체크)
+      if (typeof window !== "undefined") {
+        const testRouteString = window.localStorage.getItem("testRoute");
+        if (testRouteString) {
+          try {
+            const testRoute = JSON.parse(testRouteString);
+            return HttpResponse.json(testRoute);
+          } catch (error) {
+            console.error("Failed to parse test route:", error);
+            return new HttpResponse(null, { status: 500 });
+          }
+        }
+      }
+      return new HttpResponse(null, {
+        status: 404,
+        statusText: "Test route not found",
+      });
+    }
+
+    // 일반 경로 조회
+    const post = dummyPosts.find((post) => post.id === Number(id));
     if (!post) {
-      return new HttpResponse(null, { status: 404 });
+      return new HttpResponse(null, {
+        status: 404,
+        statusText: "Route not found",
+      });
     }
 
     return HttpResponse.json(post);
-  }),
-
-  http.get("/api/routes/999", () => {
-    const testRouteString = localStorage.getItem("testRoute");
-    if (!testRouteString) {
-      return new HttpResponse(null, { status: 404 });
-    }
-
-    const testRoute = JSON.parse(testRouteString);
-    return HttpResponse.json(testRoute);
   }),
 ];
