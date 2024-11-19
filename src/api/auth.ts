@@ -1,3 +1,4 @@
+import { emailFormProperty } from "@/types/types_JHW";
 import axios from "axios";
 
 //회원가입, 로그인 관련 API///////////////
@@ -10,7 +11,7 @@ const api = axios.create({
  * 이메일 로그인
  * @returns
  */
-export const emailLogin = async (email : string, password : string) => {
+export const emailLogin = async (email: string, password: string) => {
   try {
     // FormData 객체 생성
     const formData = new FormData();
@@ -24,7 +25,35 @@ export const emailLogin = async (email : string, password : string) => {
       },
     });
   } catch (error) {
-    console.error("로그인 API 호출 실패:", error);
+    // console.error("로그인 API 호출 실패:", error);
+    throw error;
+  }
+};
+
+/**
+ * 이메일 회원가입
+ * @returns 
+ */
+export const emailJoin = async ({
+  name,
+  nickName,
+  email,
+  password,
+}: emailFormProperty) => {
+  try {
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("nickName", nickName);
+    formData.append("email", email);
+    formData.append("password", password);
+
+    const response = await api.post("/join", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data;
+  } catch (error) {
     throw error;
   }
 };

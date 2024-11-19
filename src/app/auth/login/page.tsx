@@ -29,19 +29,22 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
 import { emailLogin } from "@/api/auth";
+import { useRouter } from "next/navigation";
 
 const HomePage = () => {
+  let router = useRouter();
   const [open, setOpen] = useState(false);
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const handleLogin = async () => {
     try {
-      await emailLogin(email,password);
-      console.log("로그인 성공");
+      await emailLogin(email, password);
+      alert("로그인 성공!");
+      router.push("http://localhost:3000/main");
     } catch (error) {
-      console.error("로그인 실패", error);
+      // console.error("로그인 실패", error);
+      alert("로그인 실패");
     }
   };
 
@@ -50,7 +53,7 @@ const HomePage = () => {
       {/* Card Component */}
       <Card className="max-w-screen-md">
         <CardHeader>
-          <CardTitle>회원 가입</CardTitle>
+          <CardTitle>로그인</CardTitle>
           <CardDescription>필요한 정보를 입력하세요.</CardDescription>
         </CardHeader>
         <CardContent>
@@ -77,17 +80,32 @@ const HomePage = () => {
                 />
               </div>
               <div>
-                <Button className="w-full bg-slate-300 hover:bg-slate-500">
+                <Button
+                  className="w-full bg-slate-300 hover:bg-slate-500"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    location.href =
+                      "http://localhost:8080/oauth2/authorization/google";
+                  }}
+                >
                   Continue with Google
                 </Button>
               </div>
               <div>
-                <Button className="w-full bg-yellow-400 hover:bg-yellow-600">
+                <Button className="w-full bg-yellow-400 hover:bg-yellow-600"  onClick={(e) => {
+                    e.preventDefault();
+                    location.href =
+                      "http://localhost:8080/oauth2/authorization/kakao";
+                  }}>
                   Continue with Kakao
                 </Button>
               </div>
               <div>
-                <Button className="w-full bg-blue-700 hover:bg-blue-900">
+                <Button className="w-full bg-blue-700 hover:bg-blue-900" onClick={(e)=>{
+                  e.preventDefault();
+                  location.href =
+                    "http://localhost:8080/oauth2/authorization/naver";
+                }}>
                   Continue with Facebook
                 </Button>
               </div>
