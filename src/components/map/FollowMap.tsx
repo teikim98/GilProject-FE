@@ -1,5 +1,5 @@
 import { Position, Post } from "@/types/types";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { BaseKakaoMap } from "./BaseKakaoMap";
 import { RoutePolyline } from "./RoutePolyline";
 import { CustomMarker } from "./CustomMarkerProps";
@@ -22,6 +22,11 @@ export function FollowMap({ route, width, height }: FollowMapProps) {
         updateStatus,
         watchId
     } = useFollowStore();
+
+    const [completedPath, setCompletedPath] = useState<Position[]>([]);
+    const [remainingPath, setRemainingPath] = useState<Position[]>(route.routeData.path);
+
+
 
     // center 위치는 현재 위치가 있으면 현재 위치, 없으면 경로의 시작점을 사용
     const center = currentPosition || route.routeData.path[0];
@@ -75,18 +80,32 @@ export function FollowMap({ route, width, height }: FollowMapProps) {
         <BaseKakaoMap
             width={width}
             height={height}
-            center={center}
+            center={currentPosition || route.routeData.path[0]}
         >
-            <RoutePolyline path={route.routeData.path} />
-            {followedPath.length > 1 && (
+
+            {completedPath.length > 0 && (
                 <RoutePolyline
-                    path={followedPath}
-                    isRecording={true}
+                    path={completedPath}
+                    strokeColor="#19801b"
+                    strokeOpacity={0.9}
                 />
             )}
+
+
+            {remainingPath.length > 0 && (
+                <RoutePolyline
+                    path={remainingPath}
+                    strokeColor="#0011ff"
+                    strokeOpacity={0.5}
+                />
+            )}
+
+            {/* 현재 위치 마커 */}
             {currentPosition && (
                 <CurrentLocationMarker position={currentPosition} />
             )}
+
+            {/* 경로 마커들 */}
             {route.routeData.markers.map(marker => (
                 <CustomMarker
                     key={marker.id}
