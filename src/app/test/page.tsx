@@ -46,7 +46,7 @@ export default function TestFollowPage() {
     const [selectedRouteIndex, setSelectedRouteIndex] = useState<number | null>(null);
 
     useEffect(() => {
-        const savedPathsString = localStorage.getItem('savedPath');
+        const savedPathsString = localStorage.getItem('savedRoutes');
         if (savedPathsString) {
             try {
                 const parsed = JSON.parse(savedPathsString);
