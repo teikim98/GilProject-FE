@@ -69,4 +69,25 @@ export const handlers = [
 
     return HttpResponse.json(post);
   }),
+
+  http.get("/api/routes/:id", ({ params }) => {
+    const { id } = params;
+    const post = dummyPosts.find((post) => post.id === Number(id));
+
+    if (!post) {
+      return new HttpResponse(null, { status: 404 });
+    }
+
+    return HttpResponse.json(post);
+  }),
+
+  http.get("/api/routes/999", () => {
+    const testRouteString = localStorage.getItem("testRoute");
+    if (!testRouteString) {
+      return new HttpResponse(null, { status: 404 });
+    }
+
+    const testRoute = JSON.parse(testRouteString);
+    return HttpResponse.json(testRoute);
+  }),
 ];

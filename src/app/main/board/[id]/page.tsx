@@ -5,11 +5,12 @@ import { Post } from '@/types/types'
 import { Card } from '@/components/ui/card';
 import { ViewingMap } from '@/components/map/ViewingMapProps';
 import { Button } from '@/components/ui/button';
-import { Bookmark, Heart, MessageCircle } from 'lucide-react';
+import { Bookmark, Heart, MessageCircle, Navigation } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import BackHeader from '@/components/layout/BackHeader';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { getPost } from '@/api/post';
+import Link from 'next/link';
 
 
 interface PostPageProps {
@@ -38,6 +39,7 @@ export default function PostPage({ params }: PostPageProps) {
 
         fetchPost()
     }, [])
+
 
     if (loading) return <div>로딩 중...</div>
     if (error) return <div>{error}</div>
@@ -131,7 +133,15 @@ export default function PostPage({ params }: PostPageProps) {
                 </div>
             </Card>
 
-            <Button> 따라걷기 </Button>
+            <Link href={`/follow/${params.id}`}>
+                <Button
+                    className="w-full mb-4 bg-primary hover:bg-primary/90 text-white"
+                    size="lg"
+                >
+                    <Navigation className="w-5 h-5 mr-2" />
+                    이 경로 따라걷기
+                </Button>
+            </Link>
 
             <Separator className="my-4" />
 

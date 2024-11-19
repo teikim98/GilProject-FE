@@ -1,4 +1,5 @@
 import { Post } from "@/types/types";
+import { convertSavedPathToPost } from "@/util/convertSavedPathToPath";
 
 export const dummyPosts: Post[] = [
   {
@@ -178,3 +179,9 @@ export const dummyPosts: Post[] = [
     },
   },
 ];
+
+const savedPost =
+  typeof window !== "undefined" ? convertSavedPathToPost() : null;
+if (savedPost) {
+  dummyPosts.push(savedPost);
+}

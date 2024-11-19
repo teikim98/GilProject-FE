@@ -1,4 +1,4 @@
-export function calculatePathDistance(
+export default function calculatePathDistance(
   path: Array<{ lat: number; lng: number }>
 ): number {
   let totalDistance = 0;

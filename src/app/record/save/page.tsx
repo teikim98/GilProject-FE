@@ -10,7 +10,7 @@ import { useRecordStore } from '@/store/useRecordStore';
 import { RouteData } from '@/types/types';
 import { EditingMap } from '@/components/map/EditingMapProps';
 import BackHeader from '@/components/layout/BackHeader';
-import { calculatePathDistance } from '@/util/calculateDistance';
+import calculatePathDistance from '@/util/calculateDistance';
 
 
 export default function SaveRoutePage() {
