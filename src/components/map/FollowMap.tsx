@@ -1,11 +1,12 @@
+'use client'
+
 import { Position, Post } from "@/types/types";
 import { useEffect, useState } from "react";
 import { BaseKakaoMap } from "./BaseKakaoMap";
 import { RoutePolyline } from "./RoutePolyline";
-import { CustomMarker } from "./CustomMarkerProps";
 import { CurrentLocationMarker } from "./CurrentLocationMarker";
-import { calculatePathDistanceInMeters, isRouteCompleted } from "../../util/calculatePathDistance";
 import { useFollowStore } from "@/store/useFollowStore";
+import { CustomMarker } from "./CustomMarkerProps";
 
 interface FollowMapProps {
     route: Post;
@@ -13,11 +14,55 @@ interface FollowMapProps {
     height?: string;
 }
 
+// 두 점 사이의 거리 계산 (미터 단위)
+const calculateDistance = (point1: Position, point2: Position): number => {
+    const R = 6371e3; // 지구의 반지름 (미터)
+    const φ1 = point1.lat * Math.PI / 180;
+    const φ2 = point2.lat * Math.PI / 180;
+    const Δφ = (point2.lat - point1.lat) * Math.PI / 180;
+    const Δλ = (point2.lng - point1.lng) * Math.PI / 180;
+
+    const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+        Math.cos(φ1) * Math.cos(φ2) *
+        Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+    return R * c;
+};
+
+// 경로 상의 가장 가까운 점 찾기
+const findClosestPointOnPath = (position: Position, path: Position[]): Position => {
+    let closestPoint = path[0];
+    let minDistance = calculateDistance(position, path[0]);
+
+    for (let i = 0; i < path.length - 1; i++) {
+        const start = path[i];
+        const end = path[i + 1];
+
+        // 두 점을 잇는 선분 위의 점들을 검사
+        const numPoints = 10; // 선분을 10개의 점으로 나눔
+        for (let j = 0; j <= numPoints; j++) {
+            const ratio = j / numPoints;
+            const point = {
+                lat: start.lat + (end.lat - start.lat) * ratio,
+                lng: start.lng + (end.lng - start.lng) * ratio
+            };
+
+            const distance = calculateDistance(position, point);
+            if (distance < minDistance) {
+                minDistance = distance;
+                closestPoint = point;
+            }
+        }
+    }
+
+    return closestPoint;
+};
+
 export function FollowMap({ route, width, height }: FollowMapProps) {
     const {
         isFollowing,
         currentPosition,
-        followedPath,
         updatePosition,
         updateStatus,
         watchId
@@ -25,11 +70,7 @@ export function FollowMap({ route, width, height }: FollowMapProps) {
 
     const [completedPath, setCompletedPath] = useState<Position[]>([]);
     const [remainingPath, setRemainingPath] = useState<Position[]>(route.routeData.path);
-
-
-
-    // center 위치는 현재 위치가 있으면 현재 위치, 없으면 경로의 시작점을 사용
-    const center = currentPosition || route.routeData.path[0];
+    const [snappedPosition, setSnappedPosition] = useState<Position | null>(null);
 
     useEffect(() => {
         if (isFollowing && !watchId) {
@@ -40,22 +81,36 @@ export function FollowMap({ route, width, height }: FollowMapProps) {
                         lng: position.coords.longitude
                     };
 
+                    // 경로 상의 가장 가까운 점 찾기
+                    const snapped = findClosestPointOnPath(newPosition, route.routeData.path);
+                    setSnappedPosition(snapped);
+
+                    // 경로 분할 지점 찾기
+                    const pathIndex = route.routeData.path.findIndex(point =>
+                        calculateDistance(point, snapped) < 5 // 5미터 이내
+                    );
+
+                    if (pathIndex !== -1) {
+                        // 완료된 경로와 남은 경로 업데이트
+                        const completed = route.routeData.path.slice(0, pathIndex + 1);
+                        const remaining = route.routeData.path.slice(pathIndex);
+
+                        setCompletedPath(completed);
+                        setRemainingPath(remaining);
+
+                        // 진행 상태 업데이트
+                        const totalDistance = route.routeData.distance;
+                        const completedDistance = (completed.length / route.routeData.path.length) * totalDistance;
+
+                        updateStatus({
+                            currentDistance: completedDistance * 1000, // km to m
+                            remainingDistance: (totalDistance - completedDistance) * 1000,
+                            currentSpeed: position.coords.speed || 0,
+                            isCompleted: pathIndex === route.routeData.path.length - 1
+                        });
+                    }
+
                     updatePosition(newPosition);
-
-                    // Calculate status updates
-                    const followedDistance = calculatePathDistanceInMeters(followedPath);
-                    const remainingDistance = route.routeData.distance - followedDistance;
-                    const speed = position.coords.speed || 0;
-
-                    // Check if route is completed
-                    const isCompleted = isRouteCompleted(newPosition, route.routeData.path[route.routeData.path.length - 1]);
-
-                    updateStatus({
-                        currentDistance: followedDistance,
-                        remainingDistance,
-                        currentSpeed: speed,
-                        isCompleted
-                    });
                 },
                 (error) => console.error("Error getting location:", error),
                 {
@@ -80,29 +135,28 @@ export function FollowMap({ route, width, height }: FollowMapProps) {
         <BaseKakaoMap
             width={width}
             height={height}
-            center={currentPosition || route.routeData.path[0]}
+            center={snappedPosition || route.routeData.path[0]}
         >
-
+            {/* 완료된 경로 (빨간색) */}
             {completedPath.length > 0 && (
                 <RoutePolyline
                     path={completedPath}
-                    strokeColor="#19801b"
-                    strokeOpacity={0.9}
+                    isRecording={true}
                 />
             )}
 
-
+            {/* 남은 경로 (회색) */}
             {remainingPath.length > 0 && (
                 <RoutePolyline
                     path={remainingPath}
-                    strokeColor="#0011ff"
+                    strokeColor="#808080"
                     strokeOpacity={0.5}
                 />
             )}
 
-            {/* 현재 위치 마커 */}
-            {currentPosition && (
-                <CurrentLocationMarker position={currentPosition} />
+            {/* 경로 상의 현재 위치 마커 */}
+            {snappedPosition && (
+                <CurrentLocationMarker position={snappedPosition} />
             )}
 
             {/* 경로 마커들 */}
