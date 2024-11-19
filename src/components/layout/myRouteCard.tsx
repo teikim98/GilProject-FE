@@ -5,6 +5,7 @@ import { Separator } from '../ui/separator'
 import { ChevronDown, ChevronUp } from 'lucide-react'
 import { RouteCardProps, RouteData } from '@/types/types'
 import { ViewingMap } from '../map/ViewingMapProps'
+import { Button } from '../ui/button'
 
 
 
@@ -51,6 +52,9 @@ function RouteCard({ route }: RouteCardProps) {
                         <span className='text-xs text-gray-400 mt-auto'>
                             {new Date(route.createdAt).toLocaleDateString()}
                         </span>
+                        <Button className='w-[50%]' onClick={(e) => { e.stopPropagation() }}>
+                            선택하기
+                        </Button>
                     </div>
                 </div>
 

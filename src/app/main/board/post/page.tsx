@@ -15,6 +15,7 @@ import { CreatePostRequest } from "@/types/types";
 import dynamic from 'next/dynamic';
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 import 'react-quill/dist/quill.snow.css';
+import MyRouteList from "@/components/layout/myRouteCard";
 
 interface SavedRoute {
     title: string;
@@ -53,7 +54,6 @@ export default function PostPage() {
     useEffect(() => {
         const savedRoutes = localStorage.getItem('savedRoutes');
         if (!savedRoutes) {
-            // 테스트용 더미 데이터
             const testRoute: SavedRoute = {
                 title: "테스트 산책로",
                 description: "테스트용 산책 경로입니다",
@@ -163,7 +163,6 @@ export default function PostPage() {
 
             formData.append('postData', JSON.stringify(postData));
 
-            // 이미지 파일들 추가
             images.forEach((image) => {
                 formData.append('images', image);
             });
@@ -195,7 +194,7 @@ export default function PostPage() {
                         <DialogTitle>저장된 경로 목록</DialogTitle>
                     </DialogHeader>
                     <div className="space-y-2">
-                        {routes.map((route, index) => (
+                        {/* {routes.map((route, index) => (
                             <div
                                 key={route.createdAt + index}
                                 className="p-4 cursor-pointer rounded-lg hover:bg-accent dark:hover:bg-accent/30"
@@ -208,7 +207,8 @@ export default function PostPage() {
                                     시간: {route.pathData.recordedTime}분
                                 </div>
                             </div>
-                        ))}
+                        ))} */}
+                        <MyRouteList />
                         {routes.length === 0 && (
                             <div className="text-center text-muted-foreground py-4">
                                 저장된 경로가 없습니다

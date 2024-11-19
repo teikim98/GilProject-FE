@@ -131,6 +131,8 @@ export default function PostPage({ params }: PostPageProps) {
                 </div>
             </Card>
 
+            <Button> 따라걷기 </Button>
+
             <Separator className="my-4" />
 
 
