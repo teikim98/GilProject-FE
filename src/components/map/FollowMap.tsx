@@ -76,6 +76,7 @@ export function FollowMap({ route, width, height }: FollowMapProps) {
 
     const startPoint = route.routeData.path[0];
     const endPoint = route.routeData.path[route.routeData.path.length - 1];
+    const totalDistance = route.routeData.distance; // 전체 경로 거리 (km)
 
     const [completedPath, setCompletedPath] = useState<Position[]>([]);
     const [remainingPath, setRemainingPath] = useState<Position[]>(route.routeData.path);
@@ -129,9 +130,12 @@ export function FollowMap({ route, width, height }: FollowMapProps) {
                         setCompletedPath(completed);
                         setRemainingPath(remaining);
 
-                        // 진행 상태 업데이트
-                        const totalDistance = route.routeData.distance;
+                        // 완료된 거리 계산 (km)
                         const completedDistance = calculatePathDistance(completed);
+                        // 남은 거리 계산 (km)
+                        const remaining_distance = totalDistance - completedDistance;
+                        // 진행률 계산
+                        const progress = (completedDistance / totalDistance) * 100;
 
                         // 완주 조건 체크
                         const isCompleted = checkCompletion(
@@ -141,13 +145,14 @@ export function FollowMap({ route, width, height }: FollowMapProps) {
                             completed.length
                         );
 
+                        // 상태 업데이트
                         updateStatus({
                             currentPosition: snapped,
                             currentDistance: completedDistance * 1000, // km to m
-                            remainingDistance: remainingDistance * 1000, // km to m
+                            remainingDistance: remaining_distance * 1000, // km to m
                             currentSpeed: position.coords.speed || 0,
                             isCompleted,
-                            progressPercent: Math.min(progressPercent, 100) // 100%를 넘지 않도록
+                            progressPercent: Math.min(progress, 100) // 새로 계산된 진행률 사용
                         });
                     }
 
