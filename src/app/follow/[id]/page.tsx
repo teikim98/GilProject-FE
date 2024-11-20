@@ -8,9 +8,11 @@ import { useFollowStore } from '@/store/useFollowStore';
 import { getRouteById } from '@/api/route';
 import { Post, Position } from '@/types/types';
 import { calculatePathDistance } from '@/util/calculatePathDistance';
-import { Navigation, AlertCircle } from 'lucide-react';
+import { Navigation, AlertCircle, Trophy } from 'lucide-react';
 import { ProgressDisplay } from '@/components/layout/ProgressDisplay';
 import BackHeader from '@/components/layout/BackHeader';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { useRouter } from 'next/navigation';
 
 interface PostPageProps {
     params: {
@@ -18,7 +20,9 @@ interface PostPageProps {
     };
 }
 
+
 export default function FollowPage({ params }: PostPageProps) {
+    const router = useRouter();
     const [route, setRoute] = useState<Post | null>(null);
     const [currentPosition, setCurrentPosition] = useState<Position | null>(null);
     const [isNearStart, setIsNearStart] = useState(false);
@@ -80,6 +84,14 @@ export default function FollowPage({ params }: PostPageProps) {
         }
     }, [route]);
 
+    useEffect(() => {
+        // 경로 완주시 Dialog 표시
+        if (isCompleted) {
+            setShowCompletionDialog(true);
+            stopFollowing(); // 자동으로 따라걷기 중지
+        }
+    }, [isCompleted]);
+
     // 경로 데이터 로드
     useEffect(() => {
         const loadRoute = async () => {
@@ -107,6 +119,14 @@ export default function FollowPage({ params }: PostPageProps) {
         } else {
             startFollowing();
         }
+    };
+    const [showCompletionDialog, setShowCompletionDialog] = useState(false);
+
+
+
+    const handleCompletionConfirm = () => {
+        setShowCompletionDialog(false);
+        router.push('/'); // 메인 페이지로 이동
     };
 
     const formatTime = (seconds: number) => {
@@ -158,14 +178,8 @@ export default function FollowPage({ params }: PostPageProps) {
                     </Alert>
                 )}
 
-                {isCompleted && (
-                    <Alert className="bg-green-100">
-                        <AlertTitle>축하합니다! 🎉</AlertTitle>
-                        <AlertDescription>
-                            경로를 완주하셨습니다! 총 {formatTime(elapsedTime)}이 걸렸습니다.
-                        </AlertDescription>
-                    </Alert>
-                )}
+
+
                 <ProgressDisplay />
 
                 <Button
@@ -177,6 +191,32 @@ export default function FollowPage({ params }: PostPageProps) {
                     <Navigation className="w-5 h-5 mr-2" />
                     {isFollowing ? '따라걷기 중지하기' : '따라걷기 시작하기'}
                 </Button>
+
+                <Dialog open={showCompletionDialog} onOpenChange={setShowCompletionDialog}>
+                    <DialogContent className="sm:max-w-md">
+                        <DialogHeader>
+                            <DialogTitle className="flex items-center justify-center gap-2 text-xl">
+                                <Trophy className="h-6 w-6 text-yellow-500" />
+                                축하합니다! 🎉
+                            </DialogTitle>
+                            <DialogDescription className="text-center pt-4 text-base">
+                                경로를 완주하셨습니다!
+                                <br />
+                                총 소요 시간: {formatTime(elapsedTime)}
+                                <br />
+                                이동 거리: {(currentDistance / 1000).toFixed(2)}km
+                            </DialogDescription>
+                        </DialogHeader>
+                        <DialogFooter className="flex justify-center">
+                            <Button
+                                onClick={handleCompletionConfirm}
+                                className="w-full"
+                            >
+                                확인
+                            </Button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
 
 
             </div>
