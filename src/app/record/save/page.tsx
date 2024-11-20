@@ -1,6 +1,5 @@
 'use client';
 
-import BackButton from '@/components/layout/BackIcon'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -10,7 +9,7 @@ import { useRecordStore } from '@/store/useRecordStore';
 import { RouteData } from '@/types/types';
 import { EditingMap } from '@/components/map/EditingMapProps';
 import BackHeader from '@/components/layout/BackHeader';
-import calculatePathDistance from '@/util/calculateDistance';
+import { calculatePathDistance } from '@/util/calculatePathDistance';
 
 
 export default function SaveRoutePage() {

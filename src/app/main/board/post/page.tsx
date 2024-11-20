@@ -208,7 +208,10 @@ export default function PostPage() {
                                 </div>
                             </div>
                         ))} */}
-                        <MyRouteList />
+                        <div className="mt-4">
+                            <h3 className="font-semibold mb-4">내 저장 경로</h3>
+                            <MyRouteList isWriteMode={true} onRouteSelect={handleRouteSelect} />
+                        </div>
                         {routes.length === 0 && (
                             <div className="text-center text-muted-foreground py-4">
                                 저장된 경로가 없습니다

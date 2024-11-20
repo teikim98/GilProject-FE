@@ -68,6 +68,8 @@ export interface RouteData {
 
 export interface RouteCardProps {
   route: RouteData;
+  onSelect?: (route: RouteData) => void;
+  isWriteMode?: boolean;
 }
 
 export interface PostImage {
