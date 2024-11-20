@@ -105,15 +105,24 @@ export const useFollowStore = create<FollowState>((set, get) => ({
     const currentState = get();
     const newState = { ...status };
 
-    if (status.currentDistance !== undefined && currentState.originalRoute) {
-      // 모든 계산을 미터 단위로 수행
+    // isCompleted가 true로 설정되면 progress를 100%로 설정
+    if (status.isCompleted) {
+      newState.progressPercent = 100;
+      newState.currentDistance = currentState.originalRoute
+        ? currentState.originalRoute.routeData.distance * 1000
+        : 0;
+      newState.remainingDistance = 0;
+    }
+    // 아직 완주하지 않은 경우 기존 계산 로직 사용
+    else if (
+      status.currentDistance !== undefined &&
+      currentState.originalRoute
+    ) {
       const totalDistanceMeters =
         currentState.originalRoute.routeData.distance * 1000;
       const currentDistanceMeters = status.currentDistance;
 
-      // 진행률 계산 (미터 기준)
       const percent = (currentDistanceMeters / totalDistanceMeters) * 100;
-
       newState.progressPercent = Math.min(Math.max(0, percent), 100);
       newState.remainingDistance = totalDistanceMeters - currentDistanceMeters;
     }

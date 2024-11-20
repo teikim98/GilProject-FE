@@ -83,20 +83,42 @@ export function FollowMap({ route, width, height }: FollowMapProps) {
     const [snappedPosition, setSnappedPosition] = useState<Position | null>(null);
     const [hasStarted, setHasStarted] = useState(false); // 실제 이동 시작 여부
 
-    //완주조건 체크
     const checkCompletion = (
         currentPoint: Position,
         endPoint: Position,
         completedDistance: number,
         visitedPoints: number
     ): boolean => {
-        const isNearEnd = calculateDistance(currentPoint, endPoint) < 0.005; // 5m 이내
-        const hasMinimumDistance = completedDistance > 0.01; // 최소 10m 이상 이동
-        const hasMinimumPoints = visitedPoints > 3; // 최소 3개 이상의 경로 포인트 방문
-        const hasMinimumTime = startTime ? (Date.now() - startTime) > 10000 : false;
+        const distanceToEnd = calculateDistance(currentPoint, endPoint);
+        const totalDistance = route.routeData.distance * 1000; // km to m
+        const completionThreshold = 3; // 3미터 이내
+
+        const isNearEnd = distanceToEnd < completionThreshold;
+
+        // 전체 거리에 따른 유동적인 완료 기준 설정
+        let requiredCompletionRatio;
+        if (totalDistance <= 100) {
+            requiredCompletionRatio = 0.8;
+        } else if (totalDistance <= 500) {
+            requiredCompletionRatio = 0.85;
+        } else if (totalDistance <= 1000) {
+            requiredCompletionRatio = 0.9;
+        } else {
+            requiredCompletionRatio = 0.95;
+        }
+
+        const hasMinimumDistance = completedDistance > (totalDistance * requiredCompletionRatio);
+
+        const requiredPoints = Math.max(2, Math.min(3, Math.floor(totalDistance / 200)));
+        const hasMinimumPoints = visitedPoints > requiredPoints;
+
+        const minimumTime = totalDistance <= 100 ? 5000 : 10000; // 100m 이하는 5초, 그 이상은 10초
+        const hasMinimumTime = startTime ? (Date.now() - startTime) > minimumTime : false;
 
         return isNearEnd && hasMinimumDistance && hasMinimumPoints && hasMinimumTime;
     };
+
+
 
     useEffect(() => {
         if (isFollowing && !watchId) {
