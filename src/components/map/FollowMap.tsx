@@ -6,8 +6,8 @@ import { BaseKakaoMap } from "./BaseKakaoMap";
 import { RoutePolyline } from "./RoutePolyline";
 import { CurrentLocationMarker } from "./CurrentLocationMarker";
 import { useFollowStore } from "@/store/useFollowStore";
-import { CustomMarker } from "./CustomMarkerProps";
 import { calculatePathDistance } from "@/util/calculatePathDistance";
+import { MarkerWithOverlay } from "./MarkerWithOverlay";
 
 interface FollowMapProps {
     route: Post;
@@ -166,9 +166,9 @@ export function FollowMap({ route, width, height }: FollowMapProps) {
 
             {/* 경로 마커들 */}
             {route.routeData.markers.map(marker => (
-                <CustomMarker
+                <MarkerWithOverlay
                     key={marker.id}
-                    position={marker.position}
+                    marker={marker}
                 />
             ))}
         </BaseKakaoMap>
