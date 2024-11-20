@@ -7,6 +7,7 @@ import { RoutePolyline } from "./RoutePolyline";
 import { CurrentLocationMarker } from "./CurrentLocationMarker";
 import { useFollowStore } from "@/store/useFollowStore";
 import { CustomMarker } from "./CustomMarkerProps";
+import { calculatePathDistance } from "@/util/calculatePathDistance";
 
 interface FollowMapProps {
     route: Post;
@@ -65,7 +66,9 @@ export function FollowMap({ route, width, height }: FollowMapProps) {
         currentPosition,
         updatePosition,
         updateStatus,
-        watchId
+        watchId,
+        remainingDistance,
+        progressPercent
     } = useFollowStore();
 
     const [completedPath, setCompletedPath] = useState<Position[]>([]);
@@ -100,13 +103,15 @@ export function FollowMap({ route, width, height }: FollowMapProps) {
 
                         // 진행 상태 업데이트
                         const totalDistance = route.routeData.distance;
-                        const completedDistance = (completed.length / route.routeData.path.length) * totalDistance;
+                        const completedDistance = calculatePathDistance(completed);
 
                         updateStatus({
+                            currentPosition: snapped,
                             currentDistance: completedDistance * 1000, // km to m
-                            remainingDistance: (totalDistance - completedDistance) * 1000,
+                            remainingDistance: remainingDistance * 1000, // km to m
                             currentSpeed: position.coords.speed || 0,
-                            isCompleted: pathIndex === route.routeData.path.length - 1
+                            isCompleted: pathIndex === route.routeData.path.length - 1,
+                            progressPercent: Math.min(progressPercent, 100) // 100%를 넘지 않도록
                         });
                     }
 
