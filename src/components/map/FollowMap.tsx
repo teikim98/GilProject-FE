@@ -67,16 +67,35 @@ export function FollowMap({ route, width, height }: FollowMapProps) {
         isFollowing,
         currentPosition,
         updatePosition,
+        startTime,
         updateStatus,
         watchId,
         remainingDistance,
         progressPercent
     } = useFollowStore();
+
     const startPoint = route.routeData.path[0];
     const endPoint = route.routeData.path[route.routeData.path.length - 1];
+
     const [completedPath, setCompletedPath] = useState<Position[]>([]);
     const [remainingPath, setRemainingPath] = useState<Position[]>(route.routeData.path);
     const [snappedPosition, setSnappedPosition] = useState<Position | null>(null);
+    const [hasStarted, setHasStarted] = useState(false); // 실제 이동 시작 여부
+
+    //완주조건 체크
+    const checkCompletion = (
+        currentPoint: Position,
+        endPoint: Position,
+        completedDistance: number,
+        visitedPoints: number
+    ): boolean => {
+        const isNearEnd = calculateDistance(currentPoint, endPoint) < 0.005; // 5m 이내
+        const hasMinimumDistance = completedDistance > 0.01; // 최소 10m 이상 이동
+        const hasMinimumPoints = visitedPoints > 3; // 최소 3개 이상의 경로 포인트 방문
+        const hasMinimumTime = startTime ? (Date.now() - startTime) > 10000 : false;
+
+        return isNearEnd && hasMinimumDistance && hasMinimumPoints && hasMinimumTime;
+    };
 
     useEffect(() => {
         if (isFollowing && !watchId) {
@@ -86,6 +105,12 @@ export function FollowMap({ route, width, height }: FollowMapProps) {
                         lat: position.coords.latitude,
                         lng: position.coords.longitude
                     };
+
+                    // 실제 이동 시작 체크
+                    if (!hasStarted && calculateDistance(newPosition, route.routeData.path[0]) < 0.02) {
+                        setHasStarted(true);
+                    }
+
 
                     // 경로 상의 가장 가까운 점 찾기
                     const snapped = findClosestPointOnPath(newPosition, route.routeData.path);
@@ -108,12 +133,20 @@ export function FollowMap({ route, width, height }: FollowMapProps) {
                         const totalDistance = route.routeData.distance;
                         const completedDistance = calculatePathDistance(completed);
 
+                        // 완주 조건 체크
+                        const isCompleted = checkCompletion(
+                            snapped,
+                            route.routeData.path[route.routeData.path.length - 1],
+                            completedDistance,
+                            completed.length
+                        );
+
                         updateStatus({
                             currentPosition: snapped,
                             currentDistance: completedDistance * 1000, // km to m
                             remainingDistance: remainingDistance * 1000, // km to m
                             currentSpeed: position.coords.speed || 0,
-                            isCompleted: pathIndex === route.routeData.path.length - 1,
+                            isCompleted,
                             progressPercent: Math.min(progressPercent, 100) // 100%를 넘지 않도록
                         });
                     }
@@ -137,7 +170,7 @@ export function FollowMap({ route, width, height }: FollowMapProps) {
                 updateStatus({ watchId: null });
             }
         };
-    }, [isFollowing, route.routeData.path]);
+    }, [isFollowing, route.routeData.path, hasStarted]);
 
     return (
         <BaseKakaoMap
