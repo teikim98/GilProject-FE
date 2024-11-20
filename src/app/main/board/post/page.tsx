@@ -6,15 +6,13 @@ import { useState, useEffect } from "react"
 import { Plus, ImagePlus, X } from 'lucide-react';
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import BackHeader from "@/components/layout/BackHeader";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { createPost } from "@/api/post";
 import { ViewingMap } from "@/components/map/ViewingMapProps";
 import { CreatePostRequest } from "@/types/types";
-import dynamic from 'next/dynamic';
-const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
-import 'react-quill/dist/quill.snow.css';
 import MyRouteList from "@/components/layout/myRouteCard";
 
 interface SavedRoute {
@@ -59,7 +57,7 @@ export default function PostPage() {
                 description: "테스트용 산책 경로입니다",
                 pathData: {
                     path: [
-                        { lat: 37.5665, lng: 126.9780 },  // 서울시청 좌표
+                        { lat: 37.5665, lng: 126.9780 },
                         { lat: 37.5668, lng: 126.9785 },
                         { lat: 37.5671, lng: 126.9790 }
                     ],
@@ -83,7 +81,6 @@ export default function PostPage() {
         }
     }, []);
 
-    // 제목이나 내용이 입력되면 작성 중 상태로 변경
     useEffect(() => {
         if (title || content) {
             setIsWriting(true);
@@ -97,8 +94,6 @@ export default function PostPage() {
         setIsRouteListOpen(false);
     };
 
-
-
     const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = Array.from(e.target.files || []);
         if (files.length > 0) {
@@ -108,9 +103,6 @@ export default function PostPage() {
                 const reader = new FileReader();
                 reader.onloadend = () => {
                     setPreviews(prev => [...prev, reader.result as string]);
-                    // 에디터에 이미지 삽입
-                    const imageUrl = reader.result as string;
-                    setContent(prev => prev + `<img src="${imageUrl}" alt="uploaded image" />`);
                 };
                 reader.readAsDataURL(file);
             });
@@ -118,26 +110,8 @@ export default function PostPage() {
     };
 
     const removeImage = (index: number) => {
-        // 기존 이미지 배열에서 제거
         setImages(prev => prev.filter((_, i) => i !== index));
-
-        // 미리보기 URL 가져오기
-        const imageUrlToRemove = previews[index];
         setPreviews(prev => prev.filter((_, i) => i !== index));
-
-        // DOM parser를 사용하여 에디터 내용에서 이미지 제거
-        const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = content;
-        const images = tempDiv.getElementsByTagName('img');
-
-        // HTMLCollection을 배열로 변환하여 역순으로 순회
-        Array.from(images).reverse().forEach(img => {
-            if (img.src === imageUrlToRemove) {
-                img.remove();
-            }
-        });
-
-        setContent(tempDiv.innerHTML);
     };
 
     const handleSubmit = async () => {
@@ -193,30 +167,9 @@ export default function PostPage() {
                     <DialogHeader>
                         <DialogTitle>저장된 경로 목록</DialogTitle>
                     </DialogHeader>
-                    <div className="space-y-2">
-                        {/* {routes.map((route, index) => (
-                            <div
-                                key={route.createdAt + index}
-                                className="p-4 cursor-pointer rounded-lg hover:bg-accent dark:hover:bg-accent/30"
-                                onClick={() => handleRouteSelect(route)}
-                            >
-                                <div className="font-medium">{route.title}</div>
-                                <div className="text-sm text-muted-foreground">
-                                    {new Date(route.createdAt).toLocaleDateString()} •
-                                    거리: {route.pathData.distance}km •
-                                    시간: {route.pathData.recordedTime}분
-                                </div>
-                            </div>
-                        ))} */}
-                        <div className="mt-4">
-                            <h3 className="font-semibold mb-4">내 저장 경로</h3>
-                            <MyRouteList isWriteMode={true} onRouteSelect={handleRouteSelect} />
-                        </div>
-                        {routes.length === 0 && (
-                            <div className="text-center text-muted-foreground py-4">
-                                저장된 경로가 없습니다
-                            </div>
-                        )}
+                    <div className="mt-4">
+                        <h3 className="font-semibold mb-4">내 저장 경로</h3>
+                        <MyRouteList isWriteMode={true} onRouteSelect={handleRouteSelect} />
                     </div>
                 </DialogContent>
             </Dialog>
@@ -258,14 +211,16 @@ export default function PostPage() {
                 </div>
                 <div className="grid w-full gap-2">
                     <Label htmlFor="content">내용</Label>
-                    <ReactQuill
+                    <Textarea
+                        id="content"
                         value={content}
-                        onChange={setContent}
-                        className="h-[300px] mb-12"
-                        theme="snow"
+                        onChange={(e) => setContent(e.target.value)}
+                        placeholder="내용을 입력하세요"
+                        className="min-h-[200px]"
                     />
                 </div>
                 <div className="grid w-full gap-2 pt-4">
+                    <Label>이미지</Label>
                     <div className="flex flex-wrap gap-2">
                         <label className="w-24 h-24 border-2 border-dashed rounded-lg hover:bg-accent flex items-center justify-center cursor-pointer">
                             <input
@@ -278,7 +233,6 @@ export default function PostPage() {
                             <ImagePlus className="w-6 h-6" />
                         </label>
 
-                        {/* 이미지 미리보기 */}
                         {previews.map((preview, index) => (
                             <div key={index} className="relative w-24 h-24">
                                 <img

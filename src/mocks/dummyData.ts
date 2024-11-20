@@ -21,6 +21,11 @@ export const dummyPosts: Post[] = [
     repliesNum: 2,
     postWishListsUsers: [1, 3, 6, 7],
     postWishListsNum: 4,
+    images: [
+      "/api/placeholder/800/600",
+      "/api/placeholder/800/600",
+      "/api/placeholder/800/600",
+    ],
     routeData: {
       path: [
         { lat: 37.5665, lng: 126.978 },
@@ -32,7 +37,7 @@ export const dummyPosts: Post[] = [
           id: "marker-1",
           position: { lat: 37.5665, lng: 126.978 },
           content: "시작점 - 여의도 한강공원",
-          image: "marker1.jpg",
+          image: "/api/placeholder/400/300",
         },
       ],
       recordedTime: 45,
@@ -58,6 +63,7 @@ export const dummyPosts: Post[] = [
     repliesNum: 3,
     postWishListsUsers: [4, 7, 9],
     postWishListsNum: 3,
+    images: ["/api/placeholder/800/600", "/api/placeholder/800/600"],
     routeData: {
       path: [
         { lat: 37.6532, lng: 126.9779 },
@@ -69,6 +75,7 @@ export const dummyPosts: Post[] = [
           id: "marker-2",
           position: { lat: 37.6532, lng: 126.9779 },
           content: "북한산 입구",
+          image: "/api/placeholder/400/300",
         },
       ],
       recordedTime: 180,
@@ -94,6 +101,12 @@ export const dummyPosts: Post[] = [
     repliesNum: 3,
     postWishListsUsers: [3, 6],
     postWishListsNum: 2,
+    images: [
+      "/api/placeholder/800/600",
+      "/api/placeholder/800/600",
+      "/api/placeholder/800/600",
+      "/api/placeholder/800/600",
+    ],
     routeData: {
       path: [
         { lat: 37.5139, lng: 127.1058 },
@@ -124,6 +137,7 @@ export const dummyPosts: Post[] = [
     repliesNum: 1,
     postWishListsUsers: [2, 4, 8],
     postWishListsNum: 3,
+    images: ["/api/placeholder/800/600", "/api/placeholder/800/600"],
     routeData: {
       path: [
         { lat: 37.5113, lng: 127.098 },
@@ -135,7 +149,7 @@ export const dummyPosts: Post[] = [
           id: "marker-4",
           position: { lat: 37.5113, lng: 127.098 },
           content: "석촌호수 시작점",
-          image: "marker4.jpg",
+          image: "/api/placeholder/400/300",
         },
       ],
       recordedTime: 30,
@@ -161,6 +175,11 @@ export const dummyPosts: Post[] = [
     repliesNum: 4,
     postWishListsUsers: [2, 5, 7, 9],
     postWishListsNum: 4,
+    images: [
+      "/api/placeholder/800/600",
+      "/api/placeholder/800/600",
+      "/api/placeholder/800/600",
+    ],
     routeData: {
       path: [
         { lat: 37.5037, lng: 127.0447 },
@@ -172,6 +191,7 @@ export const dummyPosts: Post[] = [
           id: "marker-5",
           position: { lat: 37.5037, lng: 127.0447 },
           content: "첫 번째 헬스장",
+          image: "/api/placeholder/400/300",
         },
       ],
       recordedTime: 120,

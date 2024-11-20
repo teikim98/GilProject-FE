@@ -115,10 +115,7 @@ export interface Post {
     recordedTime: number;
     distance: number;
   };
-  images?: {
-    id: number;
-    url: string;
-  }[];
+  images?: string[];
 }
 
 export interface CreatePostRequest {
