@@ -130,12 +130,10 @@ export function FollowMap({ route, width, height }: FollowMapProps) {
                         setCompletedPath(completed);
                         setRemainingPath(remaining);
 
-                        // 완료된 거리 계산 (km)
-                        const completedDistance = calculatePathDistance(completed);
-                        // 남은 거리 계산 (km)
-                        const remaining_distance = totalDistance - completedDistance;
-                        // 진행률 계산
-                        const progress = (completedDistance / totalDistance) * 100;
+                        let completedDistance = 0;
+                        for (let i = 0; i < completed.length - 1; i++) {
+                            completedDistance += calculateDistance(completed[i], completed[i + 1]);
+                        }
 
                         // 완주 조건 체크
                         const isCompleted = checkCompletion(
@@ -148,7 +146,7 @@ export function FollowMap({ route, width, height }: FollowMapProps) {
                         // 상태 업데이트
                         updateStatus({
                             currentPosition: snapped,
-                            currentDistance: completedDistance * 1000, // km to m 변환
+                            currentDistance: completedDistance,
                             currentSpeed: position.coords.speed || 0,
                             isCompleted
                         });

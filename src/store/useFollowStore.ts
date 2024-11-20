@@ -39,15 +39,23 @@ export const useFollowStore = create<FollowState>((set, get) => ({
   startTime: null,
   originalRoute: null,
 
-  setOriginalRoute: (route: Post) => set({ originalRoute: route }),
+  setOriginalRoute: (route: Post) =>
+    set({
+      originalRoute: route,
+      remainingDistance: route.routeData.distance * 1000, // km to m conversion
+    }),
 
   startFollowing: () => {
+    const state = get();
     set({
       isFollowing: true,
       startTime: Date.now(),
       followedPath: [],
       elapsedTime: 0,
       currentDistance: 0,
+      remainingDistance: state.originalRoute
+        ? state.originalRoute.routeData.distance * 1000
+        : 0,
       isCompleted: false,
       progressPercent: 0,
     });
@@ -97,13 +105,17 @@ export const useFollowStore = create<FollowState>((set, get) => ({
     const currentState = get();
     const newState = { ...status };
 
-    // 현재 거리가 업데이트되면 자동으로 진행률도 업데이트
     if (status.currentDistance !== undefined && currentState.originalRoute) {
-      const totalDistance = currentState.originalRoute.routeData.distance;
-      const percent = (status.currentDistance / (totalDistance * 1000)) * 100;
-      newState.progressPercent = Math.min(percent, 100);
-      newState.remainingDistance =
-        totalDistance * 1000 - status.currentDistance;
+      // 모든 계산을 미터 단위로 수행
+      const totalDistanceMeters =
+        currentState.originalRoute.routeData.distance * 1000;
+      const currentDistanceMeters = status.currentDistance;
+
+      // 진행률 계산 (미터 기준)
+      const percent = (currentDistanceMeters / totalDistanceMeters) * 100;
+
+      newState.progressPercent = Math.min(Math.max(0, percent), 100);
+      newState.remainingDistance = totalDistanceMeters - currentDistanceMeters;
     }
 
     set(newState);

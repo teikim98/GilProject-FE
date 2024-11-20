@@ -8,12 +8,19 @@ export function ProgressDisplay() {
         isFollowing,
         currentDistance,
         remainingDistance,
-        originalRoute  // originalRoute 추가
+        originalRoute
     } = useFollowStore();
 
     if (!isFollowing || !originalRoute) return null;
 
-    const totalDistance = originalRoute.routeData.distance * 1000; // km를 m로 변환
+    const formatDistance = (meters: number) => {
+        if (meters < 1000) {
+            return `${Math.round(meters)}m`;
+        }
+        return `${(meters / 1000).toFixed(2)}km`;
+    };
+
+    const totalDistanceMeters = originalRoute.routeData.distance * 1000;
 
     return (
         <AnimatePresence>
@@ -26,14 +33,34 @@ export function ProgressDisplay() {
                 <div className="bg-white rounded-lg shadow-lg p-4 space-y-2">
                     <div className="flex justify-between items-center mb-2">
                         <span className="text-sm font-medium">진행률</span>
-                        <span className="text-sm font-bold text-primary">
+                        <motion.span
+                            className="text-sm font-bold text-primary"
+                            animate={{ opacity: 1 }}
+                            transition={{ duration: 0.5 }}
+                        >
                             {progressPercent.toFixed(1)}%
-                        </span>
+                        </motion.span>
                     </div>
-                    <Progress value={progressPercent} className="h-2" />
+                    <motion.div
+                        className="relative"
+                        initial={{ width: 0 }}
+                        animate={{ width: "100%" }}
+                        transition={{ duration: 0.5 }}
+                    >
+                        <Progress
+                            value={progressPercent}
+                            className="h-2"
+                            style={{
+                                transition: "all 0.5s ease-out"
+                            }}
+                        />
+                    </motion.div>
                     <div className="flex justify-between text-xs text-gray-500">
                         <span>시작</span>
-                        <span>{(currentDistance / 1000).toFixed(2)}m / {(totalDistance / 1000).toFixed(2)}m 완료</span>
+                        <span>
+                            {formatDistance(totalDistanceMeters)} 중{' '}
+                            {formatDistance(currentDistance)} 완료
+                        </span>
                         <span>종료</span>
                     </div>
                 </div>
