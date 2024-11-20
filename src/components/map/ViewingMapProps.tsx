@@ -30,8 +30,8 @@ export function ViewingMap({ route, width, height }: ViewingMapProps) {
                     position={startPoint}
                     image={{
                         src: createStartMarker(),
-                        size: { width: 48, height: 48 },
-                        options: { offset: { x: 24, y: 24 } },
+                        size: { width: 32, height: 32 },
+                        options: { offset: { x: 0, y: 0 } },
                     }}
                 />
             )}
@@ -40,8 +40,8 @@ export function ViewingMap({ route, width, height }: ViewingMapProps) {
                     position={endPoint}
                     image={{
                         src: createEndMarker(),
-                        size: { width: 48, height: 48 },
-                        options: { offset: { x: 24, y: 24 } },
+                        size: { width: 32, height: 32 },
+                        options: { offset: { x: 0, y: 0 } },
                     }}
                 />
             )}

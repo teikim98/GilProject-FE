@@ -8,6 +8,8 @@ import { CurrentLocationMarker } from "./CurrentLocationMarker";
 import { useFollowStore } from "@/store/useFollowStore";
 import { calculatePathDistance } from "@/util/calculatePathDistance";
 import { MarkerWithOverlay } from "./MarkerWithOverlay";
+import { MapMarker } from "react-kakao-maps-sdk";
+import { createEndMarker, createStartMarker } from "./CustomMarkerIcon";
 
 interface FollowMapProps {
     route: Post;
@@ -70,7 +72,8 @@ export function FollowMap({ route, width, height }: FollowMapProps) {
         remainingDistance,
         progressPercent
     } = useFollowStore();
-
+    const startPoint = route.routeData.path[0];
+    const endPoint = route.routeData.path[route.routeData.path.length - 1];
     const [completedPath, setCompletedPath] = useState<Position[]>([]);
     const [remainingPath, setRemainingPath] = useState<Position[]>(route.routeData.path);
     const [snappedPosition, setSnappedPosition] = useState<Position | null>(null);
@@ -142,6 +145,26 @@ export function FollowMap({ route, width, height }: FollowMapProps) {
             height={height}
             center={snappedPosition || route.routeData.path[0]}
         >
+            {startPoint && (
+                <MapMarker
+                    position={startPoint}
+                    image={{
+                        src: createStartMarker(),
+                        size: { width: 32, height: 32 },
+                        options: { offset: { x: 0, y: 0 } },
+                    }}
+                />
+            )}
+            {endPoint && route.routeData.path.length > 1 && (
+                <MapMarker
+                    position={endPoint}
+                    image={{
+                        src: createEndMarker(),
+                        size: { width: 32, height: 32 },
+                        options: { offset: { x: 0, y: 0 } },
+                    }}
+                />
+            )}
             {/* 완료된 경로 (빨간색) */}
             {completedPath.length > 0 && (
                 <RoutePolyline
