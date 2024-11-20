@@ -41,9 +41,14 @@ const HomePage = () => {
     try {
       await emailLogin(email, password);
       alert("로그인 성공!");
+
+      // 저장된 JWT 확인
+      // const token = localStorage.getItem("jwtToken");
+      // console.log("저장된 JWT:", token);
+
       router.push("http://localhost:3000/main");
     } catch (error) {
-      // console.error("로그인 실패", error);
+      console.error("로그인 실패", error);
       alert("로그인 실패");
     }
   };
@@ -92,20 +97,26 @@ const HomePage = () => {
                 </Button>
               </div>
               <div>
-                <Button className="w-full bg-yellow-400 hover:bg-yellow-600"  onClick={(e) => {
+                <Button
+                  className="w-full bg-yellow-400 hover:bg-yellow-600"
+                  onClick={(e) => {
                     e.preventDefault();
                     location.href =
                       "http://localhost:8080/oauth2/authorization/kakao";
-                  }}>
+                  }}
+                >
                   Continue with Kakao
                 </Button>
               </div>
               <div>
-                <Button className="w-full bg-blue-700 hover:bg-blue-900" onClick={(e)=>{
-                  e.preventDefault();
-                  location.href =
-                    "http://localhost:8080/oauth2/authorization/naver";
-                }}>
+                <Button
+                  className="w-full bg-blue-700 hover:bg-blue-900"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    location.href =
+                      "http://localhost:8080/oauth2/authorization/naver";
+                  }}
+                >
                   Continue with Facebook
                 </Button>
               </div>

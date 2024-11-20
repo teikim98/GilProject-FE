@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -24,7 +24,7 @@ const HomePage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
-  const [userCertifyCode,setUserCertifyCode] = useState("");
+  const [userCertifyCode, setUserCertifyCode] = useState("");
   const [certifyCode, setCertifyCode] = useState("");
 
   const handleJoin = async () => {
@@ -32,7 +32,8 @@ const HomePage = () => {
       const response = await emailJoin({ name, nickName, email, password });
       if (response === 1) {
         alert("회원가입 성공!");
-        router.push("http://localhost:3000/auth/login");
+        // router.push("http://localhost:3000/auth/login");
+        router.push("http://localhost:3000/auth/addr")
       } else if (response === 0) {
         alert("회원가입 실패");
       }
@@ -43,23 +44,25 @@ const HomePage = () => {
 
   /**
    * 인증 이메일 보내기
-   * @param e 
+   * @param e
    */
-  const sendEmail = async(e : React.MouseEvent)=>{
+  const sendEmail = async (e: React.MouseEvent) => {
     e.preventDefault();
     const response = await emailSend(email);
-    setCertifyCode(response+"");
+    setCertifyCode(response + "");
   };
 
   /**
    * 인증코드 맞는지 확인
-   * @param e 
+   * @param e
    */
-  const certifyEmail = async(e:React.MouseEvent)=>{
+  const certifyEmail = async (e: React.MouseEvent) => {
     e.preventDefault();
 
-    userCertifyCode === certifyCode? alert("인증코드 확인완료") : alert("인증 실패");
-  }
+    userCertifyCode === certifyCode
+      ? alert("인증코드 확인완료")
+      : alert("인증 실패");
+  };
 
   return (
     <div className="w-full max-w-screen-md p-4 space-y-4 animate-fade-in">
@@ -91,7 +94,7 @@ const HomePage = () => {
                 />
               </div>
               <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="name">이메일</Label>
+                <Label htmlFor="name">이메일</Label>
                 <Input
                   name="email"
                   type="email"
@@ -99,7 +102,11 @@ const HomePage = () => {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="이메일을 입력해주세요"
                 />
-                <Button variant="outline" className="w-auto" onClick={(e)=>sendEmail(e)}>
+                <Button
+                  variant="outline"
+                  className="w-auto"
+                  onClick={(e) => sendEmail(e)}
+                >
                   인증 이메일 보내기
                 </Button>
                 <Input
@@ -107,7 +114,11 @@ const HomePage = () => {
                   onChange={(e) => setUserCertifyCode(e.target.value)}
                   placeholder="인증코드를 입력해주세요"
                 />
-                <Button variant="outline" className="w-auto" onClick={certifyEmail}>
+                <Button
+                  variant="outline"
+                  className="w-auto"
+                  onClick={certifyEmail}
+                >
                   확인
                 </Button>
               </div>
