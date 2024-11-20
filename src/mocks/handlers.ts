@@ -50,10 +50,7 @@ export const handlers = [
       startLat: postData.routeData.path[0].lat,
       startLong: postData.routeData.path[0].lng,
       state: 1,
-      images: imageFiles.map((_, index) => ({
-        id: index + 1,
-        url: `/api/placeholder/400/300`,
-      })),
+      images: imageFiles.map(() => `/api/placeholder/400/300`), // 단순 문자열 배열로 수정
       writeDate: new Date().toISOString(),
       updateDate: "",
       readNum: 0,
