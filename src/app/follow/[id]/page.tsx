@@ -151,20 +151,12 @@ export default function FollowPage({ params }: PostPageProps) {
 
                 <div className='grid grid-cols-2 gap-4'>
                     <div className='p-4 rounded-lg'>
-                        <h3 className='text-sm'>남은 거리</h3>
-                        <p className='text-lg font-bold'>{remainingDistance.toFixed(1)}m</p>
-                    </div>
-                    <div className='p-4 rounded-lg'>
                         <h3 className='text-sm'>현재 속도</h3>
                         <p className='text-lg font-bold'>{currentSpeed.toFixed(1)}m/s</p>
                     </div>
                     <div className='p-4 rounded-lg'>
                         <h3 className='text-sm'>경과 시간</h3>
                         <p className='text-lg font-bold'>{formatTime(elapsedTime)}</p>
-                    </div>
-                    <div className='p-4 rounded-lg'>
-                        <h3 className='text-sm'>이동 거리</h3>
-                        <p className='text-lg font-bold'>{currentDistance.toFixed(1)}m</p>
                     </div>
                 </div>
 
