@@ -39,7 +39,8 @@ export default function FollowPage({ params }: PostPageProps) {
         isCompleted,
         startFollowing,
         stopFollowing,
-        resetStatus
+        resetStatus,
+        setOriginalRoute
     } = useFollowStore();
 
     // 현재 위치와 시작점 사이의 거리 계산
@@ -99,6 +100,7 @@ export default function FollowPage({ params }: PostPageProps) {
             try {
                 const data = await getRouteById(parseInt(params.id));
                 setRoute(data);
+                setOriginalRoute(data);
             } catch (err) {
                 setError('경로를 불러오는데 실패했습니다.');
                 console.error('Failed to load route:', err);

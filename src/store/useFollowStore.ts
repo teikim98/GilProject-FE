@@ -83,11 +83,31 @@ export const useFollowStore = create<FollowState>((set, get) => ({
 
   updateProgress: (totalDistance: number) => {
     const { currentDistance } = get();
-    const percent = Math.min((currentDistance / totalDistance) * 100, 100);
-    set({ progressPercent: Number(percent.toFixed(1)) });
+    const currentDistanceMeters = currentDistance;
+    const totalDistanceMeters = totalDistance * 1000;
+    const percent = (currentDistanceMeters / totalDistanceMeters) * 100;
+
+    set({
+      progressPercent: Math.min(percent, 100),
+      remainingDistance: totalDistanceMeters - currentDistanceMeters,
+    });
   },
 
-  updateStatus: (status) => set(status),
+  updateStatus: (status: Partial<FollowState>) => {
+    const currentState = get();
+    const newState = { ...status };
+
+    // 현재 거리가 업데이트되면 자동으로 진행률도 업데이트
+    if (status.currentDistance !== undefined && currentState.originalRoute) {
+      const totalDistance = currentState.originalRoute.routeData.distance;
+      const percent = (status.currentDistance / (totalDistance * 1000)) * 100;
+      newState.progressPercent = Math.min(percent, 100);
+      newState.remainingDistance =
+        totalDistance * 1000 - status.currentDistance;
+    }
+
+    set(newState);
+  },
 
   resetStatus: () =>
     set({

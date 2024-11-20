@@ -148,11 +148,9 @@ export function FollowMap({ route, width, height }: FollowMapProps) {
                         // 상태 업데이트
                         updateStatus({
                             currentPosition: snapped,
-                            currentDistance: completedDistance * 1000, // km to m
-                            remainingDistance: remaining_distance * 1000, // km to m
+                            currentDistance: completedDistance * 1000, // km to m 변환
                             currentSpeed: position.coords.speed || 0,
-                            isCompleted,
-                            progressPercent: Math.min(progress, 100) // 새로 계산된 진행률 사용
+                            isCompleted
                         });
                     }
 
