@@ -13,6 +13,7 @@ import { ProgressDisplay } from '@/components/layout/ProgressDisplay';
 import BackHeader from '@/components/layout/BackHeader';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useRouter } from 'next/navigation';
+import CelebrationAnimation from '@/components/layout/CelebrationAnimation ';
 
 interface PostPageProps {
     params: {
@@ -124,11 +125,6 @@ export default function FollowPage({ params }: PostPageProps) {
 
 
 
-    const handleCompletionConfirm = () => {
-        setShowCompletionDialog(false);
-        router.push('/'); // 메인 페이지로 이동
-    };
-
     const formatTime = (seconds: number) => {
         const minutes = Math.floor(seconds / 60);
         const remainingSeconds = Math.floor(seconds % 60);
@@ -184,32 +180,16 @@ export default function FollowPage({ params }: PostPageProps) {
                     {isFollowing ? '따라걷기 중지하기' : '따라걷기 시작하기'}
                 </Button>
 
-                <Dialog open={showCompletionDialog} onOpenChange={setShowCompletionDialog}>
-                    <DialogContent className="sm:max-w-md">
-                        <DialogHeader>
-                            <DialogTitle className="flex items-center justify-center gap-2 text-xl">
-                                <Trophy className="h-6 w-6 text-yellow-500" />
-                                축하합니다! 🎉
-                            </DialogTitle>
-                            <DialogDescription className="text-center pt-4 text-base">
-                                경로를 완주하셨습니다!
-                                <br />
-                                총 소요 시간: {formatTime(elapsedTime)}
-                                <br />
-                                이동 거리: {(currentDistance / 1000).toFixed(2)}km
-                            </DialogDescription>
-                        </DialogHeader>
-                        <DialogFooter className="flex justify-center">
-                            <Button
-                                onClick={handleCompletionConfirm}
-                                className="w-full"
-                            >
-                                확인
-                            </Button>
-                        </DialogFooter>
-                    </DialogContent>
-                </Dialog>
-
+                {showCompletionDialog && (
+                    <CelebrationAnimation
+                        elapsedTime={elapsedTime}
+                        distance={currentDistance}
+                        onConfirm={() => {
+                            setShowCompletionDialog(false);
+                            router.push('/main  ');
+                        }}
+                    />
+                )}
 
             </div>
         </div>
