@@ -22,9 +22,9 @@ export const dummyPosts: Post[] = [
     postWishListsUsers: [1, 3, 6, 7],
     postWishListsNum: 4,
     images: [
-      "/api/placeholder/800/600",
-      "/api/placeholder/800/600",
-      "/api/placeholder/800/600",
+      "https://images.unsplash.com/photo-1502904550040-7534597429ae?auto=format&fit=crop&w=800&h=600",
+      "https://images.unsplash.com/photo-1528543606781-2f6e6857f318?auto=format&fit=crop&w=800&h=600",
+      "https://images.unsplash.com/photo-1526676037777-05a232554f77?auto=format&fit=crop&w=800&h=600",
     ],
     routeData: {
       path: [
@@ -37,7 +37,8 @@ export const dummyPosts: Post[] = [
           id: "marker-1",
           position: { lat: 37.5665, lng: 126.978 },
           content: "시작점 - 여의도 한강공원",
-          image: "/api/placeholder/400/300",
+          image:
+            "https://images.unsplash.com/photo-1615551043360-33de8b5f410c?auto=format&fit=crop&w=400&h=300",
         },
       ],
       recordedTime: 45,
@@ -63,7 +64,10 @@ export const dummyPosts: Post[] = [
     repliesNum: 3,
     postWishListsUsers: [4, 7, 9],
     postWishListsNum: 3,
-    images: ["/api/placeholder/800/600", "/api/placeholder/800/600"],
+    images: [
+      "https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&w=800&h=600",
+      "https://images.unsplash.com/photo-1486179814561-91c2d61fe857?auto=format&fit=crop&w=800&h=600",
+    ],
     routeData: {
       path: [
         { lat: 37.6532, lng: 126.9779 },
@@ -75,7 +79,8 @@ export const dummyPosts: Post[] = [
           id: "marker-2",
           position: { lat: 37.6532, lng: 126.9779 },
           content: "북한산 입구",
-          image: "/api/placeholder/400/300",
+          image:
+            "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=400&h=300",
         },
       ],
       recordedTime: 180,
@@ -102,10 +107,10 @@ export const dummyPosts: Post[] = [
     postWishListsUsers: [3, 6],
     postWishListsNum: 2,
     images: [
-      "/api/placeholder/800/600",
-      "/api/placeholder/800/600",
-      "/api/placeholder/800/600",
-      "/api/placeholder/800/600",
+      "https://images.unsplash.com/photo-1541625602330-2277a4c46182?auto=format&fit=crop&w=800&h=600",
+      "https://images.unsplash.com/photo-1571333250630-f0230c320b6d?auto=format&fit=crop&w=800&h=600",
+      "https://images.unsplash.com/photo-1545559054-8f4f9e855781?auto=format&fit=crop&w=800&h=600",
+      "https://images.unsplash.com/photo-1506789014804-b92b0088af92?auto=format&fit=crop&w=800&h=600",
     ],
     routeData: {
       path: [
@@ -137,7 +142,10 @@ export const dummyPosts: Post[] = [
     repliesNum: 1,
     postWishListsUsers: [2, 4, 8],
     postWishListsNum: 3,
-    images: ["/api/placeholder/800/600", "/api/placeholder/800/600"],
+    images: [
+      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&h=600",
+      "https://images.unsplash.com/photo-1476820865390-c52aeebb9891?auto=format&fit=crop&w=800&h=600",
+    ],
     routeData: {
       path: [
         { lat: 37.5113, lng: 127.098 },
@@ -149,7 +157,8 @@ export const dummyPosts: Post[] = [
           id: "marker-4",
           position: { lat: 37.5113, lng: 127.098 },
           content: "석촌호수 시작점",
-          image: "/api/placeholder/400/300",
+          image:
+            "https://images.unsplash.com/photo-1506784365847-bbad939e9335?auto=format&fit=crop&w=400&h=300",
         },
       ],
       recordedTime: 30,
@@ -176,9 +185,9 @@ export const dummyPosts: Post[] = [
     postWishListsUsers: [2, 5, 7, 9],
     postWishListsNum: 4,
     images: [
-      "/api/placeholder/800/600",
-      "/api/placeholder/800/600",
-      "/api/placeholder/800/600",
+      "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=800&h=600",
+      "https://images.unsplash.com/photo-1517963879433-6ad2b056d712?auto=format&fit=crop&w=800&h=600",
+      "https://images.unsplash.com/photo-1571902943202-507ec2618e8f?auto=format&fit=crop&w=800&h=600",
     ],
     routeData: {
       path: [
@@ -191,7 +200,8 @@ export const dummyPosts: Post[] = [
           id: "marker-5",
           position: { lat: 37.5037, lng: 127.0447 },
           content: "첫 번째 헬스장",
-          image: "/api/placeholder/400/300",
+          image:
+            "https://images.unsplash.com/photo-1540497077202-7c8a3999166f?auto=format&fit=crop&w=400&h=300",
         },
       ],
       recordedTime: 120,
