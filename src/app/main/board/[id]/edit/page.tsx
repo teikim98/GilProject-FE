@@ -1,15 +1,15 @@
 'use client'
 
 
+import PostForm from "@/components/layout/PostForm";
 import { useParams } from "next/navigation";
-import PostPage from "../../post/page";
 
 export default function EditPostPage() {
     const params = useParams();
     const postId = typeof params.id === 'string' ? parseInt(params.id) : undefined;
 
     return (
-        <PostPage
+        <PostForm
             isEdit={true}
             postId={postId}
         />

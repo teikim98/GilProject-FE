@@ -1,9 +1,8 @@
-"use client"
 import { useRecordStore } from "@/store/useRecordStore";
 import { MarkerData, Position, SizeProps } from "@/types/types";
 import { getCurrentPosition } from "@/util/getCurrentPosition";
 import { LocationSmoother } from "@/util/locationSmoother";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { BaseKakaoMap } from "./BaseKakaoMap";
 import { CurrentLocationMarker } from "./CurrentLocationMarker";
 import MarkerForm from "./MarkerForm";
@@ -18,55 +17,91 @@ export function RecordingMap({ width, height }: SizeProps) {
     const [selectedPosition, setSelectedPosition] = useState<Position | null>(null);
     const [showMarkerForm, setShowMarkerForm] = useState(false);
     const [isGettingLocation, setIsGettingLocation] = useState(false);
+    const locationSmootherRef = useRef(new LocationSmoother(20, 5, 3));
+
+    // 위치 처리 함수 분리
+    const processNewPosition = (rawPosition: Position, accuracy?: number) => {
+        const smoothedPosition = locationSmootherRef.current.smooth(rawPosition, accuracy);
+        if (smoothedPosition) {
+            setUserPosition(smoothedPosition);
+            setCenter(smoothedPosition);
+            addPathPosition(smoothedPosition);
+
+            // Service Worker에 스무딩된 위치 전송
+            if (navigator.serviceWorker.controller) {
+                navigator.serviceWorker.controller.postMessage({
+                    type: 'LOCATION_UPDATE',
+                    data: {
+                        ...smoothedPosition,
+                        accuracy,
+                        timestamp: Date.now()
+                    }
+                });
+            }
+        }
+    };
 
     useEffect(() => {
         if (!navigator.geolocation) return;
 
-        const locationSmoother = new LocationSmoother(20, 5, 3);
+        // Service Worker 등록
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/worker/location-worker.js')
+                .then(registration => {
+                    console.log('Location worker registered');
+                    registration.active?.postMessage({
+                        type: 'START_RECORDING'
+                    });
+                })
+                .catch(error => {
+                    console.error('Location worker registration failed:', error);
+                });
 
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-                const newPosition = {
-                    lat: position.coords.latitude,
-                    lng: position.coords.longitude,
-                };
-                setUserPosition(newPosition);
-                setCenter(newPosition);
-            },
-            (error) => console.error("Error getting initial location:", error)
-        );
-
-        const watchId = navigator.geolocation.watchPosition(
-            (position) => {
-                const newPosition = {
-                    lat: position.coords.latitude,
-                    lng: position.coords.longitude,
-                };
-
-                setUserPosition(newPosition);
-
-                const smoothedPosition = locationSmoother.smooth(
-                    newPosition,
-                    position.coords.accuracy
-                );
-                if (smoothedPosition) {
-                    addPathPosition(smoothedPosition);
-                    setCenter(smoothedPosition);
+            // 백그라운드 위치 업데이트 수신
+            const messageHandler = (event: MessageEvent) => {
+                if (event.data.type === 'BACKGROUND_UPDATE' &&
+                    event.data.trackingType === 'RECORDING') {
+                    const { position, accuracy } = event.data.location;
+                    processNewPosition(position, accuracy);
+                } else if (event.data.type === 'RECORDING_LOCATIONS') {
+                    // 백그라운드에서 수집된 위치들 처리
+                    event.data.locations.forEach((loc: any) => {
+                        processNewPosition(loc.position, loc.accuracy);
+                    });
                 }
-            },
-            (error) => console.error("Error watching location:", error),
-            {
-                enableHighAccuracy: true,
-                maximumAge: 0,
-                timeout: 5000
-            }
-        );
+            };
 
-        return () => {
-            if (watchId) {
-                navigator.geolocation.clearWatch(watchId);
-            }
-        };
+            navigator.serviceWorker.addEventListener('message', messageHandler);
+
+            // 위치 감시 설정
+            const watchId = navigator.geolocation.watchPosition(
+                (position) => {
+                    const newPosition = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude,
+                    };
+                    processNewPosition(newPosition, position.coords.accuracy);
+                },
+                (error) => console.error("Error watching location:", error),
+                {
+                    enableHighAccuracy: true,
+                    maximumAge: 0,
+                    timeout: 5000
+                }
+            );
+
+            return () => {
+                if (watchId) {
+                    navigator.geolocation.clearWatch(watchId);
+                }
+                navigator.serviceWorker.removeEventListener('message', messageHandler);
+                if (navigator.serviceWorker.controller) {
+                    navigator.serviceWorker.controller.postMessage({
+                        type: 'STOP_TRACKING'
+                    });
+                }
+            };
+        }
     }, [addPathPosition]);
 
     const handleAddMarker = async () => {

@@ -9,5 +9,13 @@ export default withPWA({
   register: true,
   skipWaiting: true,
   disable: false, // 개발 모드에서도 PWA 활성화
+  runtimeCaching: [],
+  buildExcludes: [/middleware-manifest\.json$/],
+  additionalManifestEntries: [
+    {
+      url: "/worker/location-worker.js",
+      revision: "1",
+    },
+  ],
   ...nextConfig,
 });
