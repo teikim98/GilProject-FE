@@ -14,9 +14,9 @@ export function DarkModeToggle() {
             className="ml-auto"
         >
             {isDarkMode ? (
-                <Sun className="h-5 w-5" />
+                <Sun className="h-7 w-7" />
             ) : (
-                <Moon className="h-5 w-5" />
+                <Moon className="h-7 w-7" />
             )}
         </Button>
     );

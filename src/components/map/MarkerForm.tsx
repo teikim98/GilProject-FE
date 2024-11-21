@@ -11,8 +11,8 @@ interface MarkerFormProps {
     onCancel: () => void;
 }
 
-// 이미지 크기 제한 (예: 1MB)
-const MAX_FILE_SIZE = 1024 * 1024;
+// 이미지 크기 제한 10Mb
+const MAX_FILE_SIZE = 1024 * 10000;
 
 const MarkerForm = ({ onSubmit, onCancel }: MarkerFormProps) => {
     const [content, setContent] = useState('');
@@ -26,7 +26,7 @@ const MarkerForm = ({ onSubmit, onCancel }: MarkerFormProps) => {
         if (file) {
             // 파일 크기 체크
             if (file.size > MAX_FILE_SIZE) {
-                setError('이미지 크기는 1MB 이하여야 합니다.');
+                setError('이미지 크기는 10MB 이하여야 합니다.');
                 return;
             }
 

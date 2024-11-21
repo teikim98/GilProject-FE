@@ -1,11 +1,12 @@
 import { NavigationState } from '@/types/types';
 import React from 'react'
 import BackButton from './BackIcon'
+
 interface BackHeaderProps {
     content: string;
     navigationState?: NavigationState;  // 'isRecording' | 'isEditing' | 'isWriting' | 'isSaving' | 'none'
     onStateReset?: () => void;
-    className?: string;  // 추가: 필요한 경우 스타일 커스텀
+    className?: string;
 }
 
 export default function BackHeader({

@@ -68,18 +68,27 @@ export interface RouteData {
 
 export interface RouteCardProps {
   route: RouteData;
+  onSelect?: (route: RouteData) => void;
+  isWriteMode?: boolean;
+}
+
+export interface PostImage {
+  id: number;
+  url: string;
+  fileName?: string;
+  order?: number;
 }
 
 export interface Post {
-  id: number; // 글 ID
-  userNickName: string; // 작성자 닉네임
-  pathId: number; // 경로 ID
-  startLat: number; // 시작 위치 위도
-  startLong: number; // 시작 위치 경도
-  state: number; // 게시글 상태
-  title: string; // 글 제목
-  content: string; // 글 내용
-  tag: string; // 태그
+  id: number;
+  userNickName: string;
+  pathId: number;
+  startLat: number;
+  startLong: number;
+  state: number;
+  title: string;
+  content: string;
+  tag: string;
   writeDate: string; // 작성일
   updateDate: string; // 수정일
   readNum: number; // 조회수
@@ -89,9 +98,31 @@ export interface Post {
   repliesNum: number; // 댓글 수
   postWishListsUsers: number[]; // 찜한 유저 ID 배열
   postWishListsNum: number; // 찜 수
+  routeData: {
+    path: Array<{
+      lat: number;
+      lng: number;
+    }>;
+    markers: Array<{
+      id: string;
+      position: {
+        lat: number;
+        lng: number;
+      };
+      content: string;
+      image?: string;
+    }>;
+    recordedTime: number;
+    distance: number;
+  };
+  images?: string[];
+}
 
-  routeData?: {
-    // 선택적으로 경로 데이터 포함
+export interface CreatePostRequest {
+  title: string;
+  content: string;
+  tag: string;
+  routeData: {
     path: Array<{
       lat: number;
       lng: number;
@@ -110,24 +141,59 @@ export interface Post {
   };
 }
 
-export interface CreatePostRequest {
-  userNickName: string;
-  pathId: number;
-  startLat: number;
-  startLong: number;
+export interface User {
+  id: number;
+  platform: number;
+  name: string;
+  nickName: string;
+  imageUrl: string;
+  password: string;
+  email: string | null;
+  comment: string | null;
+  address: string | null;
+  latitude: number | null;
+  longitude: number | null;
+  joinDate: string;
+  updateDate: string;
+  point: number;
+  state: number;
+  posts: any[] | null;
+  paths: any[] | null;
+  postLikes: any[] | null;
+  subscriptions: any[] | null;
+  notifications: any[] | null;
+  postWishLists: any[] | null;
+  replyLikes: any[] | null;
+}
+
+interface RouteCoordinate {
+  latitude: number;
+  longitude: number;
+}
+
+interface Pin {
+  id: number;
+  imageUrl: string;
+  content: string;
+  latitude: number;
+  longitude: number;
+}
+
+interface RouteUser {
+  id: number;
+}
+
+export interface RouteTest {
+  id: number;
+  user: RouteUser;
+  content: string;
   state: number;
   title: string;
-  content: string;
-  tag: string;
-  routeData?: {
-    path: Array<{ lat: number; lng: number }>;
-    markers: Array<{
-      id: string;
-      position: { lat: number; lng: number };
-      content: string;
-      image?: string;
-    }>;
-    recordedTime: number;
-    distance: number;
-  };
+  time: number;
+  distance: number;
+  startLat: number;
+  startLong: number;
+  startAddr: string;
+  routeCoordinates: RouteCoordinate[];
+  pins: Pin[];
 }

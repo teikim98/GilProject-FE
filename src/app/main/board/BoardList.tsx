@@ -4,12 +4,15 @@ import { useEffect, useState } from 'react';
 import { Post } from '@/types/types';
 import BoardCard from '@/components/layout/BoardListCard';
 import { getPosts } from '@/api/post';
+import { useSearchStore } from '@/store/useSearchStore';
+import { Search } from 'lucide-react';
 
 export default function BoardList() {
     const [posts, setPosts] = useState<Post[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
+    const { searchTerm } = useSearchStore()
 
     // 현재 위치 가져오기
     useEffect(() => {
@@ -55,7 +58,20 @@ export default function BoardList() {
         };
 
         fetchPosts();
-    }, [userLocation]);
+    }, [searchTerm]);
+
+    useEffect(() => {
+        return () => {
+            useSearchStore.getState().submitSearch()
+            useSearchStore.getState().setQuery('')
+            useSearchStore.getState().setSearchTerm('')
+        }
+    }, [])
+
+    const filteredPosts = posts.filter(post =>
+        post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        post.content.toLowerCase().includes(searchTerm.toLowerCase())
+    )
 
     if (loading) {
         return (
@@ -83,9 +99,17 @@ export default function BoardList() {
 
     return (
         <div className="space-y-4 mt-4">
-            {posts.map((post) => (
-                <BoardCard key={post.id} post={post} />
-            ))}
+            {filteredPosts.length > 0 ? (
+                filteredPosts.map((post) => (
+                    <BoardCard key={post.id} post={post} />
+                ))
+            ) : (
+                <div className="flex flex-col items-center justify-center py-10 text-gray-500">
+                    <Search className="w-12 h-12 mb-4" />
+                    <p className="text-lg mb-2">검색 결과가 없습니다</p>
+                    <p className="text-sm">다른 키워드로 검색해보세요</p>
+                </div>
+            )}
         </div>
     );
 }

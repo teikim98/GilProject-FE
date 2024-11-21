@@ -3,7 +3,6 @@
 import { Card, CardContent } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import { Pencil } from 'lucide-react'
-import KakaoMap from '../providers/KakaoMap'
 import PWAInstallButton from '@/components/layout/PwaInstallBtn';
 import Sidemenu from '@/components/layout/Sidemenu'
 import Link from 'next/link'
@@ -68,6 +67,8 @@ export default function Page() {
                     </Link>
                 </div>
             </Card>
+
+            <Link href='/test' className='text-lg font-semibold'>경로 따라가기 테스트하기</Link>
 
             <Separator className='my-4 dark:bg-gray-700' />
 

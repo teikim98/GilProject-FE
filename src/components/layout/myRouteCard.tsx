@@ -5,6 +5,19 @@ import { Separator } from '../ui/separator'
 import { ChevronDown, ChevronUp } from 'lucide-react'
 import { RouteCardProps, RouteData } from '@/types/types'
 import { ViewingMap } from '../map/ViewingMapProps'
+import { Button } from '../ui/button'
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Trash2 } from 'lucide-react';
 
 
 
@@ -17,8 +30,23 @@ function formatRecordedTime(minutes: number) {
     return `${hours}시간 ${remainingMinutes}분`;
 }
 
-function RouteCard({ route }: RouteCardProps) {
+function RouteCard({
+    route,
+    isWriteMode = false,
+    onSelect,
+    onDelete
+}: RouteCardProps & { onDelete?: (routeId: string) => void }) {
     const [isExpanded, setIsExpanded] = useState(false);
+
+    const handleSelectRoute = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        onSelect?.(route);
+    };
+
+    const handleDelete = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        onDelete?.(route.createdAt);
+    };
 
     return (
         <div className="">
@@ -38,7 +66,6 @@ function RouteCard({ route }: RouteCardProps) {
                                 }
                             }
                         />
-
                     </div>
                     <div className="flex flex-col flex-1">
                         <div className="flex justify-between items-start">
@@ -48,9 +75,57 @@ function RouteCard({ route }: RouteCardProps) {
                         <p className='text-slate-500 text-sm overflow-hidden line-clamp-3'>
                             {route.description}
                         </p>
-                        <span className='text-xs text-gray-400 mt-auto'>
-                            {new Date(route.createdAt).toLocaleDateString()}
-                        </span>
+                        <div className='flex justify-between mt-auto'>
+                            <span className='text-xs text-gray-400 self-end'>
+                                {new Date(route.createdAt).toLocaleDateString()}
+                            </span>
+                            <div className="flex self-end gap-2">
+                                {!isWriteMode && (
+                                    <AlertDialog>
+                                        <AlertDialogTrigger asChild onClick={(e) => e.stopPropagation()}>
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                className="h-8 w-8 text-destructive hover:text-destructive/90"
+                                            >
+                                                <Trash2 className="h-5 w-5" />
+                                            </Button>
+                                        </AlertDialogTrigger>
+                                        <AlertDialogContent>
+                                            <AlertDialogHeader>
+                                                <AlertDialogTitle>경로 삭제</AlertDialogTitle>
+                                                <AlertDialogDescription>
+                                                    정말로 이 경로를 삭제하시겠습니까?
+                                                    삭제된 경로는 복구할 수 없습니다.
+                                                </AlertDialogDescription>
+                                            </AlertDialogHeader>
+                                            <AlertDialogFooter>
+                                                <AlertDialogCancel onClick={(e) => e.stopPropagation()}>
+                                                    취소
+                                                </AlertDialogCancel>
+                                                <AlertDialogAction
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleDelete(e);
+                                                    }}
+                                                    className="bg-destructive hover:bg-destructive/90"
+                                                >
+                                                    삭제
+                                                </AlertDialogAction>
+                                            </AlertDialogFooter>
+                                        </AlertDialogContent>
+                                    </AlertDialog>
+                                )}
+                            </div>
+                            {isWriteMode && (
+                                <Button
+                                    className='w-[50%] self-end'
+                                    onClick={handleSelectRoute}
+                                >
+                                    선택하기
+                                </Button>
+                            )}
+                        </div>
                     </div>
                 </div>
 
@@ -93,7 +168,13 @@ function RouteCard({ route }: RouteCardProps) {
 }
 
 
-export default function MyRouteList() {
+export default function MyRouteList({
+    isWriteMode = false,
+    onRouteSelect
+}: {
+    isWriteMode?: boolean;
+    onRouteSelect?: (route: RouteData) => void
+}) {
     const [routes, setRoutes] = React.useState<RouteData[]>([]);
 
     React.useEffect(() => {
@@ -106,6 +187,12 @@ export default function MyRouteList() {
         }
     }, []);
 
+    const handleDelete = (routeId: string) => {
+        const updatedRoutes = routes.filter(route => route.createdAt !== routeId);
+        setRoutes(updatedRoutes);
+        localStorage.setItem('savedRoutes', JSON.stringify(updatedRoutes));
+    };
+
     if (routes.length === 0) {
         return (
             <div className="text-center py-8 text-gray-500">
@@ -117,7 +204,13 @@ export default function MyRouteList() {
     return (
         <div className="space-y-4">
             {routes.map((route, index) => (
-                <RouteCard key={route.createdAt + index} route={route} />
+                <RouteCard
+                    key={route.createdAt + index}
+                    route={route}
+                    isWriteMode={isWriteMode}
+                    onSelect={onRouteSelect}
+                    onDelete={!isWriteMode ? handleDelete : undefined}
+                />
             ))}
         </div>
     );
