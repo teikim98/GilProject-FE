@@ -15,10 +15,13 @@ import {
 } from "@/components/ui/card";
 import Link from "next/link";
 import { useGeocoder } from "@/hooks/useGeocoder";
+import { updateAddress } from "@/api/user";
+import { useRouter } from "next/navigation";
 
 // declare const kakao : any;
 
 const HomePage = () => {
+  let router = useRouter();
   const [address, setAddress] = useState<string>("");
   const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false);
 
@@ -51,25 +54,32 @@ const HomePage = () => {
     console.log("위도:", lat, "경도:", lon);
 
     //주소, 위도, 경도 회원테이블에 업데이트하기
+    await updateAddress(address, lat.toString(), lon.toString());
 
-    //메인 페이지로 리다이렉트
+    //메인 페이지로 이동
+    router.push("http://localhost:3000/main");
   };
-  
+
+  /**
+   * 주소를 위도, 경도로 변환
+   * @param addr 주소
+   * @returns 위도,경도 객체
+   */
   const conversionAddr = async (addr: string) => {
-    return new Promise<{ lat: number, lon: number }>((resolve, reject) => {
+    return new Promise<{ lat: number; lon: number }>((resolve, reject) => {
       kakao.maps.load(function () {
         const geocoder = new kakao.maps.services.Geocoder();
-  
+
         const callback = function (result: any, status: any) {
           if (status === kakao.maps.services.Status.OK) {
             const lat = result[0].y;
             const lon = result[0].x;
             resolve({ lat, lon });
           } else {
-            reject('Failed to find address');
+            reject("Failed to find address");
           }
         };
-  
+
         geocoder.addressSearch(addr, callback);
       });
     });
