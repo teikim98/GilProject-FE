@@ -17,7 +17,7 @@ export default function Page() {
     useEffect(()=>{
         console.log("main 도착");
         //쿠키 확인
-        const getCookie = (name) => {
+        const getCookie = (name :any) => {
             const value = `; ${document.cookie}`; // 쿠키 문자열 앞에 ;를 추가하여 구분하기 쉽게 만듦
             const parts = value.split(`; ${name}=`); // name=토큰을 기준으로 분할
             if (parts.length === 2) {
@@ -28,7 +28,7 @@ export default function Page() {
         
         const token = getCookie('authorization');
         console.log(token);
-        
+
             //있으면
             if(token){
                 //로컬스토리지에 저장
