@@ -140,3 +140,60 @@ export interface CreatePostRequest {
     distance: number;
   };
 }
+
+export interface User {
+  id: number;
+  platform: number;
+  name: string;
+  nickName: string;
+  imageUrl: string;
+  password: string;
+  email: string | null;
+  comment: string | null;
+  address: string | null;
+  latitude: number | null;
+  longitude: number | null;
+  joinDate: string;
+  updateDate: string;
+  point: number;
+  state: number;
+  posts: any[] | null;
+  paths: any[] | null;
+  postLikes: any[] | null;
+  subscriptions: any[] | null;
+  notifications: any[] | null;
+  postWishLists: any[] | null;
+  replyLikes: any[] | null;
+}
+
+interface RouteCoordinate {
+  latitude: number;
+  longitude: number;
+}
+
+interface Pin {
+  id: number;
+  imageUrl: string;
+  content: string;
+  latitude: number;
+  longitude: number;
+}
+
+interface RouteUser {
+  id: number;
+}
+
+export interface RouteTest {
+  id: number;
+  user: RouteUser;
+  content: string;
+  state: number;
+  title: string;
+  time: number;
+  distance: number;
+  startLat: number;
+  startLong: number;
+  startAddr: string;
+  routeCoordinates: RouteCoordinate[];
+  pins: Pin[];
+}
