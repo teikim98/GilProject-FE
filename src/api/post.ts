@@ -1,4 +1,3 @@
-import { CreatePostRequest } from "./../types/types";
 import axios from "axios";
 import { Post } from "@/types/types";
 
@@ -17,15 +16,29 @@ export const getPost = async (id: number): Promise<Post> => {
 };
 
 export const createPost = async (formData: FormData) => {
-    try {
-        const response = await axios.post('/api/posts', formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            },
-        });
-        console.log(formData)
-        return response.data;
-    } catch (error) {
-        throw error;
-    }
+  try {
+    const response = await axios.post("/api/posts", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    console.log(formData);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const updatePost = async (id: number, formData: FormData) => {
+  try {
+    const response = await axios.put(`/api/posts/${id}`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    console.log("Updated post data:", formData);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
 };

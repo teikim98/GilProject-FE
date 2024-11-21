@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import BackHeader from "@/components/layout/BackHeader";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import { createPost } from "@/api/post";
+import { createPost, getPost, updatePost } from "@/api/post";
 import { ViewingMap } from "@/components/map/ViewingMapProps";
 import { CreatePostRequest } from "@/types/types";
 import MyRouteList from "@/components/layout/myRouteCard";
@@ -38,7 +38,12 @@ interface SavedRoute {
     createdAt: string;
 }
 
-export default function PostPage() {
+interface WritePostPageProps {
+    isEdit?: boolean;
+    postId?: number;
+}
+
+export default function PostPage({ isEdit, postId }: WritePostPageProps) {
     const router = useRouter();
     const [isRouteListOpen, setIsRouteListOpen] = useState(false);
     const [selectedRoute, setSelectedRoute] = useState<SavedRoute | null>(null);
@@ -48,6 +53,8 @@ export default function PostPage() {
     const [isWriting, setIsWriting] = useState(false);
     const [images, setImages] = useState<File[]>([]);
     const [previews, setPreviews] = useState<string[]>([]);
+    const [existingImages, setExistingImages] = useState<string[]>([]);
+    const [deletedImageUrls, setDeletedImageUrls] = useState<string[]>([]); // deletedImageIds 대신
 
     useEffect(() => {
         const savedRoutes = localStorage.getItem('savedRoutes');
@@ -89,6 +96,38 @@ export default function PostPage() {
         }
     }, [title, content]);
 
+    useEffect(() => {
+        // 수정 모드일 때 기존 데이터 불러오기
+        if (isEdit && postId) {
+            fetchPost();
+        }
+    }, [isEdit, postId]);
+
+    const fetchPost = async () => {
+        if (!postId) return;
+
+        try {
+            const data = await getPost(postId);
+            setTitle(data.title);
+            setContent(data.content);
+
+            if (data.routeData) {
+                setSelectedRoute({
+                    title: data.title,
+                    description: data.content,
+                    pathData: data.routeData,
+                    createdAt: data.writeDate
+                });
+            }
+
+            if (data.images) {
+                setExistingImages(data.images);
+            }
+        } catch (error) {
+            console.error('Error fetching post:', error);
+        }
+    };
+
     const handleRouteSelect = (route: SavedRoute) => {
         setSelectedRoute(route);
         setIsRouteListOpen(false);
@@ -112,6 +151,12 @@ export default function PostPage() {
     const removeImage = (index: number) => {
         setImages(prev => prev.filter((_, i) => i !== index));
         setPreviews(prev => prev.filter((_, i) => i !== index));
+    };
+
+    // 기존 이미지 삭제 함수 수정
+    const removeExistingImage = (imageUrl: string, index: number) => {
+        setExistingImages(prev => prev.filter((_, i) => i !== index));
+        setDeletedImageUrls(prev => [...prev, imageUrl]);
     };
 
     const handleSubmit = async () => {
@@ -141,26 +186,35 @@ export default function PostPage() {
                 formData.append('images', image);
             });
 
-            await createPost(formData);
-            router.push('/main/board');
+            if (isEdit && postId) {
+                formData.append('deletedImageUrls', JSON.stringify(deletedImageUrls));
+                await updatePost(postId, formData);
+                router.push(`/posts/${postId}`);
+            } else {
+                await createPost(formData);
+                router.push('/main/board');
+            }
         } catch (error) {
-            console.error("게시글 작성 실패:", error);
-            alert("게시글 작성에 실패했습니다.");
+            console.error(isEdit ? "게시글 수정 실패:" : "게시글 작성 실패:", error);
+            alert(isEdit ? "게시글 수정에 실패했습니다." : "게시글 작성에 실패했습니다.");
         }
     };
 
     return (
         <div className="w-full animate-fade-in pb-20">
             <BackHeader
-                content="글 쓰기"
+                content={isEdit ? "글 수정" : "글 쓰기"}
                 navigationState={isWriting ? 'isWriting' : 'none'}
             />
-            <button
-                onClick={() => setIsRouteListOpen(true)}
-                className="w-full h-24 border-2 border-dashed rounded-lg hover:bg-accent flex items-center justify-center dark:hover:bg-accent/30"
-            >
-                <Plus className="w-8 h-8" />
-            </button>
+
+            {!isEdit && (
+                <button
+                    onClick={() => setIsRouteListOpen(true)}
+                    className="w-full h-24 border-2 border-dashed rounded-lg hover:bg-accent flex items-center justify-center dark:hover:bg-accent/30"
+                >
+                    <Plus className="w-8 h-8" />
+                </button>
+            )}
 
             <Dialog open={isRouteListOpen} onOpenChange={setIsRouteListOpen}>
                 <DialogContent className="max-h-[80vh] overflow-y-auto">
@@ -233,8 +287,26 @@ export default function PostPage() {
                             <ImagePlus className="w-6 h-6" />
                         </label>
 
+                        {/* 기존 이미지 표시 */}
+                        {isEdit && existingImages.map((imageUrl, index) => (
+                            <div key={`existing-${index}`} className="relative w-24 h-24">
+                                <img
+                                    src={imageUrl}
+                                    alt={`existing ${index}`}
+                                    className="w-full h-full object-cover rounded-lg"
+                                />
+                                <button
+                                    onClick={() => removeExistingImage(imageUrl, index)}
+                                    className="absolute -top-2 -right-2 p-1 bg-background border rounded-full"
+                                >
+                                    <X className="w-4 h-4" />
+                                </button>
+                            </div>
+                        ))}
+
+                        {/* 새로 추가된 이미지 미리보기 */}
                         {previews.map((preview, index) => (
-                            <div key={index} className="relative w-24 h-24">
+                            <div key={`new-${index}`} className="relative w-24 h-24">
                                 <img
                                     src={preview}
                                     alt={`preview ${index}`}
@@ -255,7 +327,7 @@ export default function PostPage() {
                     disabled={!selectedRoute || !title.trim()}
                     className="w-full mb-16"
                 >
-                    작성 완료
+                    {isEdit ? "수정 완료" : "작성 완료"}
                 </Button>
             </div>
         </div>

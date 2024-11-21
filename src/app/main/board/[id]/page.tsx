@@ -219,8 +219,19 @@ export default function PostPage({ params }: PostPageProps) {
                             <span>{post.postWishListsNum}</span>
                         </Button>
                     </div>
+                    {/* 수정하기 버튼 추가 */}
+                    <Link href={`/main/board/${params.id}/edit`}>
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            className="flex items-center gap-1"
+                        >
+                            수정하기
+                        </Button>
+                    </Link>
                 </div>
             </Card>
+
 
             <Link href={`/follow/${params.id}`}>
                 <Button
