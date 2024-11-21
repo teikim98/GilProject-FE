@@ -9,10 +9,42 @@ import Sidemenu from '@/components/layout/Sidemenu'
 import Link from 'next/link'
 import { DarkModeToggle } from '@/components/layout/DarkModeToggle'
 import { CurrentLocationMap } from '@/components/map/CurrentLocationMap'
+import { useEffect } from 'react'
 
 
 
 export default function Page() {
+    useEffect(()=>{
+        console.log("main 도착");
+        //쿠키 확인
+        const getCookie = (name) => {
+            const value = `; ${document.cookie}`; // 쿠키 문자열 앞에 ;를 추가하여 구분하기 쉽게 만듦
+            const parts = value.split(`; ${name}=`); // name=토큰을 기준으로 분할
+            if (parts.length === 2) {
+                return parts.pop().split(';').shift(); // ;로 끝나는 부분을 제거하여 값만 리턴
+            }
+            return null; // 쿠키가 없으면 null 리턴
+        };
+        
+        const token = getCookie('authorization');
+        console.log(token);
+        
+            //있으면
+            if(token){
+                //로컬스토리지에 저장
+                localStorage.setItem("access",token);
+                //쿠키 삭제
+                document.cookie = 'authorization=; Max-Age=0'; 
+
+            }
+            else{
+            //없으면
+                //아무일안함
+                console.log("쿠키가 없습니다");
+            }
+
+    });
+
     return (
         <div className='w-full animate-fade-in flex flex-col bg-white dark:bg-gray-900 pb-20'>
             <div className='flex flex-row justify-between mb-8'>

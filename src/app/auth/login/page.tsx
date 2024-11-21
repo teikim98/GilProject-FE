@@ -43,12 +43,12 @@ const HomePage = () => {
       alert("로그인 성공!");
 
       // 저장된 JWT 확인
-      // const token = localStorage.getItem("jwtToken");
-      // console.log("저장된 JWT:", token);
+      //const token = localStorage.getItem("access");
+      //console.log("저장된 JWT:", token);
 
       router.push("http://localhost:3000/main");
     } catch (error) {
-      console.error("로그인 실패", error);
+      //  console.error("로그인 실패", error);
       alert("로그인 실패");
     }
   };
@@ -134,11 +134,19 @@ const HomePage = () => {
             </a>{" "}
             눌러 회원가입
           </h2>
+
+          <h2>
+           계정을 잊으셨다면{" "}
+            <a href="" className=" bg-slate-500">
+              여기를 
+            </a>{" "}
+            눌러 아이디/비밀번호 찾기
+          </h2>
         </CardFooter>
       </Card>
 
       {/* Dropdown Menu Component */}
-      <DropdownMenu>
+      {/* <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button className="w-full bg-blue-500 hover:bg-blue-600 text-white mb-4">
             Open Dropdown
@@ -157,7 +165,7 @@ const HomePage = () => {
             Logout
           </DropdownMenuItem>
         </DropdownMenuContent>
-      </DropdownMenu>
+      </DropdownMenu> */}
 
       {/* Dialog Component */}
       <Dialog open={open} onOpenChange={setOpen}>

@@ -13,7 +13,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
-import { emailJoin, emailLogin } from "@/api/auth";
+import { emailJoin, emailLogin, existEmail, existNickname } from "@/api/auth";
 import { redirect, useRouter } from "next/navigation";
 import { emailSend } from "@/api/mail";
 
@@ -46,11 +46,44 @@ const HomePage = () => {
    * 인증 이메일 보내기
    * @param e
    */
-  const sendEmail = async (e: React.MouseEvent) => {
-    e.preventDefault();
+  const sendEmail = async (email : string) => {
     const response = await emailSend(email);
     setCertifyCode(response + "");
   };
+
+  /**
+   * 중복 이메일 확인
+   */
+  const checkEmail = async(e: React.MouseEvent)=>{
+    e.preventDefault();
+    //DB에서 중복이메일 체크
+    const response = await existEmail(email);
+
+    if(response ===1){
+      alert("중복된 이메일입니다 다른 이메일을 사용해주세요");
+    }
+    else{
+      //통과하면 인증 이메일 보내기 + 인증코드 컴포넌트 출력
+      alert("이메일 인증코드를 확인해주세요");
+      sendEmail(email);
+    }
+  }
+
+  /**
+   * 중복 닉네임 확인
+   */
+  const checkNickname = async(e:React.MouseEvent)=>{
+    e.preventDefault();
+    const response = await existNickname(nickName);
+    // console.log(typeof response);
+
+    if(response ===1){
+      alert("중복된 닉네임입니다 다른 닉네임을 사용해주세요");
+    }
+    else{
+      alert("사용가능한 닉네임입니다");
+    }
+  }
 
   /**
    * 인증코드 맞는지 확인
@@ -92,6 +125,13 @@ const HomePage = () => {
                   onChange={(e) => setNickName(e.target.value)}
                   placeholder="닉네임을 입력해주세요"
                 />
+                <Button
+                  variant="outline"
+                  className="w-auto"
+                  onClick={(e) =>{checkNickname(e)}}
+                >
+                  닉네임 중복 확인
+                </Button>
               </div>
               <div className="flex flex-col space-y-1.5">
                 <Label htmlFor="name">이메일</Label>
@@ -105,10 +145,11 @@ const HomePage = () => {
                 <Button
                   variant="outline"
                   className="w-auto"
-                  onClick={(e) => sendEmail(e)}
+                  onClick={(e) => checkEmail(e)}
                 >
-                  인증 이메일 보내기
+                  이메일 중복 확인 + 이메일 전송
                 </Button>
+                {/* 인증코드, 확인 버튼은 이메일 중복확인 끝난후 표시 */}
                 <Input
                   value={userCertifyCode}
                   onChange={(e) => setUserCertifyCode(e.target.value)}

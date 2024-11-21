@@ -4,7 +4,7 @@ import axios from "axios";
 //회원가입, 로그인 관련 API///////////////
 
 const api = axios.create({
-  baseURL: "http://localhost:8080/api/auth",
+  baseURL: "http://localhost:8080/auth",
 });
 
 /**
@@ -19,7 +19,7 @@ export const emailLogin = async (email: string, password: string) => {
     formData.append("password", password);
 
     // POST 요청 보내기
-    const response = await api.post("/api/auth/login", formData, {
+    const response = await api.post("/login", formData, {
       headers: {
         "Content-Type": "multipart/form-data", // FormData의 경우 이 헤더를 설정합니다.
       },
@@ -28,11 +28,9 @@ export const emailLogin = async (email: string, password: string) => {
     // 응답 헤더에서 JWT 토큰 추출
     const token = response.headers["authorization"];
     if (token) {
-      const jwtToken = token.split(" ")[1]; // "Bearer " 접두어 제거
-      // localStorage.setItem("jwtToken", jwtToken); // LocalStorage에 저장
-      document.cookie = `jwtToken=${jwtToken}; path=/; max-age=${60 * 60 * 24 * 7};`;
-      console.log("JWT 저장 완료:", jwtToken);
-    } else {
+      const accessToken = token.split(" ")[1];
+      localStorage.setItem("access", accessToken); // LocalStorage에 저장
+    } else {  
       throw new Error("토큰이 응답에 포함되지 않았습니다.");
     }
   } catch (error) {
@@ -68,3 +66,21 @@ export const emailJoin = async ({
     throw error;
   }
 };
+
+/**
+ * 닉네임 DB 조회
+ */
+export const existNickname = async (nickName : string)=>{
+  const response = await api.get("/nickname/" + nickName);
+
+  return response.data;
+}
+
+/**
+ * 이메일 DB 조회
+ */
+export const existEmail = async (email : string)=>{
+  const response = await api.get("/email/" + email);
+
+  return response.data;
+}
