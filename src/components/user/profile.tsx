@@ -1,5 +1,5 @@
 'use client'
-import { getUser } from '@/api/user'
+// import { getUser } from '@/api/user'
 import { User } from '@/types/types'
 import { Camera, Pencil } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
@@ -9,19 +9,19 @@ import { Card, CardContent, CardFooter, CardHeader } from '../ui/card'
 export default function Profile() {
     const [user, setUser] = useState<User>();
 
-    useEffect(() => {
-        const fetchUser = async () => {
-            try {
-                console.log("유저 정보 가져오기 시작");  // 함수 실행 확인
-                const user = await getUser();
-                console.log("받아온 유저 데이터:", user);
-                setUser(user);
-            } catch (error) {
-                console.error("유저 정보 가져오기 실패:", error);  // 구체적인 에러 내용 확인
-            }
-        }
-        fetchUser();
-    }, [])
+    // useEffect(() => {
+    //     const fetchUser = async () => {
+    //         try {
+    //             console.log("유저 정보 가져오기 시작");  // 함수 실행 확인
+    //             const user = await getUser();
+    //             console.log("받아온 유저 데이터:", user);
+    //             setUser(user);
+    //         } catch (error) {
+    //             console.error("유저 정보 가져오기 실패:", error);  // 구체적인 에러 내용 확인
+    //         }
+    //     }
+    //     fetchUser();
+    // }, [])
 
 
 
