@@ -10,6 +10,7 @@ import Link from 'next/link';
 import { cn } from "@/lib/utils";
 import { HamburgerMenuIcon } from '@radix-ui/react-icons'
 import { Bell } from 'lucide-react'
+import Profile from "../user/profile";
 
 
 const navigationItems = [
@@ -35,6 +36,7 @@ export default function Sidemenu() {
                         <SheetTitle className="text-left">메뉴</SheetTitle>
                     </SheetHeader>
                     <nav className="mt-8">
+                        <Profile />
                         <ul className="space-y-4">
                             {navigationItems.map((item) => (
                                 <li key={item.href}>

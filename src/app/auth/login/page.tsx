@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
     Card,
@@ -12,25 +11,22 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from '@/components/ui/dialog';
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { setCookie } from 'cookies-next'
+
 
 const HomePage = () => {
-    const [open, setOpen] = useState(false);
+    const router = useRouter()
+
+    const handleLogin = () => {
+        // 임시 인증 상태 설정
+        setCookie('auth-status', 'authenticated', {
+            maxAge: 60 * 60 * 24, // 24시간
+            path: '/',
+        })
+
+        router.push('/main')
+    }
 
     return (
         <div className="w-full max-w-screen-md p-4 space-y-4 animate-fade-in">
@@ -64,43 +60,11 @@ const HomePage = () => {
                     </form>
                 </CardContent>
                 <CardFooter className="flex justify-center flex-col">
-                    <Button variant="outline" className='w-full'> <Link href="/main">Sign in</Link> </Button>
+                    <Button onClick={handleLogin} variant="outline" className='w-full'>Sign in</Button>
                     <h2>아직 회원이 아니라면 <a href="/auth/signup" className=' bg-slate-500'>여기를</a> 눌러 회원가입</h2>
                 </CardFooter>
             </Card>
 
-            {/* Dropdown Menu Component */}
-            <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <Button className="w-full bg-blue-500 hover:bg-blue-600 text-white mb-4">
-                        Open Dropdown
-                    </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className='min-w-fit'>
-                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onSelect={() => alert('Profile clicked')}>Profile</DropdownMenuItem>
-                    <DropdownMenuItem onSelect={() => alert('Settings clicked')}>Settings</DropdownMenuItem>
-                    <DropdownMenuItem onSelect={() => alert('Logout clicked')}>Logout</DropdownMenuItem>
-                </DropdownMenuContent>
-            </DropdownMenu>
-
-            {/* Dialog Component */}
-            <Dialog open={open} onOpenChange={setOpen}>
-                <DialogTrigger asChild>
-                    <Button className="w-full bg-green-500 hover:bg-green-600 text-white">
-                        Open Dialog
-                    </Button>
-                </DialogTrigger>
-                <DialogContent className=' w-2/3'>
-                    <DialogHeader>
-                        <DialogTitle>Dialog Title</DialogTitle>
-                    </DialogHeader>
-                    <div className="mt-2">
-                        <p>This is a dialog content.</p>
-                    </div>
-                </DialogContent>
-            </Dialog>
         </div>
     );
 };

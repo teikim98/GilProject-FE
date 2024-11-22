@@ -36,10 +36,13 @@ export const useRecordStore = create<RecordState>((set, get) => ({
   stopRecording: () => {
     const { pathPositions, markers } = get();
     if (pathPositions.length > 0) {
+      // 임시 저장 경로 데이터
       localStorage.setItem(
         "savedPath",
         JSON.stringify({ path: pathPositions, markers })
       );
+      // 임시 경로가 있음을 나타내는 쿠키 설정
+      document.cookie = "has-temp-path=true;path=/;max-age=3600"; // 1시간
     }
     set({ isRecording: false });
   },
@@ -65,9 +68,14 @@ export const useRecordStore = create<RecordState>((set, get) => ({
     }
   },
 
-  resetRecord: () =>
+  resetRecord: () => {
+    // 임시 저장 데이터 삭제
+    localStorage.removeItem("savedPath");
+    // 쿠키도 삭제
+    document.cookie = "has-temp-path=false;path=/;max-age=0";
     set({
       pathPositions: [],
       markers: [],
-    }),
+    });
+  },
 }));

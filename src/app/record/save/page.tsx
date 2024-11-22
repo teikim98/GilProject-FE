@@ -53,12 +53,14 @@ export default function SaveRoutePage() {
         };
 
         // 기존 저장된 경로들 가져오기
-        console.log(localStorage.getItem('savedRoutes'))
         const savedRoutes: RouteData[] = JSON.parse(localStorage.getItem('savedRoutes') || '[]');
         savedRoutes.push(routeData);
         localStorage.setItem('savedRoutes', JSON.stringify(savedRoutes));
 
-        // store 상태 초기화
+        // 임시 저장 데이터와 쿠키 삭제
+        localStorage.removeItem("savedPath");
+        document.cookie = 'has-temp-path=false;path=/;max-age=0';
+
         resetRecord();
 
         // 저장 후 메인 페이지로 이동

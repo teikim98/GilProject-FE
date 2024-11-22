@@ -19,6 +19,7 @@ import {
     CarouselPrevious,
 } from "@/components/ui/carousel"
 import { type CarouselApi } from "@/components/ui/carousel"
+import { CommentSection } from '@/components/comment/CommentSection';
 
 interface PostPageProps {
     params: {
@@ -77,7 +78,7 @@ export default function PostPage({ params }: PostPageProps) {
     }
 
     return (
-        <div className="animate-fade-in flex flex-col min-h-screen pb-16">
+        <div className="animate-fade-in flex flex-col min-h-screen pb-20">
             <BackHeader content={post.title} />
 
             <div className="relative mb-4">
@@ -235,7 +236,7 @@ export default function PostPage({ params }: PostPageProps) {
 
             <Link href={`/follow/${params.id}`}>
                 <Button
-                    className="w-full mb-4 bg-primary hover:bg-primary/90 text-white"
+                    className="w-full my-4 bg-primary hover:bg-primary/90 text-white"
                     size="lg"
                 >
                     <Navigation className="w-5 h-5 mr-2" />
@@ -247,7 +248,7 @@ export default function PostPage({ params }: PostPageProps) {
 
             <div className="space-y-4">
                 <h3 className="font-semibold">댓글 {post.repliesNum}개</h3>
-                {/* 댓글 목록 컴포넌트 */}
+                <CommentSection />
             </div>
         </div>
     )
