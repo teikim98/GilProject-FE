@@ -12,7 +12,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useRouter } from 'next/navigation';
-import { setCookie } from 'cookies-next'
+import Cookies from 'js-cookie';
 
 
 const HomePage = () => {
@@ -20,10 +20,8 @@ const HomePage = () => {
 
     const handleLogin = () => {
         // 임시 인증 상태 설정
-        setCookie('auth-status', 'authenticated', {
-            maxAge: 60 * 60 * 24, // 24시간
-            path: '/',
-        })
+        Cookies.set('has-temp-path', 'true', { expires: 1 }); // 1일
+
 
         router.push('/main')
     }
