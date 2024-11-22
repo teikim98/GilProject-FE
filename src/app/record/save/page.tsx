@@ -21,11 +21,11 @@ export default function SaveRoutePage() {
     // store에서 경로와 마커 데이터 가져오기
     const { pathPositions, markers, recordStartTime, resetRecord } = useRecordStore();
 
-    const isFormModified = title.trim() !== '' || description.trim() !== '';
+    // const isFormModified = title.trim() !== '' || description.trim() !== '';
 
     useEffect(() => {
-        setIsSaving(isFormModified);
-    }, [isFormModified]);
+        setIsSaving(true);
+    }, []);
 
     const handleSave = () => {
         if (pathPositions.length === 0) {

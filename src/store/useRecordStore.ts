@@ -42,7 +42,7 @@ export const useRecordStore = create<RecordState>((set, get) => ({
         JSON.stringify({ path: pathPositions, markers })
       );
       // 임시 경로가 있음을 나타내는 쿠키 설정
-      document.cookie = "has-temp-path=true;path=/;max-age=3600"; // 1시간
+      document.cookie = "has-temp-path=true;path=/";
     }
     set({ isRecording: false });
   },
