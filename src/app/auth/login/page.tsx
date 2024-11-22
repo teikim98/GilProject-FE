@@ -20,9 +20,7 @@ const HomePage = () => {
 
     const handleLogin = () => {
         // 임시 인증 상태 설정
-        Cookies.set('has-temp-path', 'true', { expires: 1 }); // 1일
-
-
+        Cookies.set('auth-status', 'authenticated', { expires: 1 });
         router.push('/main')
     }
 
