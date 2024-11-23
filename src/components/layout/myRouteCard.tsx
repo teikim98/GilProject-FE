@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { Card } from '../ui/card'
 import { Separator } from '../ui/separator'
 import { ChevronDown, ChevronUp } from 'lucide-react'
-import { RouteCardProps, RouteData } from '@/types/types'
+import { Path } from '@/types/types'
 import { ViewingMap } from '../map/ViewingMapProps'
 import { Button } from '../ui/button'
 import {
@@ -19,7 +19,12 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Trash2 } from 'lucide-react';
 
-
+interface MyRouteCardProps {
+    route: Path;
+    isWriteMode?: boolean;
+    onSelect?: (route: Path) => void;
+    onDelete?: (routeId: number) => void;
+}
 
 function formatRecordedTime(minutes: number) {
     if (minutes < 60) {
@@ -35,7 +40,7 @@ function RouteCard({
     isWriteMode = false,
     onSelect,
     onDelete
-}: RouteCardProps & { onDelete?: (routeId: string) => void }) {
+}: MyRouteCardProps & { onDelete?: (routeId: number) => void }) {
     const [isExpanded, setIsExpanded] = useState(false);
 
     const handleSelectRoute = (e: React.MouseEvent) => {
@@ -45,7 +50,7 @@ function RouteCard({
 
     const handleDelete = (e: React.MouseEvent) => {
         e.stopPropagation();
-        onDelete?.(route.createdAt);
+        onDelete?.(route.id);
     };
 
     return (
@@ -59,12 +64,10 @@ function RouteCard({
                         className={`min-w-32 h-32 mr-4 ${isExpanded ? 'hidden' : ''}`}>
                         <ViewingMap width='w-full'
                             height='h-full'
-                            route={
-                                {
-                                    path: route.pathData.path,
-                                    markers: route.pathData.markers
-                                }
-                            }
+                            route={{
+                                routeCoordinates: route.routeCoordinates,
+                                pins: route.pins
+                            }}
                         />
                     </div>
                     <div className="flex flex-col flex-1">
@@ -73,11 +76,11 @@ function RouteCard({
                             {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                         </div>
                         <p className='text-slate-500 text-sm overflow-hidden line-clamp-3'>
-                            {route.description}
+                            {route.content}
                         </p>
                         <div className='flex justify-between mt-auto'>
                             <span className='text-xs text-gray-400 self-end'>
-                                {new Date(route.createdAt).toLocaleDateString()}
+                                {new Date(route.createdDate).toLocaleDateString()}
                             </span>
                             <div className="flex self-end gap-2">
                                 {!isWriteMode && (
@@ -140,8 +143,8 @@ function RouteCard({
                                 width='w-full'
                                 height='h-[400px]'
                                 route={{
-                                    path: route.pathData.path,
-                                    markers: route.pathData.markers
+                                    routeCoordinates: route.routeCoordinates,  // path -> routeCoordinates
+                                    pins: route.pins  // markers -> pins
                                 }}
                             />
                         </div>
@@ -149,13 +152,13 @@ function RouteCard({
                             <div className="bg-gray-50 dark:bg-slate-500 p-3 rounded">
                                 <h3 className="text-sm text-gray-500 dark:text-white">총 거리</h3>
                                 <p className="font-semibold">
-                                    {route.pathData.distance}km
+                                    {route.distance}km
                                 </p>
                             </div>
                             <div className="bg-gray-50 dark:bg-slate-500 p-3 rounded">
                                 <h3 className="text-sm text-gray-500 dark:text-white">소요 시간</h3>
                                 <p className="font-semibold">
-                                    {formatRecordedTime(route.pathData.recordedTime)}
+                                    {formatRecordedTime(route.time)}
                                 </p>
                             </div>
                         </div>
@@ -173,22 +176,22 @@ export default function MyRouteList({
     onRouteSelect
 }: {
     isWriteMode?: boolean;
-    onRouteSelect?: (route: RouteData) => void
+    onRouteSelect?: (route: Path) => void
 }) {
-    const [routes, setRoutes] = React.useState<RouteData[]>([]);
+    const [routes, setRoutes] = React.useState<Path[]>([]);
 
     React.useEffect(() => {
         const savedRoutes = localStorage.getItem('savedRoutes');
         if (savedRoutes) {
             const parsedRoutes = JSON.parse(savedRoutes);
-            setRoutes(parsedRoutes.sort((a: RouteData, b: RouteData) =>
-                new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+            setRoutes(parsedRoutes.sort((a: Path, b: Path) =>
+                new Date(b.createdDate).getTime() - new Date(a.createdDate).getTime()
             ));
         }
     }, []);
 
-    const handleDelete = (routeId: string) => {
-        const updatedRoutes = routes.filter(route => route.createdAt !== routeId);
+    const handleDelete = (routeId: number) => {
+        const updatedRoutes = routes.filter(route => route.id !== routeId);
         setRoutes(updatedRoutes);
         localStorage.setItem('savedRoutes', JSON.stringify(updatedRoutes));
     };
@@ -205,7 +208,7 @@ export default function MyRouteList({
         <div className="space-y-4">
             {routes.map((route, index) => (
                 <RouteCard
-                    key={route.createdAt + index}
+                    key={route.createdDate + index}
                     route={route}
                     isWriteMode={isWriteMode}
                     onSelect={onRouteSelect}

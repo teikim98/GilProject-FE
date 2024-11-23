@@ -1,20 +1,43 @@
-import { Post } from "@/types/types";
+import { Post, RouteCoordinate, Pin } from "@/types/types";
 
 export const convertSavedPathToPost = (): Post | null => {
-  // 로컬스토리지에서 저장된 경로 가져오기
   const savedPathString = localStorage.getItem("savedRoute");
   if (!savedPathString) return null;
 
   try {
     const savedPath = JSON.parse(savedPathString);
-
-    // 현재 시간 기준으로 작성 시간 생성
     const now = new Date().toISOString();
 
-    // Post 형식으로 변환
+    // Path 형식의 데이터로 변환
+    const pathData = {
+      id: 999,
+      user: { id: 0 },
+      content: "테스트 경로 내용",
+      state: 0,
+      title: "테스트 경로",
+      time: savedPath.recordedTime || 0,
+      distance: savedPath.distance || 0,
+      startLat: savedPath.path[0]?.lat || 0,
+      startLong: savedPath.path[0]?.lng || 0,
+      startAddr: null,
+      createdDate: now,
+      routeCoordinates: savedPath.path.map((pos: any) => ({
+        latitude: pos.lat.toString(),
+        longitude: pos.lng.toString(),
+      })),
+      pins: (savedPath.markers || []).map((marker: any) => ({
+        id: parseInt(marker.id),
+        latitude: marker.position.lat,
+        longitude: marker.position.lng,
+        content: marker.content,
+        imageUrl: marker.image || null,
+      })),
+    };
+
+    // 새로운 Post 형식으로 변환
     const convertedPost: Post = {
-      id: 999, // 테스트용 고유 ID
-      userNickName: "테스트 사용자",
+      postId: 999,
+      nickName: "테스트 사용자",
       pathId: 999,
       startLat: savedPath.path[0]?.lat || 0,
       startLong: savedPath.path[0]?.lng || 0,
@@ -25,18 +48,14 @@ export const convertSavedPathToPost = (): Post | null => {
       writeDate: now,
       updateDate: now,
       readNum: 0,
-      postLikesUsers: [],
-      postLikesNum: 0,
-      repliesUsers: [],
-      repliesNum: 0,
-      postWishListsUsers: [],
+      likesCount: 0,
+      repliesCount: 0,
       postWishListsNum: 0,
-      routeData: {
-        path: savedPath.path,
-        markers: savedPath.markers || [],
-        recordedTime: savedPath.recordedTime || 0,
-        distance: savedPath.distance || 0,
-      },
+      userImgUrl: "",
+      pathResDTO: pathData,
+      imageUrls: [],
+      liked: false,
+      wishListed: false,
     };
 
     return convertedPost;

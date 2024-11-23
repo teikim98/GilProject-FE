@@ -6,29 +6,34 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { FollowMap } from '@/components/map/FollowMap';
 import { useFollowStore } from '@/store/useFollowStore';
 import { getRouteById } from '@/api/route';
-import { Post, Position } from '@/types/types';
-import { calculatePathDistance } from '@/util/calculatePathDistance';
-import { Navigation, AlertCircle, Trophy } from 'lucide-react';
+import { Post, RouteCoordinate } from '@/types/types';
+import { calculatePathDistance, calculateRouteDistance } from '@/util/calculatePathDistance';
+import { Navigation, AlertCircle } from 'lucide-react';
 import { ProgressDisplay } from '@/components/layout/ProgressDisplay';
 import BackHeader from '@/components/layout/BackHeader';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useRouter } from 'next/navigation';
 import CelebrationAnimation from '@/components/layout/CelebrationAnimation ';
 
-interface PostPageProps {
+// 페이지 props 인터페이스
+export interface PostPageProps {
     params: {
         id: string;
     };
+}
+function checkDistanceToStart(position: RouteCoordinate, startPosition: RouteCoordinate): boolean {
+    const distance = calculateRouteDistance([position, startPosition]);
+    return distance <= 0.02; // 20m = 0.02km
 }
 
 
 export default function FollowPage({ params }: PostPageProps) {
     const router = useRouter();
     const [route, setRoute] = useState<Post | null>(null);
-    const [currentPosition, setCurrentPosition] = useState<Position | null>(null);
+    const [currentPosition, setCurrentPosition] = useState<RouteCoordinate | null>(null);
     const [isNearStart, setIsNearStart] = useState(false);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [showCompletionDialog, setShowCompletionDialog] = useState(false);
 
     const {
         isFollowing,
@@ -43,28 +48,22 @@ export default function FollowPage({ params }: PostPageProps) {
         setOriginalRoute
     } = useFollowStore();
 
-    // 현재 위치와 시작점 사이의 거리 계산
-    const checkDistanceToStart = (position: Position, startPosition: Position) => {
-        const distance = calculatePathDistance([position, startPosition]); // km 단위
-        return distance <= 0.02; // 20m = 0.02km
-    };
-
     // 현재 위치 추적
     useEffect(() => {
         if ('geolocation' in navigator) {
             const watchId = navigator.geolocation.watchPosition(
                 (position) => {
-                    const newPosition = {
-                        lat: position.coords.latitude,
-                        lng: position.coords.longitude
+                    const newPosition: RouteCoordinate = {
+                        latitude: position.coords.latitude.toString(),
+                        longitude: position.coords.longitude.toString()
                     };
                     setCurrentPosition(newPosition);
 
                     // 경로가 있는 경우, 시작점과의 거리 체크
-                    if (route?.routeData.path[0]) {
+                    if (route?.pathResDTO.routeCoordinates[0]) {
                         const isNear = checkDistanceToStart(
                             newPosition,
-                            route.routeData.path[0]
+                            route.pathResDTO.routeCoordinates[0]
                         );
                         setIsNearStart(isNear);
                     }
@@ -87,12 +86,11 @@ export default function FollowPage({ params }: PostPageProps) {
     }, [route]);
 
     useEffect(() => {
-        // 경로 완주시 Dialog 표시
         if (isCompleted) {
             setShowCompletionDialog(true);
-            stopFollowing(); // 자동으로 따라걷기 중지
+            stopFollowing();
         }
-    }, [isCompleted]);
+    }, [isCompleted, stopFollowing]);
 
     // 경로 데이터 로드
     useEffect(() => {
@@ -114,7 +112,7 @@ export default function FollowPage({ params }: PostPageProps) {
         return () => {
             resetStatus();
         };
-    }, [params.id]);
+    }, [params.id, resetStatus, setOriginalRoute]);
 
     const handleFollowToggle = () => {
         if (isFollowing) {
@@ -123,11 +121,8 @@ export default function FollowPage({ params }: PostPageProps) {
             startFollowing();
         }
     };
-    const [showCompletionDialog, setShowCompletionDialog] = useState(false);
 
-
-
-    const formatTime = (seconds: number) => {
+    const formatTime = (seconds: number): string => {
         const minutes = Math.floor(seconds / 60);
         const remainingSeconds = Math.floor(seconds % 60);
         return `${minutes}분 ${remainingSeconds}초`;
@@ -168,8 +163,6 @@ export default function FollowPage({ params }: PostPageProps) {
                     </Alert>
                 )}
 
-
-
                 <ProgressDisplay />
 
                 <Button
@@ -188,11 +181,10 @@ export default function FollowPage({ params }: PostPageProps) {
                         distance={currentDistance}
                         onConfirm={() => {
                             setShowCompletionDialog(false);
-                            router.push('/main  ');
+                            router.push('/main');
                         }}
                     />
                 )}
-
             </div>
         </div>
     );

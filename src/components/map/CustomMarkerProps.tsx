@@ -1,9 +1,9 @@
-import { Position } from "@/types/types";
+import { KakaoPosition } from "@/types/types";
 import { MapMarker } from "react-kakao-maps-sdk";
 import { createPinMarker } from "./CustomMarkerIcon";
 
 interface CustomMarkerProps {
-    position: Position;
+    position: KakaoPosition;
     onClick?: () => void;
 }
 

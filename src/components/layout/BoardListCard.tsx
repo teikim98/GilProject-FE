@@ -31,14 +31,14 @@ function formatDate(dateString: string): string {
 export default function BoardCard({ post }: BoardCardProps) {
     return (
         <Card className="p-4 hover:shadow-lg transition-shadow">
-            <Link href={`/main/board/${post.id}`}>
+            <Link href={`/main/board/${post.postId}`}>
                 <div className="flex items-center gap-3 mb-3">
                     <Avatar>
-                        <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${post.userNickName}`} />
-                        <AvatarFallback>{post.userNickName[0]}</AvatarFallback>
+                        <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${post.nickName}`} />
+                        <AvatarFallback>{post.nickName[0]}</AvatarFallback>
                     </Avatar>
                     <div>
-                        <h3 className="font-semibold">{post.userNickName}</h3>
+                        <h3 className="font-semibold">{post.nickName}</h3>
                         <p className="text-sm text-gray-500 dark:text-gray-400">
                             {formatDate(post.writeDate)}
                         </p>
@@ -47,12 +47,12 @@ export default function BoardCard({ post }: BoardCardProps) {
 
                 <h2 className="text-xl font-bold mb-2">{post.title}</h2>
 
-                {post.routeData && (
+                {post.pathResDTO && (
                     <div className="h-48 mb-3">
                         <ViewingMap
                             route={{
-                                path: post.routeData.path,
-                                markers: post.routeData.markers
+                                routeCoordinates: post.pathResDTO.routeCoordinates,  // path -> routeCoordinates
+                                pins: post.pathResDTO.pins  // markers -> pins
                             }}
                             width="w-full"
                             height="h-full"
@@ -63,19 +63,19 @@ export default function BoardCard({ post }: BoardCardProps) {
                 <div className="flex justify-between items-center">
                     <div className="flex gap-4">
                         <div className="flex items-center gap-1 text-gray-600 dark:text-gray-400">
-                            <Heart size={18} className={post.postLikesNum > 0 ? 'fill-red-500 text-red-500' : ''} />
-                            <span>{post.postLikesNum}</span>
+                            <Heart size={18} className={post.liked === true ? 'fill-red-500 text-red-500' : ''} />
+                            <span>{post.likesCount}</span>
                         </div>
                         <div className="flex items-center gap-1 text-gray-600 dark:text-gray-400">
                             <MessageCircle size={18} />
-                            <span>{post.repliesNum}</span>
+                            <span>{post.repliesCount}</span>
                         </div>
                     </div>
 
-                    {post.routeData && (
+                    {post.pathResDTO && (
                         <div className="flex gap-3 text-sm text-gray-500 dark:text-gray-400">
-                            <span>{post.routeData.distance}km</span>
-                            <span>{post.routeData.recordedTime}분</span>
+                            <span>{post.pathResDTO.distance}km</span>
+                            <span>{post.pathResDTO.time}분</span>
                             <span className="text-xs bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">
                                 {post.tag}
                             </span>

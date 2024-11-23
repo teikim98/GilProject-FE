@@ -1,6 +1,6 @@
-import { CreatePostRequest, Post, PostImage } from "@/types/types";
+import { CreatePostRequest, Post } from "@/types/types";
 import { http, HttpResponse } from "msw";
-import { dummyPosts } from "./dummyData"; // 아까 만든 더미 데이터
+import { dummyPosts } from "./dummyData";
 
 export const handlers = [
   // 게시글 목록 조회
@@ -11,7 +11,7 @@ export const handlers = [
   // 게시글 상세 조회
   http.get("/api/posts/:id", ({ params }) => {
     const { id } = params;
-    const post = dummyPosts.find((post) => post.id === Number(id));
+    const post = dummyPosts.find((post) => post.postId === Number(id)); // id -> postId
 
     if (!post) {
       return new HttpResponse(null, { status: 404 });
@@ -22,48 +22,59 @@ export const handlers = [
 
   http.post("/api/posts", async ({ request }) => {
     const formData = await request.formData();
-    const postDataString = formData.get("postData");
+    const postDataString = formData.get("postCreateRequest"); // postData -> postCreateRequest
 
     if (!postDataString || typeof postDataString !== "string") {
       return new HttpResponse(null, {
         status: 400,
-        statusText: "Bad Request: Missing or invalid postData",
+        statusText: "Bad Request: Missing or invalid postCreateRequest",
       });
     }
 
     const postData = JSON.parse(postDataString) as CreatePostRequest;
     const imageFiles = formData.getAll("images") as File[];
 
-    // 실제 서버에서는 이미지를 저장하고 URL을 반환하겠지만,
-    // MSW에서는 임시 URL을 생성
-    const images: PostImage[] = imageFiles.map((_, index) => ({
-      id: index + 1,
-      url: `/api/placeholder/400/300`, // 실제 환경에서는 실제 이미지 URL
-      fileName: `image-${index + 1}.jpg`,
-    }));
+    const now = new Date().toISOString();
 
     const post: Post = {
-      ...postData,
-      id: dummyPosts.length + 1,
-      userNickName: "현재 로그인한 사용자",
-      pathId: 1,
-      startLat: postData.routeData.path[0].lat,
-      startLong: postData.routeData.path[0].lng,
+      postId: dummyPosts.length + 1, // id -> postId
+      nickName: "현재 로그인한 사용자", // userNickName -> nickName
+      pathId: postData.pathId,
+      startLat: 0, // pathResDTO에서 가져올 값
+      startLong: 0, // pathResDTO에서 가져올 값
       state: 1,
-      images: imageFiles.map(() => `/api/placeholder/400/300`), // 단순 문자열 배열로 수정
-      writeDate: new Date().toISOString(),
-      updateDate: "",
+      title: postData.title,
+      content: postData.content,
+      tag: postData.tag,
+      writeDate: now,
+      updateDate: now,
       readNum: 0,
-      postLikesUsers: [],
-      postLikesNum: 0,
-      repliesUsers: [],
-      repliesNum: 0,
-      postWishListsUsers: [],
+      likesCount: 0, // postLikesNum -> likesCount
+      repliesCount: 0, // repliesNum -> repliesCount
       postWishListsNum: 0,
+      userImgUrl: "", // 새로 추가
+      pathResDTO: {
+        // routeData -> pathResDTO
+        id: dummyPosts.length + 1,
+        user: { id: 1 }, // 임시 사용자 ID
+        content: postData.content,
+        state: 0,
+        title: postData.title,
+        time: 0, // 기본값
+        distance: 0, // 기본값
+        startLat: 0, // 기본값
+        startLong: 0, // 기본값
+        startAddr: null,
+        createdDate: now, // 새로 추가
+        routeCoordinates: [], // API 요청에서 받아와야 함
+        pins: [], // API 요청에서 받아와야 함
+      },
+      imageUrls: imageFiles.map(() => `/api/placeholder/400/300`), // images -> imageUrls
+      liked: false, // 새로 추가
+      wishListed: false, // 새로 추가
     };
 
     console.log(post);
-
     return HttpResponse.json(post);
   }),
 
@@ -72,7 +83,6 @@ export const handlers = [
 
     // id가 999인 경우 (테스트 경로)
     if (id === "999") {
-      // window 객체가 있는지 확인 (브라우저 환경인지 체크)
       if (typeof window !== "undefined") {
         const testRouteString = window.localStorage.getItem("testRoute");
         if (testRouteString) {
@@ -92,7 +102,7 @@ export const handlers = [
     }
 
     // 일반 경로 조회
-    const post = dummyPosts.find((post) => post.id === Number(id));
+    const post = dummyPosts.find((post) => post.postId === Number(id)); // id -> postId
     if (!post) {
       return new HttpResponse(null, {
         status: 404,

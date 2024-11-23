@@ -1,7 +1,5 @@
 'use client'
-
 import { useEffect, useState } from 'react'
-import { Post } from '@/types/types'
 import { Card } from '@/components/ui/card';
 import { ViewingMap } from '@/components/map/ViewingMapProps';
 import { Button } from '@/components/ui/button';
@@ -20,6 +18,7 @@ import {
 } from "@/components/ui/carousel"
 import { type CarouselApi } from "@/components/ui/carousel"
 import { CommentSection } from '@/components/comment/CommentSection';
+import { Post } from '@/types/types';
 
 interface PostPageProps {
     params: {
@@ -27,6 +26,7 @@ interface PostPageProps {
     };
 }
 
+//상세보기 페이지
 export default function PostPage({ params }: PostPageProps) {
     const [post, setPost] = useState<Post | null>(null)
     const [loading, setLoading] = useState(true)
@@ -41,7 +41,7 @@ export default function PostPage({ params }: PostPageProps) {
                 const data = await getPost(parseInt(params.id))
                 setPost(data)
                 // 지도 + 이미지 개수로 count 설정
-                setCount(1 + (data.images?.length || 0))
+                setCount(1 + (data.imageUrls?.length || 0))
             } catch (err) {
                 setError('게시글을 불러오는데 실패했습니다.')
                 console.error('Error fetching post:', err)
@@ -93,13 +93,13 @@ export default function PostPage({ params }: PostPageProps) {
                 >
                     <CarouselContent>
                         {/* 지도 슬라이드 */}
-                        {post.routeData && (
+                        {post.pathResDTO && (
                             <CarouselItem>
                                 <div className="h-[300px]">
                                     <ViewingMap
                                         route={{
-                                            path: post.routeData.path,
-                                            markers: post.routeData.markers
+                                            routeCoordinates: post.pathResDTO.routeCoordinates, // 이미 올바른 형식이므로 직접 전달
+                                            pins: post.pathResDTO.pins  // 이미 올바른 형식이므로 직접 전달
                                         }}
                                         width="w-full"
                                         height="h-full"
@@ -108,8 +108,9 @@ export default function PostPage({ params }: PostPageProps) {
                             </CarouselItem>
                         )}
 
+
                         {/* 이미지 슬라이드들 */}
-                        {post.images?.map((image, index) => (
+                        {post.imageUrls?.map((image, index) => (
                             <CarouselItem key={index}>
                                 <div className="h-[300px]">
                                     <img
@@ -120,6 +121,8 @@ export default function PostPage({ params }: PostPageProps) {
                                 </div>
                             </CarouselItem>
                         ))}
+
+
                     </CarouselContent>
 
                     {/* 이미지가 있을 때만 네비게이션 버튼 표시 */}
@@ -164,11 +167,11 @@ export default function PostPage({ params }: PostPageProps) {
             {/* 작성자 정보 */}
             <div className="flex items-center gap-3 mb-4">
                 <Avatar>
-                    <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${post.userNickName}`} />
-                    <AvatarFallback>{post.userNickName[0]}</AvatarFallback>
+                    <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${post.nickName}`} />
+                    <AvatarFallback>{post.nickName[0]}</AvatarFallback>
                 </Avatar>
                 <div>
-                    <p className="font-semibold">{post.userNickName}</p>
+                    <p className="font-semibold">{post.nickName}</p>
                     <p className="text-sm text-gray-500 dark:text-gray-400">
                         {formatDate(post.writeDate)}
                     </p>
@@ -176,16 +179,16 @@ export default function PostPage({ params }: PostPageProps) {
             </div>
 
             {/* 경로 정보 */}
-            {post.routeData && (
+            {post.pathResDTO && (
                 <Card className="p-4 mb-4">
                     <div className="grid grid-cols-2 gap-4">
                         <div>
                             <p className="text-sm text-gray-500 dark:text-gray-400">총 거리</p>
-                            <p className="font-semibold">{post.routeData.distance}km</p>
+                            <p className="font-semibold">{post.pathResDTO.distance}km</p>
                         </div>
                         <div>
                             <p className="text-sm text-gray-500 dark:text-gray-400">소요 시간</p>
-                            <p className="font-semibold">{post.routeData.recordedTime}분</p>
+                            <p className="font-semibold">{post.pathResDTO.time}분</p>
                         </div>
                     </div>
                 </Card>
@@ -208,15 +211,15 @@ export default function PostPage({ params }: PostPageProps) {
                 <div className="flex justify-between items-center">
                     <div className="flex gap-4">
                         <Button variant="ghost" size="sm" className="flex items-center gap-1">
-                            <Heart className={`w-5 h-5 ${post.postLikesNum > 0 ? 'fill-red-500 text-red-500' : ''}`} />
-                            <span>{post.postLikesNum}</span>
+                            <Heart className={`w-5 h-5 ${post.liked === true ? 'fill-red-500 text-red-500' : ''}`} />
+                            <span>{post.liked}</span>
                         </Button>
                         <Button variant="ghost" size="sm" className="flex items-center gap-1">
                             <MessageCircle className="w-5 h-5" />
-                            <span>{post.repliesNum}</span>
+                            <span>{post.repliesCount}</span>
                         </Button>
                         <Button variant="ghost" size="sm" className="flex items-center gap-1">
-                            <Bookmark className={`w-5 h-5 ${post.postWishListsNum > 0 ? 'fill-current' : ''}`} />
+                            <Bookmark className={`w-5 h-5 ${post.wishListed === true ? 'fill-current' : ''}`} />
                             <span>{post.postWishListsNum}</span>
                         </Button>
                     </div>
@@ -247,7 +250,7 @@ export default function PostPage({ params }: PostPageProps) {
             <Separator className="my-4" />
 
             <div className="space-y-4">
-                <h3 className="font-semibold">댓글 {post.repliesNum}개</h3>
+                <h3 className="font-semibold">댓글 {post.repliesCount}개</h3>
                 <CommentSection />
             </div>
         </div>

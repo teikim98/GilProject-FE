@@ -2,12 +2,15 @@ import { OverlayProps } from "@/types/types";
 import { X } from "lucide-react";
 import { CustomOverlayMap } from "react-kakao-maps-sdk";
 
-export function MarkerOverlay({ content, image, position, visible, onClose }: OverlayProps) {
+export function MarkerOverlay({ content, imageUrl, pinId, position, visible, onClose }: OverlayProps) {
     if (!visible) return null;
 
     return (
         <CustomOverlayMap
-            position={position}
+            position={{  // position을 KakaoPosition 형식으로 사용
+                lat: parseInt(position.latitude),  // RouteCoordinate -> KakaoPosition 변환
+                lng: parseInt(position.longitude)
+            }}
             yAnchor={1.2}
             clickable={true}
         >
@@ -36,9 +39,9 @@ export function MarkerOverlay({ content, image, position, visible, onClose }: Ov
                     >
                         {content}
                     </div>
-                    {image && (
+                    {imageUrl && (
                         <img
-                            src={image}
+                            src={imageUrl}
                             alt="Marker image"
                             className="w-[100px] h-[75px] overflow-hidden rounded"
                             onClick={(e) => e.stopPropagation()}

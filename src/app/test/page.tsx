@@ -7,24 +7,14 @@ import { Card } from '@/components/ui/card';
 import { useRouter } from 'next/navigation';
 import { ViewingMap } from '@/components/map/ViewingMapProps';
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Position } from '@/types/types';
+import { Pin, Post, RouteCoordinate } from '@/types/types';
 
 interface SavedPathData {
-    path: Array<{
-        latitude?: number;
-        longitude?: number;
-        lat?: number;
-        lng?: number;
-        timestamp?: string;
-    }>;
-    markers: Array<{
-        position: Position;
-        content: string;
-        image: string;
-        id: string;
-    }>;
-    recordedTime?: number;
+    path: RouteCoordinate[];
+    pins: Pin[];  // markers -> pins
+    time?: number;  // recordedTime -> time
 }
+
 
 interface SavedRoute {
     title: string;
@@ -34,20 +24,26 @@ interface SavedRoute {
 }
 
 // 좌표 형식 통일 함수
-const normalizeCoordinates = (path: SavedPathData['path']): Position[] => {
+const normalizeCoordinates = (path: RouteCoordinate[]): RouteCoordinate[] => {
     return path.map(point => ({
-        lat: point.lat || point.latitude || 0,
-        lng: point.lng || point.longitude || 0
-    })).filter(point => point.lat !== 0 && point.lng !== 0);
+        latitude: point.latitude,
+        longitude: point.longitude
+    }));
 };
 
-const calculateRouteDistance = (path: Position[]): number => {
+const calculateRouteDistance = (path: RouteCoordinate[]): number => {
     if (!path || path.length < 2) return 0;
 
     let totalDistance = 0;
     for (let i = 0; i < path.length - 1; i++) {
-        const point1 = path[i];
-        const point2 = path[i + 1];
+        const point1 = {
+            lat: parseFloat(path[i].latitude),
+            lng: parseFloat(path[i].longitude)
+        };
+        const point2 = {
+            lat: parseFloat(path[i + 1].latitude),
+            lng: parseFloat(path[i + 1].longitude)
+        };
 
         const R = 6371; // 지구 반경 (km)
         const dLat = ((point2.lat - point1.lat) * Math.PI) / 180;
@@ -107,32 +103,43 @@ export default function TestFollowPage() {
 
             const distance = calculateRouteDistance(normalizedPath);
 
-            const testPost = {
-                id: 999,
-                userNickName: "테스트 사용자",
+            const testPost: Post = {
+                postId: 999,
+                nickName: "테스트 사용자",  // userNickName -> nickName
                 pathId: 999,
-                startLat: normalizedPath[0].lat,
-                startLong: normalizedPath[0].lng,
+                startLat: parseFloat(normalizedPath[0].latitude),
+                startLong: parseFloat(normalizedPath[0].longitude),
                 state: 1,
                 title: selectedRoute.title || "테스트 경로",
-                content: selectedRoute.description || "테스트 경로입니다.",
+                content: selectedRoute.description || "테스트 경로입니다.",  // description -> content
                 tag: "테스트",
                 writeDate: selectedRoute.createdAt,
                 updateDate: selectedRoute.createdAt,
                 readNum: 0,
-                postLikesUsers: [],
-                postLikesNum: 0,
-                repliesUsers: [],
-                repliesNum: 0,
-                postWishListsUsers: [],
+                likesCount: 0,  // postLikesNum -> likesCount
+                repliesCount: 0,  // repliesNum -> repliesCount
                 postWishListsNum: 0,
-                routeData: {
-                    path: normalizedPath,
-                    markers: selectedRoute.pathData.markers,
-                    recordedTime: selectedRoute.pathData.recordedTime || 0,
-                    distance: distance
-                }
+                userImgUrl: "",
+                pathResDTO: {  // routeData -> pathResDTO
+                    id: 999,
+                    user: { id: 0 },
+                    content: selectedRoute.description,
+                    state: 0,
+                    title: selectedRoute.title,
+                    time: selectedRoute.pathData.time || 0,  // recordedTime -> time
+                    distance: distance,
+                    createdDate: selectedRoute.createdAt,
+                    startLat: parseFloat(normalizedPath[0].latitude),
+                    startLong: parseFloat(normalizedPath[0].longitude),
+                    startAddr: null,
+                    routeCoordinates: normalizedPath,
+                    pins: selectedRoute.pathData.pins
+                },
+                imageUrls: [],
+                liked: false,
+                wishListed: false
             };
+
 
             window.localStorage.setItem('testRoute', JSON.stringify(testPost));
             router.push('/follow/999');
@@ -172,8 +179,8 @@ export default function TestFollowPage() {
                                 <Card
                                     key={index}
                                     className={`p-4 cursor-pointer transition-colors ${selectedRouteIndex === index
-                                            ? 'border-2 border-primary'
-                                            : 'hover:bg-gray-50'
+                                        ? 'border-2 border-primary'
+                                        : 'hover:bg-gray-50'
                                         }`}
                                     onClick={() => setSelectedRouteIndex(index)}
                                 >
@@ -189,8 +196,8 @@ export default function TestFollowPage() {
                                     <div className="h-[200px] mb-4">
                                         <ViewingMap
                                             route={{
-                                                path: normalizedPath,
-                                                markers: route.pathData.markers
+                                                routeCoordinates: normalizedPath,  // path -> routeCoordinates
+                                                pins: route.pathData.pins          // markers -> pins
                                             }}
                                             width="w-full"
                                             height="h-full"
@@ -207,8 +214,8 @@ export default function TestFollowPage() {
                                         <div>
                                             <span className="text-gray-500">소요 시간: </span>
                                             <span className="font-medium">
-                                                {Math.floor((route.pathData.recordedTime || 0) / 60)}분
-                                                {(route.pathData.recordedTime || 0) % 60}초
+                                                {Math.floor((route.pathData.time || 0) / 60)}분
+                                                {(route.pathData.time || 0) % 60}초
                                             </span>
                                         </div>
                                     </div>

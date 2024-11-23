@@ -1,22 +1,16 @@
 import { create } from "zustand";
-import { MarkerData } from "@/types/types";
-
-interface Position {
-  lat: number;
-  lng: number;
-}
+import { Pin, RouteCoordinate } from "@/types/types";
 
 interface RecordState {
   isRecording: boolean;
-  pathPositions: Position[];
-  markers: MarkerData[];
+  pathPositions: RouteCoordinate[];
+  pins: Pin[]; // markers -> pins
   recordStartTime: number | null;
-  //시작 시간은 로컬에서만 사용
 
   startRecording: () => void;
   stopRecording: () => void;
-  addPathPosition: (position: Position) => void;
-  addMarker: (marker: MarkerData) => void;
+  addPathPosition: (position: RouteCoordinate) => void;
+  addPin: (pin: Pin) => void; // addMarker -> addPin
   loadSavedPath: () => void;
   resetRecord: () => void;
 }
@@ -24,7 +18,7 @@ interface RecordState {
 export const useRecordStore = create<RecordState>((set, get) => ({
   isRecording: false,
   pathPositions: [],
-  markers: [],
+  pins: [], // markers -> pins
   recordStartTime: null,
 
   startRecording: () =>
@@ -34,48 +28,46 @@ export const useRecordStore = create<RecordState>((set, get) => ({
     }),
 
   stopRecording: () => {
-    const { pathPositions, markers } = get();
+    const { pathPositions, pins } = get();
     if (pathPositions.length > 0) {
-      // 임시 저장 경로 데이터
       localStorage.setItem(
         "savedPath",
-        JSON.stringify({ path: pathPositions, markers })
+        JSON.stringify({ path: pathPositions, pins }) // markers -> pins
       );
-      // 임시 경로가 있음을 나타내는 쿠키 설정
       document.cookie = "has-temp-path=true;path=/";
     }
     set({ isRecording: false });
   },
 
-  addPathPosition: (position: Position) =>
+  addPathPosition: (position: RouteCoordinate) =>
     set((state) => ({
       pathPositions: [...state.pathPositions, position],
     })),
 
-  addMarker: (marker: MarkerData) =>
+  addPin: (
+    pin: Pin // addMarker -> addPin
+  ) =>
     set((state) => ({
-      markers: [...state.markers, marker],
+      pins: [...state.pins, pin], // markers -> pins
     })),
 
   loadSavedPath: () => {
     const savedData = localStorage.getItem("savedPath");
     if (savedData) {
-      const { path, markers } = JSON.parse(savedData);
+      const { path, pins } = JSON.parse(savedData); // markers -> pins
       set({
         pathPositions: path,
-        markers: markers,
+        pins: pins, // markers -> pins
       });
     }
   },
 
   resetRecord: () => {
-    // 임시 저장 데이터 삭제
     localStorage.removeItem("savedPath");
-    // 쿠키도 삭제
     document.cookie = "has-temp-path=false;path=/;max-age=0";
     set({
       pathPositions: [],
-      markers: [],
+      pins: [], // markers -> pins
     });
   },
 }));

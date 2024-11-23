@@ -1,4 +1,4 @@
-import { Position, SizeProps } from "@/types/types";
+import { KakaoPosition, RouteCoordinate, SizeProps } from "@/types/types";
 import { useState, useEffect } from "react";
 import { BaseKakaoMap } from "./BaseKakaoMap";
 import { CurrentLocationMarker } from "./CurrentLocationMarker";
@@ -6,11 +6,9 @@ import { Card } from "../ui/card";
 import { Skeleton } from "../ui/skeleton";
 
 
-
-
 export function CurrentLocationMap({ width, height }: SizeProps) {
-    const [center, setCenter] = useState<Position | null>(null);
-    const [userPosition, setUserPosition] = useState<Position | null>(null);
+    const [center, setCenter] = useState<KakaoPosition | null>(null);
+    const [userPosition, setUserPosition] = useState<KakaoPosition | null>(null);
 
     useEffect(() => {
         if (!navigator.geolocation) return;

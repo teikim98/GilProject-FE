@@ -1,5 +1,5 @@
 import { useRecordStore } from "@/store/useRecordStore";
-import { MarkerData, Position, SizeProps } from "@/types/types";
+import { Pin, RouteCoordinate, KakaoPosition, SizeProps, MarkerForOverlay } from "@/types/types";
 import { getCurrentPosition } from "@/util/getCurrentPosition";
 import { LocationSmoother } from "@/util/locationSmoother";
 import { useState, useEffect, useRef } from "react";
@@ -11,23 +11,24 @@ import { PinButton } from "./PinButtonProps";
 import { RoutePolyline } from "./RoutePolyline";
 
 export function RecordingMap({ width, height }: SizeProps) {
-    const { pathPositions, markers, addPathPosition, addMarker } = useRecordStore();
-    const [userPosition, setUserPosition] = useState<Position | null>(null);
-    const [center, setCenter] = useState<Position>({ lat: 37.5665, lng: 126.9780 });
-    const [selectedPosition, setSelectedPosition] = useState<Position | null>(null);
+    const { pathPositions, pins, addPathPosition, addPin } = useRecordStore();
+    const [userPosition, setUserPosition] = useState<KakaoPosition | null>(null);
+    const [center, setCenter] = useState<KakaoPosition>({ lat: 37.5665, lng: 126.9780 });
+    const [selectedPosition, setSelectedPosition] = useState<KakaoPosition | null>(null);
     const [showMarkerForm, setShowMarkerForm] = useState(false);
     const [isGettingLocation, setIsGettingLocation] = useState(false);
     const locationSmootherRef = useRef(new LocationSmoother(20, 5, 3));
 
-    // 위치 처리 함수 분리
-    const processNewPosition = (rawPosition: Position, accuracy?: number) => {
+    const processNewPosition = (rawPosition: KakaoPosition, accuracy?: number) => {
         const smoothedPosition = locationSmootherRef.current.smooth(rawPosition, accuracy);
         if (smoothedPosition) {
             setUserPosition(smoothedPosition);
             setCenter(smoothedPosition);
-            addPathPosition(smoothedPosition);
+            addPathPosition({
+                latitude: smoothedPosition.lat.toString(),
+                longitude: smoothedPosition.lng.toString()
+            });
 
-            // Service Worker에 스무딩된 위치 전송
             if (navigator.serviceWorker.controller) {
                 navigator.serviceWorker.controller.postMessage({
                     type: 'LOCATION_UPDATE',
@@ -44,7 +45,6 @@ export function RecordingMap({ width, height }: SizeProps) {
     useEffect(() => {
         if (!navigator.geolocation) return;
 
-        // Service Worker 등록
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('/worker/location-worker.js')
                 .then(registration => {
@@ -57,14 +57,12 @@ export function RecordingMap({ width, height }: SizeProps) {
                     console.error('Location worker registration failed:', error);
                 });
 
-            // 백그라운드 위치 업데이트 수신
             const messageHandler = (event: MessageEvent) => {
                 if (event.data.type === 'BACKGROUND_UPDATE' &&
                     event.data.trackingType === 'RECORDING') {
                     const { position, accuracy } = event.data.location;
                     processNewPosition(position, accuracy);
                 } else if (event.data.type === 'RECORDING_LOCATIONS') {
-                    // 백그라운드에서 수집된 위치들 처리
                     event.data.locations.forEach((loc: any) => {
                         processNewPosition(loc.position, loc.accuracy);
                     });
@@ -73,7 +71,6 @@ export function RecordingMap({ width, height }: SizeProps) {
 
             navigator.serviceWorker.addEventListener('message', messageHandler);
 
-            // 위치 감시 설정
             const watchId = navigator.geolocation.watchPosition(
                 (position) => {
                     const newPosition = {
@@ -117,28 +114,47 @@ export function RecordingMap({ width, height }: SizeProps) {
         }
     };
 
-    const handleMarkerSubmit = (content: string, image: string) => {
+    const handleMarkerSubmit = (content: string, imageUrl: string) => {
         if (selectedPosition) {
-            const newMarker: MarkerData = {
-                position: selectedPosition,
+            const newPin: Pin = {
+                id: Date.now(),
+                latitude: selectedPosition.lat,
+                longitude: selectedPosition.lng,
                 content,
-                image,
-                id: `marker-${Date.now()}`
+                imageUrl
             };
-            addMarker(newMarker);
+            addPin(newPin);
         }
         setShowMarkerForm(false);
         setSelectedPosition(null);
     };
 
+    const convertPinToMarker = (pin: Pin): MarkerForOverlay => ({
+        id: pin.id.toString(),
+        position: {
+            lat: pin.latitude,
+            lng: pin.longitude
+        },
+        content: pin.content,
+        imageUrl: pin.imageUrl
+    });
+
     return (
         <BaseKakaoMap width={width} height={height} center={center}>
             {userPosition && <CurrentLocationMarker position={userPosition} />}
-            {pathPositions.length > 0 && <RoutePolyline path={pathPositions} isRecording />}
-            {markers.map(marker => (
+            {pathPositions.length > 0 && (
+                <RoutePolyline
+                    path={pathPositions.map(coord => ({
+                        lat: parseFloat(coord.latitude),
+                        lng: parseFloat(coord.longitude)
+                    }))}
+                    isRecording
+                />
+            )}
+            {pins.map(pin => (
                 <MarkerWithOverlay
-                    key={marker.id}
-                    marker={marker}
+                    key={pin.id}
+                    marker={convertPinToMarker(pin)}
                 />
             ))}
             <PinButton onPinClick={handleAddMarker} isLoading={isGettingLocation} />

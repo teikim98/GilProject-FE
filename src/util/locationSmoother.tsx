@@ -1,13 +1,10 @@
-interface Position {
-    lat: number;
-    lng: number;
-}
+import { KakaoPosition } from '@/types/types';
 
 export class LocationSmoother {
-    private readonly minAccuracy: number; // 최소 정확도 (미터)
-    private readonly minDistance: number; // 최소 거리 차이 (미터)
-    private readonly bufferSize: number;  // 이동 평균을 위한 버퍼 크기
-    private positionBuffer: Position[];
+    private readonly minAccuracy: number;
+    private readonly minDistance: number;
+    private readonly bufferSize: number;
+    private positionBuffer: KakaoPosition[];
 
     constructor(minAccuracy = 20, minDistance = 5, bufferSize = 3) {
         this.minAccuracy = minAccuracy;
@@ -17,7 +14,7 @@ export class LocationSmoother {
     }
 
     // 두 지점 간의 거리 계산 (Haversine 공식)
-    private calculateDistance(pos1: Position, pos2: Position): number {
+    private calculateDistance(pos1: KakaoPosition, pos2: KakaoPosition): number {
         const R = 6371e3; // 지구 반경 (미터)
         const φ1 = (pos1.lat * Math.PI) / 180;
         const φ2 = (pos2.lat * Math.PI) / 180;
@@ -33,7 +30,7 @@ export class LocationSmoother {
     }
 
     // 이동 평균 계산
-    private calculateMovingAverage(position: Position): Position {
+    private calculateMovingAverage(position: KakaoPosition): KakaoPosition {
         this.positionBuffer.push(position);
 
         if (this.positionBuffer.length > this.bufferSize) {
@@ -52,7 +49,7 @@ export class LocationSmoother {
     }
 
     // 위치 데이터 스무딩
-    public smooth(position: Position, accuracy?: number): Position | null {
+    public smooth(position: KakaoPosition, accuracy?: number): KakaoPosition | null {
         // 정확도가 너무 낮으면 스킵
         if (accuracy && accuracy > this.minAccuracy) {
             return null;

@@ -12,124 +12,93 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { createPost, getPost, updatePost } from "@/api/post";
 import { ViewingMap } from "@/components/map/ViewingMapProps";
-import { CreatePostRequest } from "@/types/types";
+import { CreatePostRequest, Post, Path } from "@/types/types";
 import MyRouteList from "@/components/layout/myRouteCard";
-
-interface SavedRoute {
-    title: string;
-    description: string;
-    pathData: {
-        path: Array<{
-            lat: number;
-            lng: number;
-        }>;
-        markers: Array<{
-            id: string;
-            position: {
-                lat: number;
-                lng: number;
-            };
-            content: string;
-            image?: string;
-        }>;
-        recordedTime: number;
-        distance: number;
-    };
-    createdAt: string;
-}
 
 interface WritePostPageProps {
     isEdit?: boolean;
     postId?: number;
 }
 
+const INITIAL_POST: Post = {
+    postId: 0,
+    nickName: "테스트 사용자",
+    pathId: 0,
+    startLat: 37.5665,
+    startLong: 126.978,
+    state: 0,
+    title: "",
+    content: "",
+    tag: "산책",
+    writeDate: new Date().toISOString(),
+    updateDate: new Date().toISOString(),
+    readNum: 0,
+    likesCount: 0,
+    repliesCount: 0,
+    postWishListsNum: 0,
+    userImgUrl: "",
+    pathResDTO: {
+        id: 0,
+        user: { id: 0 },
+        content: "",
+        state: 0,
+        title: "",
+        time: 0,
+        distance: 0,
+        startLat: 37.5665,
+        startLong: 126.978,
+        startAddr: null,
+        createdDate: new Date().toISOString(),
+        routeCoordinates: [],
+        pins: []
+    },
+    imageUrls: [],
+    liked: false,
+    wishListed: false
+};
+
 export default function PostForm({ isEdit, postId }: WritePostPageProps) {
     const router = useRouter();
     const [isRouteListOpen, setIsRouteListOpen] = useState(false);
-    const [selectedRoute, setSelectedRoute] = useState<SavedRoute | null>(null);
-    const [routes, setRoutes] = useState<SavedRoute[]>([]);
-    const [title, setTitle] = useState("");
-    const [content, setContent] = useState("");
+    const [selectedPath, setSelectedPath] = useState<Path | null>(null);
+    const [post, setPost] = useState<Post>(INITIAL_POST);
     const [isWriting, setIsWriting] = useState(false);
     const [images, setImages] = useState<File[]>([]);
     const [previews, setPreviews] = useState<string[]>([]);
-    const [existingImages, setExistingImages] = useState<string[]>([]);
-    const [deletedImageUrls, setDeletedImageUrls] = useState<string[]>([]); // deletedImageIds 대신
+    const [deletedImageUrls, setDeletedImageUrls] = useState<string[]>([]);
 
     useEffect(() => {
-        const savedRoutes = localStorage.getItem('savedRoutes');
-        if (!savedRoutes) {
-            const testRoute: SavedRoute = {
-                title: "테스트 산책로",
-                description: "테스트용 산책 경로입니다",
-                pathData: {
-                    path: [
-                        { lat: 37.5665, lng: 126.9780 },
-                        { lat: 37.5668, lng: 126.9785 },
-                        { lat: 37.5671, lng: 126.9790 }
-                    ],
-                    markers: [
-                        {
-                            id: "1",
-                            position: { lat: 37.5665, lng: 126.9780 },
-                            content: "시작점",
-                        }
-                    ],
-                    recordedTime: 30,
-                    distance: 2.5
-                },
-                createdAt: new Date().toISOString()
-            };
-
-            localStorage.setItem('savedRoutes', JSON.stringify([testRoute]));
-            setRoutes([testRoute]);
-        } else {
-            setRoutes(JSON.parse(savedRoutes));
-        }
-    }, []);
-
-    useEffect(() => {
-        if (title || content) {
+        if (post.title || post.content) {
             setIsWriting(true);
         } else {
             setIsWriting(false);
         }
-    }, [title, content]);
+    }, [post.title, post.content]);
 
     useEffect(() => {
-        // 수정 모드일 때 기존 데이터 불러오기
         if (isEdit && postId) {
             fetchPost();
         }
     }, [isEdit, postId]);
-
     const fetchPost = async () => {
         if (!postId) return;
 
         try {
             const data = await getPost(postId);
-            setTitle(data.title);
-            setContent(data.content);
-
-            if (data.routeData) {
-                setSelectedRoute({
-                    title: data.title,
-                    description: data.content,
-                    pathData: data.routeData,
-                    createdAt: data.writeDate
-                });
-            }
-
-            if (data.images) {
-                setExistingImages(data.images);
-            }
+            setPost(data);
+            setSelectedPath(data.pathResDTO);
         } catch (error) {
             console.error('Error fetching post:', error);
         }
     };
 
-    const handleRouteSelect = (route: SavedRoute) => {
-        setSelectedRoute(route);
+    const handlePathSelect = (path: Path) => {
+        setSelectedPath(path);
+        setPost(prev => ({
+            ...prev,
+            pathId: path.id,
+            pathResDTO: path
+        }));
         setIsRouteListOpen(false);
     };
 
@@ -153,14 +122,16 @@ export default function PostForm({ isEdit, postId }: WritePostPageProps) {
         setPreviews(prev => prev.filter((_, i) => i !== index));
     };
 
-    // 기존 이미지 삭제 함수 수정
     const removeExistingImage = (imageUrl: string, index: number) => {
-        setExistingImages(prev => prev.filter((_, i) => i !== index));
+        setPost(prev => ({
+            ...prev,
+            imageUrls: prev.imageUrls.filter((_, i) => i !== index)
+        }));
         setDeletedImageUrls(prev => [...prev, imageUrl]);
     };
 
     const handleSubmit = async () => {
-        if (!selectedRoute || !title.trim()) {
+        if (!selectedPath || !post.title.trim()) {
             alert("필수 정보를 모두 입력해주세요.");
             return;
         }
@@ -169,28 +140,25 @@ export default function PostForm({ isEdit, postId }: WritePostPageProps) {
             const formData = new FormData();
 
             const postData: CreatePostRequest = {
-                title: title.trim(),
-                content: content,
-                tag: "산책",
-                routeData: {
-                    path: selectedRoute.pathData.path,
-                    markers: selectedRoute.pathData.markers,
-                    recordedTime: selectedRoute.pathData.recordedTime,
-                    distance: selectedRoute.pathData.distance
-                }
+                title: post.title.trim(),
+                content: post.content,
+                tag: post.tag,
+                pathId: selectedPath.id
             };
 
-            formData.append('postData', JSON.stringify(postData));
-
-            images.forEach((image) => {
-                formData.append('images', image);
-            });
-
             if (isEdit && postId) {
-                formData.append('deletedImageUrls', JSON.stringify(deletedImageUrls));
+                formData.append('postUpdateRequest', JSON.stringify({
+                    title: post.title.trim(),
+                    content: post.content,
+                    tag: post.tag,
+                    deleteUrls: deletedImageUrls
+                }));
+                images.forEach(image => formData.append('images', image));
                 await updatePost(postId, formData);
-                router.push(`/posts/${postId}`);
+                router.push(`/main/board/${postId}`);
             } else {
+                formData.append('postCreateRequest', JSON.stringify(postData));
+                images.forEach(image => formData.append('images', image));
                 await createPost(formData);
                 router.push('/main/board');
             }
@@ -223,27 +191,27 @@ export default function PostForm({ isEdit, postId }: WritePostPageProps) {
                     </DialogHeader>
                     <div className="mt-4">
                         <h3 className="font-semibold mb-4">내 저장 경로</h3>
-                        <MyRouteList isWriteMode={true} onRouteSelect={handleRouteSelect} />
+                        <MyRouteList isWriteMode={true} onRouteSelect={handlePathSelect} />
                     </div>
                 </DialogContent>
             </Dialog>
 
-            {selectedRoute && (
+            {selectedPath && (
                 <div className="mt-4">
                     <h2 className="text-lg font-semibold mb-4">선택된 경로</h2>
                     <Card className="p-4">
-                        <h3 className="font-medium">{selectedRoute.title}</h3>
+                        <h3 className="font-medium">{selectedPath.title}</h3>
                         <div className="text-sm text-muted-foreground">
-                            <span>{selectedRoute.pathData.recordedTime}분</span>
+                            <span>{selectedPath.time}분</span>
                             <span className="mx-2">•</span>
-                            <span>{selectedRoute.pathData.distance}km</span>
+                            <span>{selectedPath.distance}km</span>
                         </div>
                         <div className="h-[300px] mt-4">
                             <ViewingMap
                                 width="w-full"
                                 route={{
-                                    path: selectedRoute.pathData.path,
-                                    markers: selectedRoute.pathData.markers
+                                    routeCoordinates: selectedPath.routeCoordinates,
+                                    pins: selectedPath.pins
                                 }}
                                 height="h-full"
                             />
@@ -257,8 +225,8 @@ export default function PostForm({ isEdit, postId }: WritePostPageProps) {
                     <Label htmlFor="title">제목</Label>
                     <Input
                         id="title"
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
+                        value={post.title}
+                        onChange={(e) => setPost(prev => ({ ...prev, title: e.target.value }))}
                         placeholder="제목을 입력하세요"
                         className="w-full"
                     />
@@ -267,12 +235,32 @@ export default function PostForm({ isEdit, postId }: WritePostPageProps) {
                     <Label htmlFor="content">내용</Label>
                     <Textarea
                         id="content"
-                        value={content}
-                        onChange={(e) => setContent(e.target.value)}
+                        value={post.content}
+                        onChange={(e) => setPost(prev => ({ ...prev, content: e.target.value }))}
                         placeholder="내용을 입력하세요"
                         className="min-h-[200px]"
                     />
                 </div>
+                <div className="grid w-full gap-2">
+                    <Label htmlFor="tag">태그 (5자 이내)</Label>
+                    <Input
+                        id="tag"
+                        value={post.tag}
+                        maxLength={5}
+                        onChange={(e) => setPost(prev => ({
+                            ...prev,
+                            tag: e.target.value.slice(0, 5)
+                        }))}
+                        placeholder="태그를 입력하세요"
+                        className="w-full"
+                    />
+                    {post.tag.length > 0 && (
+                        <p className="text-sm text-muted-foreground text-right">
+                            {post.tag.length}/5
+                        </p>
+                    )}
+                </div>
+
                 <div className="grid w-full gap-2 pt-4">
                     <Label>이미지</Label>
                     <div className="flex flex-wrap gap-2">
@@ -288,7 +276,7 @@ export default function PostForm({ isEdit, postId }: WritePostPageProps) {
                         </label>
 
                         {/* 기존 이미지 표시 */}
-                        {isEdit && existingImages.map((imageUrl, index) => (
+                        {isEdit && post.imageUrls.map((imageUrl, index) => (
                             <div key={`existing-${index}`} className="relative w-24 h-24">
                                 <img
                                     src={imageUrl}
@@ -324,12 +312,12 @@ export default function PostForm({ isEdit, postId }: WritePostPageProps) {
                 </div>
                 <Button
                     onClick={handleSubmit}
-                    disabled={!selectedRoute || !title.trim()}
+                    disabled={!selectedPath || !post.title.trim()}
                     className="w-full mb-16"
                 >
                     {isEdit ? "수정 완료" : "작성 완료"}
                 </Button>
             </div>
         </div>
-    )
+    );
 }

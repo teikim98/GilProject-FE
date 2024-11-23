@@ -12,6 +12,7 @@ export const getPosts = async (): Promise<Post[]> => {
 
 export const getPost = async (id: number): Promise<Post> => {
   const response = await api.get(`/posts/${id}`);
+
   return response.data;
 };
 

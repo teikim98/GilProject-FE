@@ -1,31 +1,77 @@
-export interface MarkerData {
-  id: string;
-  position: {
+// 기본 위치 타입
+export interface RouteCoordinate {
+  latitude: string;
+  longitude: string;
+}
+
+export interface KakaoPosition {
+  lat: number;
+  lng: number;
+}
+
+// 마커/핀 통합 타입
+export interface Pin {
+  id: number;
+  imageUrl: string | null;
+  content: string;
+  latitude: number;
+  longitude: number;
+}
+
+export interface PathUser {
+  id: number;
+}
+
+// 경로 데이터 통합
+export interface Path {
+  id: number;
+  user: PathUser;
+  content: string;
+  state: number;
+  title: string;
+  time: number;
+  createdDate: string;
+  distance: number;
+  startLat: number;
+  startLong: number;
+  startAddr: string | null;
+  routeCoordinates: RouteCoordinate[];
+  pins: Pin[];
+}
+
+export type PathsResponse = Path[];
+
+// 게시글 타입
+export interface Post {
+  postId: number;
+  nickName: string;
+  pathId: number;
+  startLat: number;
+  startLong: number;
+  state: number;
+  title: string;
+  content: string;
+  tag: string;
+  writeDate: string;
+  updateDate: string;
+  readNum: number;
+  likesCount: number;
+  repliesCount: number;
+  postWishListsNum: number;
+  userImgUrl: string;
+  pathResDTO: Path;
+  imageUrls: string[];
+  liked: boolean;
+  wishListed: boolean;
+}
+
+// 카카오맵 관련 타입들
+export interface BaseKakaoMapProps {
+  center: {
+    // RouteCoordinate를 카카오맵 Position으로 변환해서 사용
     lat: number;
     lng: number;
   };
-  content: string;
-  image?: string;
-}
-
-export type NavigationState =
-  | "isRecording"
-  | "isEditing"
-  | "isWriting"
-  | "isSaving"
-  | "none";
-
-export interface OverlayProps {
-  content: string;
-  image?: string;
-  markerId: string;
-  position: { lat: number; lng: number };
-  visible: boolean;
-  onClose: () => void;
-}
-
-export interface BaseKakaoMapProps {
-  center: Position;
   width?: string;
   height?: string;
   onClick?: (
@@ -40,8 +86,27 @@ export interface KakaoMapProps {
   isEditing?: boolean;
   width?: string;
   height?: string;
-  initialPath?: Array<{ lat: number; lng: number }>;
-  initialMarkers?: MarkerData[];
+  initialPath?: RouteCoordinate[];
+  initialPins?: Pin[];
+}
+
+export interface OverlayProps {
+  content: string;
+  imageUrl?: string | null;
+  pinId: number;
+  position: RouteCoordinate;
+  visible: boolean;
+  onClose: () => void;
+}
+
+export interface MarkerForOverlay {
+  id: string;
+  position: {
+    lat: number;
+    lng: number;
+  };
+  content: string;
+  imageUrl?: string | null; // null도 허용하도록 변경
 }
 
 export interface SizeProps {
@@ -49,97 +114,12 @@ export interface SizeProps {
   height?: string;
 }
 
-export interface Position {
-  lat: number;
-  lng: number;
-}
-
-export interface RouteData {
-  title: string;
-  description: string;
-  pathData: {
-    path: Array<{ lat: number; lng: number }>;
-    markers: MarkerData[];
-    recordedTime: number;
-    distance: number;
-  };
-  createdAt: string;
-}
-
-export interface RouteCardProps {
-  route: RouteData;
-  onSelect?: (route: RouteData) => void;
-  isWriteMode?: boolean;
-}
-
-export interface PostImage {
-  id: number;
-  url: string;
-  fileName?: string;
-  order?: number;
-}
-
-export interface Post {
-  id: number;
-  userNickName: string;
-  pathId: number;
-  startLat: number;
-  startLong: number;
-  state: number;
-  title: string;
-  content: string;
-  tag: string;
-  writeDate: string; // 작성일
-  updateDate: string; // 수정일
-  readNum: number; // 조회수
-  postLikesUsers: number[]; // 좋아요한 유저 ID 배열
-  postLikesNum: number; // 좋아요 수
-  repliesUsers: number[]; // 댓글 작성한 유저 ID 배열
-  repliesNum: number; // 댓글 수
-  postWishListsUsers: number[]; // 찜한 유저 ID 배열
-  postWishListsNum: number; // 찜 수
-  routeData: {
-    path: Array<{
-      lat: number;
-      lng: number;
-    }>;
-    markers: Array<{
-      id: string;
-      position: {
-        lat: number;
-        lng: number;
-      };
-      content: string;
-      image?: string;
-    }>;
-    recordedTime: number;
-    distance: number;
-  };
-  images?: string[];
-}
-
-export interface CreatePostRequest {
-  title: string;
-  content: string;
-  tag: string;
-  routeData: {
-    path: Array<{
-      lat: number;
-      lng: number;
-    }>;
-    markers: Array<{
-      id: string;
-      position: {
-        lat: number;
-        lng: number;
-      };
-      content: string;
-      image?: string;
-    }>;
-    recordedTime: number;
-    distance: number;
-  };
-}
+export type NavigationState =
+  | "isRecording"
+  | "isEditing"
+  | "isWriting"
+  | "isSaving"
+  | "none";
 
 export interface User {
   id: number;
@@ -157,43 +137,47 @@ export interface User {
   updateDate: string;
   point: number;
   state: number;
-  posts: any[] | null;
-  paths: any[] | null;
-  postLikes: any[] | null;
-  subscriptions: any[] | null;
+  posts: Post[] | null;
+  paths: Path[] | null;
+  postLikes: number[] | null;
+  subscriptions: number[] | null;
   notifications: any[] | null;
-  postWishLists: any[] | null;
-  replyLikes: any[] | null;
+  postWishLists: number[] | null;
+  replyLikes: number[] | null;
 }
 
-interface RouteCoordinate {
-  latitude: number;
-  longitude: number;
-}
-
-interface Pin {
-  id: number;
-  imageUrl: string;
-  content: string;
-  latitude: number;
-  longitude: number;
-}
-
-interface RouteUser {
-  id: number;
-}
-
-export interface RouteTest {
-  id: number;
-  user: RouteUser;
-  content: string;
-  state: number;
+export interface CreatePostRequest {
   title: string;
-  time: number;
-  distance: number;
-  startLat: number;
-  startLong: number;
-  startAddr: string;
-  routeCoordinates: RouteCoordinate[];
-  pins: Pin[];
+  content: string;
+  tag: string;
+  pathId: number;
+}
+
+export interface CreatePostFormData {
+  postCreateRequest: string;
+  images: File[];
+}
+
+export interface UpdatePostRequest {
+  title: string;
+  content: string;
+  tag: string;
+  deleteUrls: string[]; // 삭제할 이미지 URL 배열
+}
+
+export interface UpdatePostFormData {
+  postUpdateRequest: string; // JSON.stringify(UpdatePostRequest)
+  images: File[]; // 새로 추가할 이미지 파일들
+}
+
+// 사용 예시를 위한 타입
+export interface PostAPI {
+  // 게시글 생성
+  createPost: (data: CreatePostRequest, images?: File[]) => Promise<Post>;
+  // 게시글 수정
+  updatePost: (
+    postId: number,
+    data: UpdatePostRequest,
+    images?: File[]
+  ) => Promise<Post>;
 }

@@ -101,7 +101,7 @@ export default function BoardList() {
         <div className="space-y-4 mt-4">
             {filteredPosts.length > 0 ? (
                 filteredPosts.map((post) => (
-                    <BoardCard key={post.id} post={post} />
+                    <BoardCard key={post.postId} post={post} />
                 ))
             ) : (
                 <div className="flex flex-col items-center justify-center py-10 text-gray-500">

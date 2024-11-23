@@ -1,7 +1,7 @@
-import { Position } from "@/types/types";
+import { KakaoPosition } from "@/types/types";
 import { CustomOverlayMap } from "react-kakao-maps-sdk";
 
-export function CurrentLocationMarker({ position }: { position: Position }) {
+export function CurrentLocationMarker({ position }: { position: KakaoPosition }) {
     return (
         <CustomOverlayMap position={position} yAnchor={1}>
             <div className="relative">

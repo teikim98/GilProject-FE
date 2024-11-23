@@ -1,6 +1,6 @@
 'use client'
 
-import { Position, Post } from "@/types/types";
+import { KakaoPosition, MarkerForOverlay, Pin, Post, RouteCoordinate } from "@/types/types";
 import { useEffect, useState } from "react";
 import { BaseKakaoMap } from "./BaseKakaoMap";
 import { RoutePolyline } from "./RoutePolyline";
@@ -18,7 +18,7 @@ interface FollowMapProps {
 }
 
 // 두 점 사이의 거리 계산 (미터 단위)
-const calculateDistance = (point1: Position, point2: Position): number => {
+const calculateDistance = (point1: KakaoPosition, point2: KakaoPosition): number => {
     const R = 6371e3; // 지구의 반지름 (미터)
     const φ1 = point1.lat * Math.PI / 180;
     const φ2 = point2.lat * Math.PI / 180;
@@ -34,7 +34,7 @@ const calculateDistance = (point1: Position, point2: Position): number => {
 };
 
 // 경로 상의 가장 가까운 점 찾기
-const findClosestPointOnPath = (position: Position, path: Position[]): Position => {
+const findClosestPointOnPath = (position: KakaoPosition, path: KakaoPosition[]): KakaoPosition => {
     let closestPoint = path[0];
     let minDistance = calculateDistance(position, path[0]);
 
@@ -74,23 +74,29 @@ export function FollowMap({ route, width, height }: FollowMapProps) {
         progressPercent
     } = useFollowStore();
 
-    const startPoint = route.routeData.path[0];
-    const endPoint = route.routeData.path[route.routeData.path.length - 1];
-    const totalDistance = route.routeData.distance; // 전체 경로 거리 (km)
+    const pathAsKakaoPositions = route.pathResDTO.routeCoordinates.map(coord => ({
+        lat: parseFloat(coord.latitude),
+        lng: parseFloat(coord.longitude)
+    }));
 
-    const [completedPath, setCompletedPath] = useState<Position[]>([]);
-    const [remainingPath, setRemainingPath] = useState<Position[]>(route.routeData.path);
-    const [snappedPosition, setSnappedPosition] = useState<Position | null>(null);
+
+    const startPoint = pathAsKakaoPositions[0];
+    const endPoint = pathAsKakaoPositions[pathAsKakaoPositions.length - 1];
+    const totalDistance = route.pathResDTO.distance;
+
+    const [completedPath, setCompletedPath] = useState<KakaoPosition[]>([]);
+    const [remainingPath, setRemainingPath] = useState<KakaoPosition[]>(pathAsKakaoPositions);
+    const [snappedPosition, setSnappedPosition] = useState<KakaoPosition | null>(null);
     const [hasStarted, setHasStarted] = useState(false); // 실제 이동 시작 여부
 
     const checkCompletion = (
-        currentPoint: Position,
-        endPoint: Position,
+        currentPoint: KakaoPosition,
+        endPoint: KakaoPosition,
         completedDistance: number,
         visitedPoints: number
     ): boolean => {
         const distanceToEnd = calculateDistance(currentPoint, endPoint);
-        const totalDistance = route.routeData.distance * 1000; // km to m
+        const totalDistance = route.pathResDTO.distance * 1000; // km to m
         const completionThreshold = 3; // 3미터 이내
 
         const isNearEnd = distanceToEnd < completionThreshold;
@@ -130,24 +136,25 @@ export function FollowMap({ route, width, height }: FollowMapProps) {
                     };
 
                     // 실제 이동 시작 체크
-                    if (!hasStarted && calculateDistance(newPosition, route.routeData.path[0]) < 0.02) {
+                    if (!hasStarted && calculateDistance(newPosition, pathAsKakaoPositions[0]) < 0.02) {
                         setHasStarted(true);
                     }
 
 
                     // 경로 상의 가장 가까운 점 찾기
-                    const snapped = findClosestPointOnPath(newPosition, route.routeData.path);
+                    const snapped = findClosestPointOnPath(newPosition, pathAsKakaoPositions);
                     setSnappedPosition(snapped);
 
                     // 경로 분할 지점 찾기
-                    const pathIndex = route.routeData.path.findIndex(point =>
-                        calculateDistance(point, snapped) < 5 // 5미터 이내
+                    const pathIndex = pathAsKakaoPositions.findIndex(point =>
+                        calculateDistance(point, snapped) < 5
                     );
+
 
                     if (pathIndex !== -1) {
                         // 완료된 경로와 남은 경로 업데이트
-                        const completed = route.routeData.path.slice(0, pathIndex + 1);
-                        const remaining = route.routeData.path.slice(pathIndex);
+                        const completed = pathAsKakaoPositions.slice(0, pathIndex + 1);
+                        const remaining = pathAsKakaoPositions.slice(pathIndex);
 
                         setCompletedPath(completed);
                         setRemainingPath(remaining);
@@ -160,7 +167,7 @@ export function FollowMap({ route, width, height }: FollowMapProps) {
                         // 완주 조건 체크
                         const isCompleted = checkCompletion(
                             snapped,
-                            route.routeData.path[route.routeData.path.length - 1],
+                            pathAsKakaoPositions[pathAsKakaoPositions.length - 1],
                             completedDistance,
                             completed.length
                         );
@@ -193,13 +200,23 @@ export function FollowMap({ route, width, height }: FollowMapProps) {
                 updateStatus({ watchId: null });
             }
         };
-    }, [isFollowing, route.routeData.path, hasStarted]);
+    }, [isFollowing, route.pathResDTO.routeCoordinates, hasStarted]);
+
+    const convertPinToMarker = (pin: Pin): MarkerForOverlay => ({
+        id: pin.id.toString(),
+        position: {
+            lat: pin.latitude,
+            lng: pin.longitude
+        },
+        content: pin.content,
+        imageUrl: pin.imageUrl
+    });
 
     return (
         <BaseKakaoMap
             width={width}
             height={height}
-            center={snappedPosition || route.routeData.path[0]}
+            center={snappedPosition || pathAsKakaoPositions[0]}
         >
             {startPoint && (
                 <MapMarker
@@ -211,7 +228,7 @@ export function FollowMap({ route, width, height }: FollowMapProps) {
                     }}
                 />
             )}
-            {endPoint && route.routeData.path.length > 1 && (
+            {endPoint && pathAsKakaoPositions.length > 1 && (
                 <MapMarker
                     position={endPoint}
                     image={{
@@ -244,10 +261,10 @@ export function FollowMap({ route, width, height }: FollowMapProps) {
             )}
 
             {/* 경로 마커들 */}
-            {route.routeData.markers.map(marker => (
+            {route.pathResDTO.pins.map(pin => (
                 <MarkerWithOverlay
-                    key={marker.id}
-                    marker={marker}
+                    key={pin.id}
+                    marker={convertPinToMarker(pin)}
                 />
             ))}
         </BaseKakaoMap>

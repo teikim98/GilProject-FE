@@ -1,10 +1,10 @@
 import { create } from "zustand";
-import { Position, MarkerData, Post } from "@/types/types";
+import { KakaoPosition, Pin, Post, RouteCoordinate } from "@/types/types";
 
 interface FollowState {
   isFollowing: boolean;
-  followedPath: Position[];
-  currentPosition: Position | null;
+  followedPath: KakaoPosition[];
+  currentPosition: KakaoPosition | null;
   elapsedTime: number;
   currentSpeed: number;
   currentDistance: number;
@@ -15,11 +15,10 @@ interface FollowState {
   startTime: number | null;
   originalRoute: Post | null;
 
-  // Actions
   setOriginalRoute: (route: Post) => void;
   startFollowing: () => void;
   stopFollowing: () => void;
-  updatePosition: (position: Position) => void;
+  updatePosition: (position: KakaoPosition) => void;
   updateProgress: (totalDistance: number) => void;
   updateStatus: (status: Partial<FollowState>) => void;
   resetStatus: () => void;
@@ -42,7 +41,7 @@ export const useFollowStore = create<FollowState>((set, get) => ({
   setOriginalRoute: (route: Post) =>
     set({
       originalRoute: route,
-      remainingDistance: route.routeData.distance * 1000, // km to m conversion
+      remainingDistance: route.pathResDTO.distance * 1000, // km to m conversion
     }),
 
   startFollowing: () => {
@@ -54,7 +53,7 @@ export const useFollowStore = create<FollowState>((set, get) => ({
       elapsedTime: 0,
       currentDistance: 0,
       remainingDistance: state.originalRoute
-        ? state.originalRoute.routeData.distance * 1000
+        ? state.originalRoute.pathResDTO.distance * 1000
         : 0,
       isCompleted: false,
       progressPercent: 0,
@@ -73,7 +72,7 @@ export const useFollowStore = create<FollowState>((set, get) => ({
     });
   },
 
-  updatePosition: (position: Position) => {
+  updatePosition: (position: KakaoPosition) => {
     const { followedPath, startTime, originalRoute } = get();
     const newPath = [...followedPath, position];
 
@@ -84,7 +83,7 @@ export const useFollowStore = create<FollowState>((set, get) => ({
     });
 
     if (originalRoute) {
-      const totalDistance = originalRoute.routeData.distance;
+      const totalDistance = originalRoute.pathResDTO.distance;
       get().updateProgress(totalDistance);
     }
   },
@@ -105,21 +104,18 @@ export const useFollowStore = create<FollowState>((set, get) => ({
     const currentState = get();
     const newState = { ...status };
 
-    // isCompleted가 true로 설정되면 progress를 100%로 설정
     if (status.isCompleted) {
       newState.progressPercent = 100;
       newState.currentDistance = currentState.originalRoute
-        ? currentState.originalRoute.routeData.distance * 1000
+        ? currentState.originalRoute.pathResDTO.distance * 1000
         : 0;
       newState.remainingDistance = 0;
-    }
-    // 아직 완주하지 않은 경우 기존 계산 로직 사용
-    else if (
+    } else if (
       status.currentDistance !== undefined &&
       currentState.originalRoute
     ) {
       const totalDistanceMeters =
-        currentState.originalRoute.routeData.distance * 1000;
+        currentState.originalRoute.pathResDTO.distance * 1000;
       const currentDistanceMeters = status.currentDistance;
 
       const percent = (currentDistanceMeters / totalDistanceMeters) * 100;

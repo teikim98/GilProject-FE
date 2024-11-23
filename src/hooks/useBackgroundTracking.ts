@@ -1,13 +1,20 @@
 "use client";
 
 import { useEffect } from "react";
-import { Position } from "@/types/types";
+import { KakaoPosition } from "@/types/types";
 
 interface UseBackgroundTrackingProps {
   isTracking: boolean;
   trackingType: "RECORDING" | "FOLLOWING";
-  onLocationUpdate: (position: Position, speed?: number) => void;
-  onBackgroundLocations?: (locations: Position[]) => void;
+  onLocationUpdate: (position: KakaoPosition, speed?: number) => void;
+  onBackgroundLocations?: (locations: KakaoPosition[]) => void;
+}
+
+interface LocationData {
+  lat: number;
+  lng: number;
+  accuracy: number;
+  speed: number | null;
 }
 
 export function useBackgroundTracking({
@@ -50,7 +57,7 @@ export function useBackgroundTracking({
         // 위치 추적 설정
         const watchId = navigator.geolocation.watchPosition(
           (position) => {
-            const locationData = {
+            const locationData: LocationData = {
               lat: position.coords.latitude,
               lng: position.coords.longitude,
               accuracy: position.coords.accuracy,

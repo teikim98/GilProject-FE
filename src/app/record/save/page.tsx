@@ -6,7 +6,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation';
 import { useRecordStore } from '@/store/useRecordStore';
-import { RouteData } from '@/types/types';
+import { Path, Pin, RouteCoordinate } from '@/types/types';
 import { EditingMap } from '@/components/map/EditingMapProps';
 import BackHeader from '@/components/layout/BackHeader';
 import { calculatePathDistance } from '@/util/calculatePathDistance';
@@ -19,7 +19,7 @@ export default function SaveRoutePage() {
     const [isSaving, setIsSaving] = useState(false);  // 추가
 
     // store에서 경로와 마커 데이터 가져오기
-    const { pathPositions, markers, recordStartTime, resetRecord } = useRecordStore();
+    const { pathPositions, pins, recordStartTime, resetRecord } = useRecordStore();
 
     // const isFormModified = title.trim() !== '' || description.trim() !== '';
 
@@ -33,28 +33,40 @@ export default function SaveRoutePage() {
             return;
         }
 
-        const recordedTime = recordStartTime
+        const time = recordStartTime
             ? Math.round((Date.now() - recordStartTime) / (1000 * 60))
             : 0;
 
-        const distance = calculatePathDistance(pathPositions);
+        const distance = calculatePathDistance(pathPositions.map(coord => ({
+            lat: parseFloat(coord.latitude),
+            lng: parseFloat(coord.longitude)
+        })));
 
 
-        const routeData: RouteData = {
-            title,
-            description,
-            pathData: {
-                path: pathPositions,
-                markers: markers,
-                recordedTime,
-                distance
+        const path: Path = {
+            id: 0,  // API에서 할당될 ID
+            user: {
+                id: 0  // 현재 로그인한 사용자 ID
             },
-            createdAt: new Date().toISOString()
+            content: description,
+            state: 0,
+            title,
+            time,
+            distance,
+            createdDate: new Date().toISOString(),  // ISO 8601 형식으로 변환
+            startLat: parseFloat(pathPositions[0].latitude),
+            startLong: parseFloat(pathPositions[0].longitude),
+            startAddr: null,
+            routeCoordinates: pathPositions,
+            pins
         };
 
+
+
+
         // 기존 저장된 경로들 가져오기
-        const savedRoutes: RouteData[] = JSON.parse(localStorage.getItem('savedRoutes') || '[]');
-        savedRoutes.push(routeData);
+        const savedRoutes: Path[] = JSON.parse(localStorage.getItem('savedRoutes') || '[]');
+        savedRoutes.push(path);
         localStorage.setItem('savedRoutes', JSON.stringify(savedRoutes));
 
         // 임시 저장 데이터와 쿠키 삭제
@@ -81,7 +93,7 @@ export default function SaveRoutePage() {
 
             <EditingMap
                 initialPath={pathPositions}
-                initialMarkers={markers}
+                initialPins={pins}
                 width="w-full"
                 height="h-72"
             />
