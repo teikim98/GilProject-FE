@@ -17,7 +17,7 @@ import { emailLogin } from "@/api/auth";
 import { useRouter } from "next/navigation";
 
 const HomePage = () => {
-  let router = useRouter();
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -26,12 +26,11 @@ const HomePage = () => {
     try {
       await emailLogin(email, password);
       alert("로그인 성공!");
-
+      router.push('/main')
       // 저장된 JWT 확인
       //const token = localStorage.getItem("access");
       //console.log("저장된 JWT:", token);
 
-      router.push("/main");
     } catch (error) {
       //  console.error("로그인 실패", error);
       alert("로그인 실패");
@@ -84,9 +83,7 @@ const HomePage = () => {
                 />
               </div>
               <div>
-                <Button variant="outline" className="w-full" onClick={handleLogin}>
-                  Sign in
-                </Button>
+
                 <Button
                   className="w-full bg-slate-300 hover:bg-slate-500"
                   onClick={(e) => {
@@ -126,6 +123,9 @@ const HomePage = () => {
           </form>
         </CardContent>
         <CardFooter className="flex justify-center flex-col">
+          <Button variant="outline" className="w-full" onClick={handleLogin}>
+            Sign in
+          </Button>
           <Button variant="outline" className="w-full" onClick={() => { router.push("/main") }}>
             메인화면 가기
           </Button>

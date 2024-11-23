@@ -8,9 +8,9 @@ export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   //테스트용
-  if (pathname === "/") {
-    return NextResponse.redirect(new URL("/auth/login", request.url));
-  }
+  // if (pathname === "/") {
+  //   return NextResponse.redirect(new URL("/auth/login", request.url));
+  // }
 
   // const isAuthenticated =
   //   request.cookies.get(AUTH_STATUS_COOKIE)?.value === "authenticated";

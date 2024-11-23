@@ -1,17 +1,19 @@
+'use client'
+
 import { useEffect } from 'react';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 
 const Home = () => {
   const router = useRouter();
 
   useEffect(() => {
-    const token = localStorage.getItem('access'); // 토큰 키 확인
+    const token = localStorage.getItem('access');
     if (token) {
-      router.replace('/main'); // 메인 페이지로 리디렉션
+      router.push('/main');
     } else {
-      router.replace('/auth/login'); // 로그인 페이지로 리디렉션
+      router.push('/auth/login');
     }
-  }, [router]);
+  }, []);
 
   return null; // 로딩 상태를 표시하거나 빈 화면을 유지
 };

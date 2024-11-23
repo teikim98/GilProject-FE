@@ -2,11 +2,11 @@ import axios from "axios";
 import { Post } from "@/types/types";
 
 const api = axios.create({
-  baseURL: "http://localhost:8080/posts/",
+  baseURL: "http://localhost:8080/posts",
 });
 
 const getAuthToken = (): string | null => {
-  return localStorage.getItem("access"); 
+  return localStorage.getItem("access");
 };
 
 api.interceptors.request.use(
@@ -41,14 +41,21 @@ export const getPostNear = async (): Promise<Post[]> => {
 
 export const createPost = async (formData: FormData) => {
   try {
-    const response = await axios.post("", formData, {
+    const token = localStorage.getItem("access");
+    if (!token) {
+      throw new Error("로그인이 필요합니다.");
+    }
+
+    const response = await axios.post("http://localhost:8080/posts", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${token}`,
       },
+      withCredentials: true, // 이 옵션 추가
     });
-    console.log(formData);
     return response.data;
   } catch (error) {
+    console.error("Create post error:", error);
     throw error;
   }
 };

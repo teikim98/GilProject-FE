@@ -5,6 +5,7 @@ import axios from "axios";
 
 const api = axios.create({
   baseURL: "http://localhost:8080/auth",
+  withCredentials: true,
 });
 
 /**
@@ -24,25 +25,26 @@ export const emailLogin = async (email: string, password: string) => {
         "Content-Type": "multipart/form-data", // FormData의 경우 이 헤더를 설정합니다.
       },
     });
-
+    console.log(response.headers["authorization"]);
     // 응답 헤더에서 JWT 토큰 추출
     const token = response.headers["authorization"];
     if (token) {
       const accessToken = token.split(" ")[1];
-      console.log(accessToken)
+      console.log(accessToken);
       localStorage.setItem("access", accessToken); // LocalStorage에 저장
-    } else {  
+    } else {
+      console.log("토큰이 응답에 포함되지 않았습니다");
       throw new Error("토큰이 응답에 포함되지 않았습니다.");
     }
   } catch (error) {
-    // console.error("로그인 API 호출 실패:", error);
+    console.error("로그인 API 호출 실패:", error);
     throw error;
   }
 };
 
 /**
  * 이메일 회원가입
- * @returns 
+ * @returns
  */
 export const emailJoin = async ({
   name,
@@ -71,18 +73,17 @@ export const emailJoin = async ({
 /**
  * 닉네임 DB 조회
  */
-export const existNickname = async (nickName : string)=>{
+export const existNickname = async (nickName: string) => {
   const response = await api.get("/nickname/" + nickName);
 
   return response.data;
-}
+};
 
 /**
  * 이메일 DB 조회
  */
-export const existEmail = async (email : string)=>{
+export const existEmail = async (email: string) => {
   const response = await api.get("/email/" + email);
 
   return response.data;
-}
-
+};

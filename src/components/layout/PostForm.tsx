@@ -194,12 +194,7 @@ export default function PostForm({ isEdit, postId }: WritePostPageProps) {
         try {
             const formData = new FormData();
 
-            const postData: CreatePostRequest = {
-                title: post.title.trim(),
-                content: post.content,
-                tag: post.tag,
-                pathId: selectedPath.id
-            };
+
 
             if (isEdit && postId) {
                 formData.append('postUpdateRequest', JSON.stringify({
@@ -212,10 +207,19 @@ export default function PostForm({ isEdit, postId }: WritePostPageProps) {
                 await updatePost(postId, formData);
                 router.push(`/main/board/${postId}`);
             } else {
-                formData.append('postCreateRequest', JSON.stringify(postData));
-                images.forEach(image => formData.append('images', image));
-                console.log(formData)
-                await createPost(formData);
+
+                // FormData에 각 필드를 개별적으로 추가
+                formData.append("title", post.title.trim());
+                formData.append("content", post.content);
+                formData.append("tag", post.tag);
+                formData.append("pathId", selectedPath.id.toString());  // pathId를 문자열로 전송
+
+                if (images.length > 0) {
+                    Array.from(images).forEach((file) => {
+                        formData.append("images", file);
+                    });
+                }
+                const response = await createPost(formData);
                 router.push('/main/board');
             }
         } catch (error) {
