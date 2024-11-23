@@ -29,6 +29,7 @@ export const emailLogin = async (email: string, password: string) => {
     const token = response.headers["authorization"];
     if (token) {
       const accessToken = token.split(" ")[1];
+      console.log(accessToken)
       localStorage.setItem("access", accessToken); // LocalStorage에 저장
     } else {  
       throw new Error("토큰이 응답에 포함되지 않았습니다.");

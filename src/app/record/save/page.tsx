@@ -6,10 +6,11 @@ import { Textarea } from '@/components/ui/textarea'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation';
 import { useRecordStore } from '@/store/useRecordStore';
-import { Path, Pin, RouteCoordinate } from '@/types/types';
+import { CreatePostPath, Path, Pin, RouteCoordinate } from '@/types/types';
 import { EditingMap } from '@/components/map/EditingMapProps';
 import BackHeader from '@/components/layout/BackHeader';
 import { calculatePathDistance } from '@/util/calculatePathDistance';
+import { createPath } from '@/api/route';
 
 
 export default function SaveRoutePage() {
@@ -43,17 +44,11 @@ export default function SaveRoutePage() {
         })));
 
 
-        const path: Path = {
-            id: 0,  // API에서 할당될 ID
-            user: {
-                id: 0  // 현재 로그인한 사용자 ID
-            },
+        const path: CreatePostPath = {
             content: description,
-            state: 0,
             title,
             time,
             distance,
-            createdDate: new Date().toISOString(),  // ISO 8601 형식으로 변환
             startLat: parseFloat(pathPositions[0].latitude),
             startLong: parseFloat(pathPositions[0].longitude),
             startAddr: null,
@@ -62,16 +57,19 @@ export default function SaveRoutePage() {
         };
 
 
+        // Create path using API
+        createPath(path)
+            .then(() => {
+                console.log('Path saved successfully');
+                // 임시 저장 데이터와 쿠키 삭제
+                localStorage.removeItem("savedPath");
+                document.cookie = 'has-temp-path=false;path=/;max-age=0';
+            })
+            .catch((error) => {
+                console.error('Error saving path:', error);
+                alert('경로 저장에 실패했습니다.');
+            });
 
-
-        // 기존 저장된 경로들 가져오기
-        const savedRoutes: Path[] = JSON.parse(localStorage.getItem('savedRoutes') || '[]');
-        savedRoutes.push(path);
-        localStorage.setItem('savedRoutes', JSON.stringify(savedRoutes));
-
-        // 임시 저장 데이터와 쿠키 삭제
-        localStorage.removeItem("savedPath");
-        document.cookie = 'has-temp-path=false;path=/;max-age=0';
 
         resetRecord();
 

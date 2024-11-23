@@ -29,6 +29,8 @@ function formatDate(dateString: string): string {
 }
 
 export default function BoardCard({ post }: BoardCardProps) {
+    console.log(post.pathResDTO)
+
     return (
         <Card className="p-4 hover:shadow-lg transition-shadow">
             <Link href={`/main/board/${post.postId}`}>

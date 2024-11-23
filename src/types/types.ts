@@ -153,6 +153,24 @@ export interface CreatePostRequest {
   pathId: number;
 }
 
+export interface CreatePostPath {
+  content: string; // 경로 설명
+  title: string; // 경로 제목
+  time: number; // 소요 시간 (분 단위)
+  distance: number; // 거리 (km 단위)
+  startLat: number; // 시작점 위도
+  startLong: number; // 시작점 경도
+  startAddr: string | null; // 시작 주소
+  routeCoordinates: RouteCoordinate[]; // 경로 좌표 배열
+  pins: {
+    id?: number; // 핀 ID (선택)
+    content: string; // 핀 설명
+    latitude: number; // 핀 위도
+    longitude: number; // 핀 경도
+    imageUrl?: string | null; // Base64 이미지 또는 null
+  }[]; // 
+}
+
 export interface CreatePostFormData {
   postCreateRequest: string;
   images: File[];

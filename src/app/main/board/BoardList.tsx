@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Post } from '@/types/types';
 import BoardCard from '@/components/layout/BoardListCard';
-import { getPosts } from '@/api/post';
+import { getPostNear, getPosts } from '@/api/post';
 import { useSearchStore } from '@/store/useSearchStore';
 import { Search } from 'lucide-react';
 
@@ -34,7 +34,7 @@ export default function BoardList() {
         const fetchPosts = async () => {
             try {
                 setLoading(true);
-                const fetchedPosts = await getPosts();
+                const fetchedPosts = await getPostNear() || [];
 
                 // 사용자 위치가 있다면 시작점과의 거리 계산
                 if (userLocation) {
@@ -73,6 +73,7 @@ export default function BoardList() {
         post.content.toLowerCase().includes(searchTerm.toLowerCase())
     )
 
+
     if (loading) {
         return (
             <div className="flex justify-center items-center h-40">
@@ -102,6 +103,7 @@ export default function BoardList() {
             {filteredPosts.length > 0 ? (
                 filteredPosts.map((post) => (
                     <BoardCard key={post.postId} post={post} />
+
                 ))
             ) : (
                 <div className="flex flex-col items-center justify-center py-10 text-gray-500">

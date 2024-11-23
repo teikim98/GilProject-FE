@@ -38,7 +38,10 @@ export default function PostPage({ params }: PostPageProps) {
     useEffect(() => {
         const fetchPost = async () => {
             try {
+                console.log(params.id)
                 const data = await getPost(parseInt(params.id))
+                console.log(data)
+
                 setPost(data)
                 // 지도 + 이미지 개수로 count 설정
                 setCount(1 + (data.imageUrls?.length || 0))
@@ -78,9 +81,9 @@ export default function PostPage({ params }: PostPageProps) {
     }
 
     return (
+
         <div className="animate-fade-in flex flex-col min-h-screen pb-20">
             <BackHeader content={post.title} />
-
             <div className="relative mb-4">
                 <Carousel
                     setApi={setApi}
@@ -168,7 +171,7 @@ export default function PostPage({ params }: PostPageProps) {
             <div className="flex items-center gap-3 mb-4">
                 <Avatar>
                     <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${post.nickName}`} />
-                    <AvatarFallback>{post.nickName[0]}</AvatarFallback>
+                    <AvatarFallback>{post.nickName}</AvatarFallback>
                 </Avatar>
                 <div>
                     <p className="font-semibold">{post.nickName}</p>
