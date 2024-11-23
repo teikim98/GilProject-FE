@@ -13,36 +13,34 @@ import { useEffect } from 'react'
 
 
 export default function Page() {
-    useEffect(()=>{
+    useEffect(() => {
         console.log("main 도착");
-        //쿠키 확인
-        const getCookie = (name :any) => {
-            const value = `; ${document.cookie}`; // 쿠키 문자열 앞에 ;를 추가하여 구분하기 쉽게 만듦
-            const parts = value.split(`; ${name}=`); // name=토큰을 기준으로 분할
+
+        // 쿠키 확인 함수의 타입 정의
+        const getCookie = (name: string): string | null => {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
             if (parts.length === 2) {
-                return parts.pop().split(';').shift(); // ;로 끝나는 부분을 제거하여 값만 리턴
+                const cookieValue = parts.pop();
+                return cookieValue ? cookieValue.split(';')[0] : null;
             }
-            return null; // 쿠키가 없으면 null 리턴
+            return null;
         };
-        
+
         const token = getCookie('authorization');
         console.log(token);
 
-            //있으면
-            if(token){
-                //로컬스토리지에 저장
-                localStorage.setItem("access",token);
-                //쿠키 삭제
-                document.cookie = 'authorization=; Max-Age=0'; 
-
-            }
-            else{
-            //없으면
-                //아무일안함
-                console.log("쿠키가 없습니다");
-            }
-
-    });
+        if (token) {
+            // 있으면
+            // 로컬스토리지에 저장
+            localStorage.setItem("access", token);
+            // 쿠키 삭제
+            document.cookie = 'authorization=; Max-Age=0; path=/';  // path 추가
+        } else {
+            // 없으면
+            console.log("쿠키가 없습니다");
+        }
+    }, []); // 의존성 배열 추가
 
     return (
         <div className='w-full animate-fade-in flex flex-col bg-white dark:bg-gray-900 pb-20'>
