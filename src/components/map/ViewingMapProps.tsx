@@ -1,6 +1,6 @@
 "use client"
 import { KakaoPosition, MarkerForOverlay, Pin, RouteCoordinate } from "@/types/types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BaseKakaoMap } from "./BaseKakaoMap";
 import { MarkerWithOverlay } from "./MarkerWithOverlay";
 import { RoutePolyline } from "./RoutePolyline";
@@ -20,23 +20,31 @@ interface ViewingMapProps {
 
 export function ViewingMap({ route, width, height }: ViewingMapProps) {
 
+    // 먼저 useState 호출
+    const [center, setCenter] = useState<KakaoPosition>({ lat: 37.5665, lng: 126.9780 });
+
+    // 그 다음에 유효성 검사
     if (!route.routeCoordinates || !Array.isArray(route.routeCoordinates)) {
         console.error('Invalid route coordinates:', route);
-        return null;  // 또는 적절한 에러 UI를 표시
+        return null;
     }
 
-    // RouteCoordinate를 카카오맵에서 사용하는 Position 형식으로 변환
     const convertToPosition = (coord: RouteCoordinate): KakaoPosition => ({
         lat: parseFloat(coord.latitude),
         lng: parseFloat(coord.longitude)
     });
 
     const positions = route.routeCoordinates.map(convertToPosition);
-    const [center] = useState(positions[0] ?? { lat: 37.5665, lng: 126.9780 });
+
+    // center 초기값 설정을 useEffect로 처리
+    useEffect(() => {
+        if (positions.length > 0) {
+            setCenter(positions[0]);
+        }
+    }, [positions]);
 
     const startPoint = positions[0];
     const endPoint = positions[positions.length - 1];
-
 
     const convertPinToMarker = (pin: Pin): MarkerForOverlay => ({
         id: pin.id.toString(),
