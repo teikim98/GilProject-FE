@@ -12,22 +12,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import Link from "next/link";
+
 import { emailLogin } from "@/api/auth";
 import { useRouter } from "next/navigation";
 
@@ -87,7 +72,7 @@ const HomePage = () => {
                   name="password"
                   type="password"
                   value={password}
-                  onChange={(e) =>{
+                  onChange={(e) => {
                     let value = e.target.value;
                     value = value.replace(/[<>]/g, "");
                     setPassword(value);
@@ -141,6 +126,9 @@ const HomePage = () => {
           <Button variant="outline" className="w-full" onClick={handleLogin}>
             Sign in
           </Button>
+          <Button variant="outline" className="w-full" onClick={() => { router.push("http://localhost:3000/main") }}>
+            메인화면 가기
+          </Button>
           <h2>
             아직 회원이 아니라면{" "}
             <a href="/auth/signup" className=" bg-slate-500">
@@ -158,45 +146,6 @@ const HomePage = () => {
           </h2>
         </CardFooter>
       </Card>
-
-      {/* Dropdown Menu Component */}
-       <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button className="w-full bg-blue-500 hover:bg-blue-600 text-white mb-4">
-            Open Dropdown
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent className="min-w-fit">
-          <DropdownMenuLabel>Actions</DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem onSelect={() => alert("Profile clicked")}>
-            Profile
-          </DropdownMenuItem>
-          <DropdownMenuItem onSelect={() => alert("Settings clicked")}>
-            Settings
-          </DropdownMenuItem>
-          <DropdownMenuItem onSelect={() => alert("Logout clicked")}>
-            Logout
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-
-      {/* Dialog Component */}
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogTrigger asChild>
-          <Button className="w-full bg-green-500 hover:bg-green-600 text-white">
-            Open Dialog
-          </Button>
-        </DialogTrigger>
-        <DialogContent className=" w-2/3">
-          <DialogHeader>
-            <DialogTitle>Dialog Title</DialogTitle>
-          </DialogHeader>
-          <div className="mt-2">
-            <p>This is a dialog content.</p>
-          </div>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };
