@@ -8,8 +8,8 @@ export function MarkerOverlay({ content, imageUrl, pinId, position, visible, onC
     return (
         <CustomOverlayMap
             position={{  // position을 KakaoPosition 형식으로 사용
-                lat: parseInt(position.latitude),  // RouteCoordinate -> KakaoPosition 변환
-                lng: parseInt(position.longitude)
+                lat: parseFloat(position.latitude),  // RouteCoordinate -> KakaoPosition 변환
+                lng: parseFloat(position.longitude)
             }}
             yAnchor={1.2}
             clickable={true}
