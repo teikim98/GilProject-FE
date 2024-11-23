@@ -5,16 +5,17 @@ const PROTECTED_PATHS = ["/main", "/record"];
 const AUTH_STATUS_COOKIE = "auth-status";
 
 export function middleware(request: NextRequest) {
-  // const { pathname } = request.nextUrl;
-  // const isAuthenticated =
-  //   request.cookies.get(AUTH_STATUS_COOKIE)?.value === "authenticated";
-  // // 루트 경로 처리 수정
-  // if (pathname === "/") {
-  //   // 인증된 상태면 /main으로, 아니면 /auth/login으로
-  //   return isAuthenticated
-  //     ? NextResponse.redirect(new URL("/main", request.url))
-  //     : NextResponse.redirect(new URL("/auth/login", request.url));
-  // }
+  const { pathname } = request.nextUrl;
+  const isAuthenticated =
+    request.cookies.get(AUTH_STATUS_COOKIE)?.value === "authenticated";
+  // 루트 경로 처리 수정
+  if (pathname === "/") {
+    // 인증된 상태면 /main으로, 아니면 /auth/login으로
+    // return isAuthenticated
+    //   ? NextResponse.redirect(new URL("/main", request.url))
+    //   : NextResponse.redirect(new URL("/auth/login", request.url));
+    NextResponse.redirect(new URL("/auth/login", request.url));
+  }
   // // 보호된 경로 체크
   // const isProtectedPath = PROTECTED_PATHS.some((path) =>
   //   pathname.startsWith(path)
@@ -30,7 +31,7 @@ export function middleware(request: NextRequest) {
   //     return NextResponse.redirect(new URL("/record", request.url));
   //   }
   // }
-  // return NextResponse.next();
+  return NextResponse.next();
 }
 
 export const config = {
