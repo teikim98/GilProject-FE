@@ -20,10 +20,19 @@ interface ViewingMapProps {
 
 export function ViewingMap({ route, width, height }: ViewingMapProps) {
 
-    // 먼저 useState 호출
     const [center, setCenter] = useState<KakaoPosition>({ lat: 37.5665, lng: 126.9780 });
 
-    // 그 다음에 유효성 검사
+    // Hook들을 최상단으로 이동
+    useEffect(() => {
+        if (route.routeCoordinates && Array.isArray(route.routeCoordinates) && route.routeCoordinates.length > 0) {
+            const firstPosition = {
+                lat: parseFloat(route.routeCoordinates[0].latitude),
+                lng: parseFloat(route.routeCoordinates[0].longitude)
+            };
+            setCenter(firstPosition);
+        }
+    }, [route.routeCoordinates]);
+
     if (!route.routeCoordinates || !Array.isArray(route.routeCoordinates)) {
         console.error('Invalid route coordinates:', route);
         return null;
@@ -33,18 +42,6 @@ export function ViewingMap({ route, width, height }: ViewingMapProps) {
         lat: parseFloat(coord.latitude),
         lng: parseFloat(coord.longitude)
     });
-
-    const positions = route.routeCoordinates.map(convertToPosition);
-
-    // center 초기값 설정을 useEffect로 처리
-    useEffect(() => {
-        if (positions.length > 0) {
-            setCenter(positions[0]);
-        }
-    }, [positions]);
-
-    const startPoint = positions[0];
-    const endPoint = positions[positions.length - 1];
 
     const convertPinToMarker = (pin: Pin): MarkerForOverlay => ({
         id: pin.id.toString(),
@@ -56,6 +53,9 @@ export function ViewingMap({ route, width, height }: ViewingMapProps) {
         imageUrl: pin.imageUrl
     });
 
+    const positions = route.routeCoordinates.map(convertToPosition);
+    const startPoint = positions[0];
+    const endPoint = positions[positions.length - 1];
 
 
     return (
