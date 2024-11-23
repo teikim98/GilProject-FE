@@ -31,7 +31,7 @@ const HomePage = () => {
       //const token = localStorage.getItem("access");
       //console.log("저장된 JWT:", token);
 
-      router.push("http://localhost:3000/main");
+      router.push("/main");
     } catch (error) {
       //  console.error("로그인 실패", error);
       alert("로그인 실패");
@@ -126,7 +126,7 @@ const HomePage = () => {
           <Button variant="outline" className="w-full" onClick={handleLogin}>
             Sign in
           </Button>
-          <Button variant="outline" className="w-full" onClick={() => { router.push("http://localhost:3000/main") }}>
+          <Button variant="outline" className="w-full" onClick={() => { router.push("/main") }}>
             메인화면 가기
           </Button>
           <h2>
