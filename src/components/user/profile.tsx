@@ -1,25 +1,29 @@
+'use client'
 import { Camera, Pencil } from 'lucide-react'
-import React from 'react'
 import { Button } from '../ui/button'
 import { Card, CardContent, CardFooter, CardHeader } from '../ui/card'
 
 export default function Profile() {
+
+
+
+
     return (
         <Card className='[w-350px]'>
             <CardHeader className='mb-4'>
                 <div className='flex flex-row justify-between items-center'>
-                    <div className="flex flex-row items-center">
-                        <Camera className='mr-4' />
+                    <div className="flex flex-row gap-4 items-center">
+                        <Camera />
                         <div className='flex flex-col'>
                             <div className='flex flex-row items-center'>
                                 <p className=' mr-2 font-bold'>
-                                    김종국
+                                    페이샤오
                                 </p>
                                 <p className='text-xs text-slate-500'>
-                                    구미동-214
+                                    유저의 주소
                                 </p>
                             </div>
-                            <p className='text-xs text-slate-500'>저는 비빔인간 입니다 어쩌구...</p>
+                            <p className='text-xs text-slate-500'>안녕하세요! 로봇청소기에여</p>
                         </div>
                     </div>
                     <Pencil className='align-top' />

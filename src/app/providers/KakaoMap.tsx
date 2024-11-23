@@ -4,26 +4,23 @@
 import { Map, MapMarker, Polyline, CustomOverlayMap } from 'react-kakao-maps-sdk'
 import { Button } from '@/components/ui/button'
 import { MapPin, X } from 'lucide-react'
-import { useState, useEffect, useRef } from 'react'
-import MarkerForm from '../../components/MarkerForm'
-import { MarkerData } from '../../types/types'
+import { useState, useEffect } from 'react'
+import { MarkerData, OverlayProps, KakaoMapProps, Position } from '../../types/types'
+import { useRecordStore } from '@/store/useRecordStore'
+import { LocationSmoother } from '@/util/locationSmoother'
+import { createPinMarker } from '@/components/map/CustomMarkerIcon'
+import MarkerForm from '@/components/map/MarkerForm'
+
 
 declare global {
     interface Window {
-        kakao: any;
+        kakao: typeof kakao;
     }
 }
 
-interface OverlayProps {
-    content: string;
-    image?: string;
-    markerId: string;
-    position: { lat: number; lng: number };
-    visible: boolean;
-    onClose: () => void;
-}
 
-const MarkerOverlay = ({ content, image, markerId, position, visible, onClose }: OverlayProps) => {
+
+const MarkerOverlay = ({ content, image, position, visible, onClose }: OverlayProps) => {
     if (!visible) return null;
 
     return (
@@ -33,13 +30,13 @@ const MarkerOverlay = ({ content, image, markerId, position, visible, onClose }:
             clickable={true}
         >
             <div
-                className="relative bg-white rounded-lg shadow-lg min-w-[200px] max-w-[300px]"
+                className="relative bottom-12 -left-2 bg-white dark:bg-gray-800 rounded-lg shadow-lg min-w-[200px] max-w-[300px]"
                 onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
                 }}
             >
-                <div className="absolute -bottom-3 left-1/2 transform -translate-x-1/2 border-l-[10px] border-r-[10px] border-t-[10px] border-l-transparent border-r-transparent border-t-white" />
+                <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 border-l-[10px] border-r-[10px] border-t-[10px] border-l-transparent border-r-transparent border-t-white dark:border-t-gray-800" />
                 <div className="relative p-4">
                     <button
                         className="absolute top-2 right-2 p-1 hover:bg-gray-100 rounded-full transition-colors"
@@ -71,34 +68,35 @@ const MarkerOverlay = ({ content, image, markerId, position, visible, onClose }:
     )
 }
 
-interface KakaoMapProps {
-    isRecording?: boolean;
-    isEditing?: boolean;
-    mapId: string;
-    width?: string;
-    height?: string;
-}
 
-interface Position {
-    lat: number;
-    lng: number;
-}
 
 export default function KakaoMap({
     isRecording = false,
     isEditing = false,
     width = "w-full",
     height = "h-72",
-    mapId
+    initialPath = [],
+    initialMarkers = [],
 }: KakaoMapProps) {
-    const [markers, setMarkers] = useState<MarkerData[]>([])
     const [selectedPosition, setSelectedPosition] = useState<Position | null>(null)
     const [showMarkerForm, setShowMarkerForm] = useState(false)
-    const [pathPositions, setPathPositions] = useState<Position[]>([])
-    const watchIdRef = useRef<number | null>(null)
     const [center, setCenter] = useState<Position>({ lat: 37.5665, lng: 126.9780 })
     const [visibleOverlays, setVisibleOverlays] = useState<Set<string>>(new Set())
+    const [isGettingLocation, setIsGettingLocation] = useState(false);
+    const [userPosition, setUserPosition] = useState<Position | null>(null);
+    // const [locationSmoother] = useState(() => new LocationSmoother());
 
+
+    // Zustand  
+    const {
+        pathPositions,
+        markers,
+        addPathPosition,
+        addMarker,
+        loadSavedPath
+    } = useRecordStore()
+
+    // 초기 위치 설정
     useEffect(() => {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
@@ -115,56 +113,85 @@ export default function KakaoMap({
         }
     }, [])
 
+    //현재위치 추적 및 경로 기록
     useEffect(() => {
-        if (isRecording) {
-            watchIdRef.current = navigator.geolocation.watchPosition(
-                (position) => {
-                    const newPosition = {
-                        lat: position.coords.latitude,
-                        lng: position.coords.longitude,
+        if (!navigator.geolocation) return;
+
+        const locationSmoother = new LocationSmoother(20, 5, 3);
+
+        // 초기 위치 한 번 가져오기
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const newPosition = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude,
+                };
+                setUserPosition(newPosition);
+                setCenter(newPosition);
+            },
+            (error) => console.error("Error getting initial location:", error)
+        );
+
+        // 위치 추적 통합
+        const watchId = navigator.geolocation.watchPosition(
+            (position) => {
+                const newPosition = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude,
+                };
+
+                // 현재 위치 업데이트
+                setUserPosition(newPosition);
+
+                // 기록 중일 때만 경로에 추가
+                if (isRecording) {
+                    const smoothedPosition = locationSmoother.smooth(
+                        newPosition,
+                        position.coords.accuracy
+                    );
+                    if (smoothedPosition) {
+                        addPathPosition(smoothedPosition);
+                        setCenter(smoothedPosition);
                     }
-                    setPathPositions(prev => [...prev, newPosition])
-                    setCenter(newPosition)
-                },
-                (error) => console.error("위치 추적 오류:", error),
-                {
-                    enableHighAccuracy: true,
-                    maximumAge: 0,
-                    timeout: Infinity
                 }
-            )
-        }
+            },
+            (error) => console.error("Error watching location:", error),
+            {
+                enableHighAccuracy: true,
+                maximumAge: 0,
+                timeout: 5000
+            }
+        );
 
         return () => {
-            if (watchIdRef.current) {
-                navigator.geolocation.clearWatch(watchIdRef.current)
-                if (pathPositions.length > 0) {
-                    const recordData = {
-                        path: pathPositions,
-                        markers: markers
-                    }
-                    localStorage.setItem('savedPath', JSON.stringify(recordData))
-                }
+            if (watchId) {
+                navigator.geolocation.clearWatch(watchId);
             }
-        }
-    }, [isRecording, pathPositions.length, markers])
+        };
+    }, [isRecording, addPathPosition]);
 
+
+
+    // 편집 모드일 때 저장된 경로 불러오기
     useEffect(() => {
         if (isEditing) {
-            const savedData = localStorage.getItem('savedPath')
-            if (savedData) {
-                const { path, markers: savedMarkers } = JSON.parse(savedData)
-                setPathPositions(path)
-                setMarkers(savedMarkers)
-                if (path.length > 0) {
-                    setCenter(path[0])
-                }
+            loadSavedPath()  // store의 액션 사용
+            if (pathPositions.length > 0) {
+                setCenter(pathPositions[0])
             }
         }
-    }, [isEditing])
+    }, [isEditing, loadSavedPath])
 
-    const handleMapClick = (_map: any, mouseEvent: any) => {
-        if (!isRecording) {
+    // 초기 경로가 있을 경우 중앙 위치 설정
+    useEffect(() => {
+        if (initialPath.length > 0) {
+            setCenter(initialPath[0]);
+        }
+    }, [initialPath]);
+
+    //맵 클릭 허용 설정 
+    const handleMapClick = (_map: kakao.maps.Map, mouseEvent: kakao.maps.event.MouseEvent) => {
+        if (isEditing) {
             setSelectedPosition({
                 lat: mouseEvent.latLng.getLat(),
                 lng: mouseEvent.latLng.getLng(),
@@ -173,34 +200,42 @@ export default function KakaoMap({
         }
     }
 
-    // 오버레이 표시/숨김 토글
+    //저장된 마커 팝업 토글
     const toggleOverlay = (markerId: string) => {
         setVisibleOverlays(prev => {
-            const next = new Set(prev);
+            const next = new Set(prev)
             if (next.has(markerId)) {
-                next.delete(markerId);
+                next.delete(markerId)
             } else {
-                next.add(markerId);
+                next.add(markerId)
             }
-            return next;
-        });
-    };
+            return next
+        })
+    }
 
     const handleAddCurrentLocationMarker = () => {
         if (navigator.geolocation) {
+            setIsGettingLocation(true); // 위치 가져오기 시작
             navigator.geolocation.getCurrentPosition(
                 (position) => {
                     setSelectedPosition({
                         lat: position.coords.latitude,
                         lng: position.coords.longitude,
-                    })
-                    setShowMarkerForm(true)
+                    });
+                    setShowMarkerForm(true);
+                    setIsGettingLocation(false); // 위치 가져오기 완료
                 },
                 (error) => {
-                    console.error("Error getting current location:", error)
-                    alert("현재 위치를 가져올 수 없습니다.")
+                    console.error("Error getting current location:", error);
+                    alert("현재 위치를 가져올 수 없습니다.");
+                    setIsGettingLocation(false); // 에러 발생시에도 상태 리셋
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 5000, // 5초 제한
+                    maximumAge: 0
                 }
-            )
+            );
         }
     }
 
@@ -212,11 +247,13 @@ export default function KakaoMap({
                 image,
                 id: `marker-${Date.now()}`
             }
-            setMarkers(prev => [...prev, newMarker])
+            addMarker(newMarker)  // store의 액션 사용
         }
         setShowMarkerForm(false)
         setSelectedPosition(null)
     }
+
+    const markerIcon = createPinMarker();
 
     return (
         <div className={`relative ${width} ${height}`}>
@@ -231,7 +268,22 @@ export default function KakaoMap({
                     <div key={marker.id}>
                         <MapMarker
                             position={marker.position}
-                            onClick={() => toggleOverlay(marker.id)}
+                            onClick={() => {
+                                toggleOverlay(marker.id);
+                            }}
+                            image={{
+                                src: markerIcon,
+                                size: {
+                                    width: 24,
+                                    height: 28,
+                                },
+                                options: {
+                                    offset: {
+                                        x: 20,
+                                        y: 48,
+                                    },
+                                },
+                            }}
                         />
                         <MarkerOverlay
                             content={marker.content}
@@ -239,7 +291,52 @@ export default function KakaoMap({
                             markerId={marker.id}
                             position={marker.position}
                             onClose={() => toggleOverlay(marker.id)}
-                            visible={visibleOverlays.has(marker.id)} // 수정된 부분
+                            visible={visibleOverlays.has(marker.id)}
+                        />
+                    </div>
+                ))}
+
+                {/* 초기 경로 표시 */}
+                {initialPath.length > 0 && (
+                    <Polyline
+                        path={initialPath}
+                        strokeWeight={5}
+                        strokeColor="#0000FF"
+                        strokeOpacity={0.7}
+                        strokeStyle={'solid'}
+                    />
+                )}
+
+                {/* 초기 마커 표시 */}
+                {initialMarkers.map((marker) => (
+                    <div key={marker.id}>
+                        <MapMarker
+                            draggable={true}
+                            position={marker.position}
+                            onClick={() => {
+                                toggleOverlay(marker.id);
+                            }}
+                            image={{
+                                src: markerIcon,
+                                size: {
+                                    width: 24,
+                                    height: 28,
+                                },
+                                options: {
+                                    offset: {
+                                        x: 20,
+                                        y: 48,
+                                    },
+                                },
+                            }}
+                        />
+                        <MarkerOverlay
+                            content={marker.content}
+                            image={marker.image}
+                            markerId={marker.id}
+                            position={marker.position}
+                            onClose={() => toggleOverlay(marker.id)}
+                            visible={visibleOverlays.has(marker.id)}
                         />
                     </div>
                 ))}
@@ -253,6 +350,21 @@ export default function KakaoMap({
                         strokeStyle={'solid'}
                     />
                 )}
+                {userPosition && (
+                    <>
+                        <CustomOverlayMap
+                            position={userPosition}
+                            yAnchor={1}
+                        >
+                            <div className="relative">
+                                {/* 파란 점 */}
+                                <div className="w-4 h-4 bg-blue-500 rounded-full" />
+                                {/* 펄스 효과 */}
+                                <div className="absolute top-0 left-0 w-4 h-4 bg-blue-500 rounded-full animate-ping opacity-75" />
+                            </div>
+                        </CustomOverlayMap>
+                    </>
+                )}
             </Map>
 
             {isRecording && (
@@ -260,16 +372,29 @@ export default function KakaoMap({
                     <Button
                         variant="secondary"
                         size="sm"
-                        className="flex items-center gap-2 bg-white shadow-md"
+                        className={`flex items-center gap-2 bg-white shadow-md ${isGettingLocation ? 'opacity-75 cursor-not-allowed' : ''
+                            }`}
                         onClick={handleAddCurrentLocationMarker}
+                        disabled={isGettingLocation}
                     >
-                        <MapPin className="w-4 h-4" />
-                        핀 찍기
+                        {isGettingLocation ? (
+                            <>
+                                <div className="w-4 h-4 border-2 border-purple-500 border-t-transparent rounded-full animate-spin" />
+                                위치 확인 중...
+                            </>
+                        ) : (
+                            <>
+                                <MapPin className="w-4 h-4" />
+                                핀 찍기
+                            </>
+                        )}
                     </Button>
                 </div>
             )}
 
-            {showMarkerForm && selectedPosition && (
+
+
+            {showMarkerForm && selectedPosition && (isEditing || isRecording) && (
                 <div className="absolute bottom-4 left-4 z-10">
                     <MarkerForm
                         onSubmit={handleMarkerSubmit}

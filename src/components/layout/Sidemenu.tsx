@@ -7,18 +7,17 @@ import {
 } from "@/components/ui/sheet";
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
-import React, { useState } from 'react'
 import { cn } from "@/lib/utils";
 import { HamburgerMenuIcon } from '@radix-ui/react-icons'
 import { Bell } from 'lucide-react'
+import Profile from "../user/profile";
 
 
 const navigationItems = [
-    { name: '홈', href: '/' },
-    { name: '프로필', href: '/profile' },
-    { name: '설정', href: '/settings' },
+    { name: '마이 페이지', href: '/main/mypage' },
+    { name: '내 경로', href: '/main/mypage/myRoute' },
     { name: '알림', href: '/notifications' },
-    { name: '로그아웃', href: '/logout' },
+    { name: '산책길 목록', href: '/main/board' },
 ];
 
 export default function Sidemenu() {
@@ -37,13 +36,14 @@ export default function Sidemenu() {
                         <SheetTitle className="text-left">메뉴</SheetTitle>
                     </SheetHeader>
                     <nav className="mt-8">
+                        <Profile />
                         <ul className="space-y-4">
                             {navigationItems.map((item) => (
                                 <li key={item.href}>
                                     <Link
                                         href={item.href}
                                         className={cn(
-                                            "block px-4 py-2 text-lg rounded-md transition-colors hover:bg-gray-100",
+                                            "block px-4 py-2 text-lg rounded-md transition-colors hover:bg-gray-100 dark:hover:bg-gray-600",
                                             pathname === item.href && "bg-gray-100 font-medium"
                                         )}
                                     >

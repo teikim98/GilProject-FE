@@ -1,57 +1,85 @@
 'use client'
 
-import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
-
-import { Camera, Pencil } from 'lucide-react'
-import KakaoMap from '../providers/KakaoMap'
+import { Pencil } from 'lucide-react'
 import PWAInstallButton from '@/components/layout/PwaInstallBtn';
 import Sidemenu from '@/components/layout/Sidemenu'
 import Link from 'next/link'
-import Image from 'next/image'
+import { DarkModeToggle } from '@/components/layout/DarkModeToggle'
+import { CurrentLocationMap } from '@/components/map/CurrentLocationMap'
 
 
 
-export default function page() {
-
-
+export default function Page() {
     return (
-        <div className='w-full h-screen animate-fade-in '>
+        <div className='w-full animate-fade-in flex flex-col bg-white dark:bg-gray-900 pb-20'>
             <div className='flex flex-row justify-between mb-8'>
-                <Camera size={28} />
+                <h2 className='font-sebang text-3xl font-semibold text-purple-800 dark:text-purple-400'>
+                    길따라
+                </h2>
+                <DarkModeToggle />
                 <Sidemenu />
             </div>
-            <Card className='flex items-center flex-col p-4'>
+
+            <Card className='flex items-center flex-col p-4 bg-white dark:bg-gray-800'>
                 <CardContent className='w-full px-0'>
-                    <KakaoMap width='w-full' height='h-48' mapId='1' />
+                    <CurrentLocationMap width='w-full' height='h-48' />
                 </CardContent>
                 <div className='w-full flex flex-row justify-between'>
-                    <h2>지금 경로 녹화 하러가기</h2>
-                    <Pencil />
+                    <h2 className='text-gray-900 dark:text-white'>
+                        지금 경로 녹화 하러가기
+                    </h2>
+                    <Link href="/record">
+                        <Pencil className="cursor-pointer hover:text-gray-600 dark:text-gray-300 dark:hover:text-gray-100" />
+                    </Link>
                 </div>
             </Card>
-            <Separator className='my-4' />
+
+            <Link href='/test' className='text-lg font-semibold'>경로 따라가기 테스트하기</Link>
+
+            <Separator className='my-4 dark:bg-gray-700' />
+
             <PWAInstallButton />
+            <div className="flex flex-col">
+                <div className="flex flex-row justify-between" style={{ height: '20vh' }}>
+                    <Link href="/main/board" className='w-[48%] block'>
+                        <Card className='h-full cursor-pointer flex flex-col items-center justify-evenly relative overflow-hidden bg-[url("/pubao.gif")] bg-cover bg-center bg-no-repeat
+                dark:before:content-[""] dark:before:absolute dark:before:inset-0 dark:before:bg-black/20'>
+                            <div className="absolute inset-0 bg-black/30" />
+                            <div className="relative z-10 h-full p-4 flex items-center justify-center">
+                                <h2 className="text-white font-semibold text-lg">
+                                    내 주변 산책로 보러가기
+                                </h2>
+                            </div>
+                        </Card>
+                    </Link>
 
-            <div className="flex flex-row justify-between h-1/4">
-                <Link href="/main/board" className='w-[48%] block'>
-                    <Card className='h-full cursor-pointer'>
-                        <h2>내 주변 산책로 보러가기</h2>
-                        <Image alt='animate-gif' src="/public/pubao.gif" width={200} height={200} unoptimized />
-                    </Card>
-                </Link>
+                    <Link href="/main/mypage/myRoute" className='w-[48%] block'>
+                        <Card className='h-full cursor-pointer flex flex-col items-center justify-evenly relative overflow-hidden bg-[url("/bird.gif")] bg-cover bg-center bg-no-repeat
+                dark:before:content-[""] dark:before:absolute dark:before:inset-0 dark:before:bg-black/20'>
+                            <div className="absolute inset-0 bg-black/30" />
+                            <div className="relative z-10 h-full p-4 flex items-center justify-center">
+                                <h2 className="text-white font-semibold text-lg">
+                                    내가 기록한 <br /> 산책로 보러가기
+                                </h2>
+                            </div>
+                        </Card>
+                    </Link>
 
-                <Link href="/main/mypage/myRoute" className='w-[48%] block'>
-                    <Card className='h-full cursor-pointer'>
-                        <h2>내가 기록한 경로</h2>
+                </div>
+                <Link href="/main/board/post" className='w-[100%] block mt-4'>
+                    <Card className='h-28 cursor-pointer flex flex-col items-center justify-evenly relative overflow-hidden bg-[url("/share.webp")] bg-cover bg-center bg-no-repeat
+                dark:before:content-[""] dark:before:absolute dark:before:inset-0 dark:before:bg-black/20'>
+                        <div className="absolute inset-0 bg-black/30" />
+                        <div className="relative z-10 h-full p-4 flex items-center justify-center">
+                            <h2 className="text-white font-semibold text-lg">
+                                내 산책길 공유하기
+                            </h2>
+                        </div>
                     </Card>
                 </Link>
             </div>
-
-
-
-
-
         </div>
     )
 }

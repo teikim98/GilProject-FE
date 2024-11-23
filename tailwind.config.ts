@@ -9,7 +9,14 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sebang: ["SEBANG_Gothic_Bold", "sans-serif"],
+      },
       keyframes: {
+        "slide-up": {
+          "0%": { transform: "translateY(100%)", opacity: "0" },
+          "100%": { transform: "translateY(0)", opacity: "1" },
+        },
         "fade-in": {
           "0%": { opacity: "0" },
           "100%": { opacity: "1" },
@@ -37,6 +44,7 @@ const config: Config = {
         "fade-in": "fade-in 0.2s ease-in-out",
         "toast-slide-down": "toast-slide-down 0.3s ease-out",
         "toast-hide": "toast-hide 0.3s ease-in",
+        "slide-up": "slide-up 0.3s ease-out;",
       },
       colors: {
         background: "hsl(var(--background))",
