@@ -5,9 +5,6 @@ import { Card, CardContent, CardFooter, CardHeader } from '../ui/card'
 
 export default function Profile() {
 
-
-
-
     return (
         <Card className='[w-350px]'>
             <CardHeader className='mb-4'>
