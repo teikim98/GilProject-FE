@@ -20,7 +20,7 @@ export function ProgressDisplay() {
         return `${(meters / 1000).toFixed(2)}km`;
     };
 
-    const totalDistanceMeters = originalRoute.routeData.distance * 1000;
+    const totalDistanceMeters = originalRoute.pathResDTO.distance * 1000;
 
     return (
         <AnimatePresence>
