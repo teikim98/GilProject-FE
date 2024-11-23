@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Post, RouteData, RouteTest } from "@/types/types";
+import { Post, Path } from "@/types/types";
 
 const api = axios.create({
   baseURL: "/api",
@@ -15,12 +15,12 @@ export const getRouteById = async (id: number): Promise<Post> => {
   }
 };
 
-export const getRouteByIdTest = async (id: number = 30): Promise<RouteTest> => {
+export const getPathById = async (id: number = 30): Promise<Path> => {
   try {
     const response = await axios.get(`/path/${id}`);
     return response.data;
   } catch (error) {
-    console.error("Error fetching route:", error);
-    throw new Error("Failed to fetch route");
+    console.error("Error fetching path:", error);
+    throw new Error("Failed to fetch path");
   }
 };
