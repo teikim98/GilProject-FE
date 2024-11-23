@@ -70,7 +70,14 @@ const HomePage = () => {
                   type="email"
                   name="email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => {
+                    let value = e.target.value;
+                    value = value.replace(/[<>]/g, "");
+                    setEmail(value);
+                  }}
+                  onInput={(e: any) => {
+                    e.target.value = e.target.value.replace(/\s/g, ""); // 공백 제거
+                  }}
                   placeholder="이메일을 입력해주세요"
                 />
               </div>
@@ -80,7 +87,14 @@ const HomePage = () => {
                   name="password"
                   type="password"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) =>{
+                    let value = e.target.value;
+                    value = value.replace(/[<>]/g, "");
+                    setPassword(value);
+                  }}
+                  onInput={(e: any) => {
+                    e.target.value = e.target.value.replace(/\s/g, ""); // 공백 제거
+                  }}
                   placeholder="비밀번호를 입력해주세요"
                 />
               </div>
@@ -146,7 +160,7 @@ const HomePage = () => {
       </Card>
 
       {/* Dropdown Menu Component */}
-      {/* <DropdownMenu>
+       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button className="w-full bg-blue-500 hover:bg-blue-600 text-white mb-4">
             Open Dropdown
@@ -165,7 +179,7 @@ const HomePage = () => {
             Logout
           </DropdownMenuItem>
         </DropdownMenuContent>
-      </DropdownMenu> */}
+      </DropdownMenu>
 
       {/* Dialog Component */}
       <Dialog open={open} onOpenChange={setOpen}>
