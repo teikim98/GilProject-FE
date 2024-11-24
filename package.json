@@ -27,6 +27,7 @@
     "cmdk": "^1.0.0",
     "embla-carousel-react": "^8.4.0",
     "js-cookie": "^3.0.5",
+    "jwt-decode": "^4.0.0",
     "lucide-react": "^0.454.0",
     "motion": "^11.11.17",
     "msw": "^2.6.5",

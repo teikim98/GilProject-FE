@@ -146,6 +146,24 @@ export interface User {
   replyLikes: number[] | null;
 }
 
+// 심플 유저 정보
+export interface UserSimple {
+  id: number;
+  nickName: string;
+  imageUrl: string;
+  comment: string | null;
+  address: string | null;
+  postCount: number;
+  likeCount: number;
+  pathCount: number;
+}
+
+export interface UserUpdateDTO {
+  nickname?: string;
+  email?: string;
+  introduction?: string;
+}
+
 export interface CreatePostRequest {
   title: string;
   content: string;

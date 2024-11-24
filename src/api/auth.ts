@@ -2,11 +2,18 @@ import { emailFormProperty } from "@/types/types_JHW";
 import axios from "axios";
 
 //회원가입, 로그인 관련 API///////////////
+import { jwtDecode } from "jwt-decode";
+import { useUserStore } from "../store/useUserStore";
+import { getDetailProfile } from "./user";
 
 const api = axios.create({
   baseURL: "http://localhost:8080/auth",
   withCredentials: true,
 });
+
+interface JWTPayload {
+  id: number;
+}
 
 /**
  * 이메일 로그인
@@ -31,7 +38,16 @@ export const emailLogin = async (email: string, password: string) => {
     if (token) {
       const accessToken = token.split(" ")[1];
       console.log(accessToken);
-      localStorage.setItem("access", accessToken); // LocalStorage에 저장
+      localStorage.setItem("access", accessToken);
+
+      // JWT에서 id 추출
+      const decoded = jwtDecode<JWTPayload>(accessToken);
+
+      // 전체 유저 정보를 가져옴
+      const userResponse = await getDetailProfile(decoded.id);
+      useUserStore.getState().setUser(userResponse);
+
+      return userResponse;
     } else {
       console.log("토큰이 응답에 포함되지 않았습니다");
       throw new Error("토큰이 응답에 포함되지 않았습니다.");
