@@ -7,18 +7,29 @@ import { Bookmark, ChevronLeft, ChevronRight, Heart, MessageCircle, Navigation }
 import { Separator } from '@/components/ui/separator';
 import BackHeader from '@/components/layout/BackHeader';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { getPost } from '@/api/post';
+import { getPost, togglePostLike, deletePost } from '@/api/post';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import {
     Carousel,
     CarouselContent,
     CarouselItem,
-    CarouselNext,
-    CarouselPrevious,
 } from "@/components/ui/carousel"
 import { type CarouselApi } from "@/components/ui/carousel"
 import { CommentSection } from '@/components/comment/CommentSection';
 import { Post } from '@/types/types';
+import { toast } from "@/hooks/use-toast";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 
 interface PostPageProps {
     params: {
@@ -26,8 +37,8 @@ interface PostPageProps {
     };
 }
 
-//상세보기 페이지
 export default function PostPage({ params }: PostPageProps) {
+    const router = useRouter();
     const [post, setPost] = useState<Post | null>(null)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
@@ -38,12 +49,8 @@ export default function PostPage({ params }: PostPageProps) {
     useEffect(() => {
         const fetchPost = async () => {
             try {
-                console.log(params.id)
                 const data = await getPost(parseInt(params.id))
-                console.log(data)
-
                 setPost(data)
-                // 지도 + 이미지 개수로 count 설정
                 setCount(1 + (data.imageUrls?.length || 0))
             } catch (err) {
                 setError('게시글을 불러오는데 실패했습니다.')
@@ -54,7 +61,7 @@ export default function PostPage({ params }: PostPageProps) {
         }
 
         fetchPost()
-    }, [])
+    }, [params.id])
 
     useEffect(() => {
         if (!api) {
@@ -65,6 +72,37 @@ export default function PostPage({ params }: PostPageProps) {
             setCurrent(api.selectedScrollSnap())
         })
     }, [api])
+
+    const handleLikeToggle = async () => {
+        if (!post) return;
+        try {
+            await togglePostLike(post.postId);
+            const updatedPost = await getPost(post.postId);
+            setPost(updatedPost);
+            toast({
+                description: updatedPost.liked ? "좋아요를 눌렀습니다." : "좋아요를 취소했습니다."
+            });
+        } catch (error) {
+            toast({
+                description: "좋아요 처리에 실패했습니다."
+            });
+        }
+    };
+
+    const handleDelete = async () => {
+        if (!post) return;
+        try {
+            await deletePost(post.postId);
+            toast({
+                description: "게시글이 삭제되었습니다."
+            });
+            router.push('/main/board');
+        } catch (error) {
+            toast({
+                description: "게시글 삭제에 실패했습니다."
+            });
+        }
+    };
 
     if (loading) return <div>로딩 중...</div>
     if (error) return <div>{error}</div>
@@ -81,7 +119,6 @@ export default function PostPage({ params }: PostPageProps) {
     }
 
     return (
-
         <div className="animate-fade-in flex flex-col min-h-screen pb-20">
             <BackHeader content={post.title} />
             <div className="relative mb-4">
@@ -91,18 +128,17 @@ export default function PostPage({ params }: PostPageProps) {
                     opts={{
                         dragFree: false,
                         containScroll: "trimSnaps",
-                        watchDrag: false  // 드래그 비활성화
+                        watchDrag: false
                     }}
                 >
                     <CarouselContent>
-                        {/* 지도 슬라이드 */}
                         {post.pathResDTO && (
                             <CarouselItem>
                                 <div className="h-[300px]">
                                     <ViewingMap
                                         route={{
-                                            routeCoordinates: post.pathResDTO.routeCoordinates, // 이미 올바른 형식이므로 직접 전달
-                                            pins: post.pathResDTO.pins  // 이미 올바른 형식이므로 직접 전달
+                                            routeCoordinates: post.pathResDTO.routeCoordinates,
+                                            pins: post.pathResDTO.pins
                                         }}
                                         width="w-full"
                                         height="h-full"
@@ -111,8 +147,6 @@ export default function PostPage({ params }: PostPageProps) {
                             </CarouselItem>
                         )}
 
-
-                        {/* 이미지 슬라이드들 */}
                         {post.imageUrls?.map((image, index) => (
                             <CarouselItem key={index}>
                                 <div className="h-[300px]">
@@ -124,11 +158,8 @@ export default function PostPage({ params }: PostPageProps) {
                                 </div>
                             </CarouselItem>
                         ))}
-
-
                     </CarouselContent>
 
-                    {/* 이미지가 있을 때만 네비게이션 버튼 표시 */}
                     {count > 1 && (
                         <>
                             <Button
@@ -152,14 +183,12 @@ export default function PostPage({ params }: PostPageProps) {
                         </>
                     )}
 
-                    {/* 슬라이드 인디케이터 */}
                     {count > 1 && (
                         <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2">
                             {Array.from({ length: count }).map((_, index) => (
                                 <div
                                     key={index}
-                                    className={`h-1.5 rounded-full transition-all ${current === index ? "w-4 bg-white" : "w-1.5 bg-white/50"
-                                        }`}
+                                    className={`h-1.5 rounded-full transition-all ${current === index ? "w-4 bg-white" : "w-1.5 bg-white/50"}`}
                                 />
                             ))}
                         </div>
@@ -167,7 +196,6 @@ export default function PostPage({ params }: PostPageProps) {
                 </Carousel>
             </div>
 
-            {/* 작성자 정보 */}
             <div className="flex items-center gap-3 mb-4">
                 <Avatar>
                     <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${post.nickName}`} />
@@ -181,7 +209,6 @@ export default function PostPage({ params }: PostPageProps) {
                 </div>
             </div>
 
-            {/* 경로 정보 */}
             {post.pathResDTO && (
                 <Card className="p-4 mb-4">
                     <div className="grid grid-cols-2 gap-4">
@@ -197,7 +224,6 @@ export default function PostPage({ params }: PostPageProps) {
                 </Card>
             )}
 
-            {/* 본문 내용 */}
             <Card className="p-4 mb-4">
                 <div className="space-y-2">
                     <div className="inline-block px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm">
@@ -209,36 +235,73 @@ export default function PostPage({ params }: PostPageProps) {
                 </div>
             </Card>
 
-            {/* 상호작용 버튼 */}
             <Card className="p-4">
                 <div className="flex justify-between items-center">
                     <div className="flex gap-4">
-                        <Button variant="ghost" size="sm" className="flex items-center gap-1">
-                            <Heart className={`w-5 h-5 ${post.liked === true ? 'fill-red-500 text-red-500' : ''}`} />
-                            <span>{post.liked}</span>
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            className="flex items-center gap-1"
+                            onClick={handleLikeToggle}
+                        >
+                            <Heart className={`w-5 h-5 ${post.liked ? 'fill-red-500 text-red-500' : ''}`} />
+                            <span>{post.likesCount}</span>
                         </Button>
                         <Button variant="ghost" size="sm" className="flex items-center gap-1">
                             <MessageCircle className="w-5 h-5" />
                             <span>{post.repliesCount}</span>
                         </Button>
                         <Button variant="ghost" size="sm" className="flex items-center gap-1">
-                            <Bookmark className={`w-5 h-5 ${post.wishListed === true ? 'fill-current' : ''}`} />
+                            <Bookmark className={`w-5 h-5 ${post.wishListed ? 'fill-current' : ''}`} />
                             <span>{post.postWishListsNum}</span>
                         </Button>
                     </div>
-                    {/* 수정하기 버튼 추가 */}
-                    <Link href={`/main/board/${params.id}/edit`}>
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            className="flex items-center gap-1"
-                        >
-                            수정하기
-                        </Button>
-                    </Link>
+                    {/* 삭제버튼은 나중에 토큰에서 유저id를 빼와서 적용해야할듯 */}
+                    {/* {post.userId === post.user.id && (
+                        <div className="flex gap-2">
+                            <Link href={`/main/board/${params.id}/edit`}>
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="flex items-center gap-1"
+                                >
+                                    수정하기
+                                </Button>
+                            </Link>
+
+                            <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        className="flex items-center gap-1 text-red-500 hover:text-red-600"
+                                    >
+                                        삭제하기
+                                    </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                        <AlertDialogTitle>게시글 삭제</AlertDialogTitle>
+                                        <AlertDialogDescription>
+                                            정말로 이 게시글을 삭제하시겠습니까?
+                                            삭제된 게시글은 복구할 수 없습니다.
+                                        </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                        <AlertDialogCancel>취소</AlertDialogCancel>
+                                        <AlertDialogAction
+                                            onClick={handleDelete}
+                                            className="bg-red-500 hover:bg-red-600"
+                                        >
+                                            삭제
+                                        </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                </AlertDialogContent>
+                            </AlertDialog>
+                        </div>
+                    )} */}
                 </div>
             </Card>
-
 
             <Link href={`/follow/${params.id}`}>
                 <Button
