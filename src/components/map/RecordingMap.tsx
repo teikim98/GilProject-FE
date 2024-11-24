@@ -28,77 +28,33 @@ export function RecordingMap({ width, height }: SizeProps) {
                 latitude: smoothedPosition.lat.toString(),
                 longitude: smoothedPosition.lng.toString()
             });
-
-            if (navigator.serviceWorker.controller) {
-                navigator.serviceWorker.controller.postMessage({
-                    type: 'LOCATION_UPDATE',
-                    data: {
-                        ...smoothedPosition,
-                        accuracy,
-                        timestamp: Date.now()
-                    }
-                });
-            }
         }
     };
 
     useEffect(() => {
         if (!navigator.geolocation) return;
 
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/worker/location-worker.js')
-                .then(registration => {
-                    console.log('Location worker registered');
-                    registration.active?.postMessage({
-                        type: 'START_RECORDING'
-                    });
-                })
-                .catch(error => {
-                    console.error('Location worker registration failed:', error);
-                });
+        const watchId = navigator.geolocation.watchPosition(
+            (position) => {
+                const newPosition = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude,
+                };
+                processNewPosition(newPosition, position.coords.accuracy);
+            },
+            (error) => console.error("Error watching location:", error),
+            {
+                enableHighAccuracy: true,
+                maximumAge: 0,
+                timeout: 5000
+            }
+        );
 
-            const messageHandler = (event: MessageEvent) => {
-                if (event.data.type === 'BACKGROUND_UPDATE' &&
-                    event.data.trackingType === 'RECORDING') {
-                    const { position, accuracy } = event.data.location;
-                    processNewPosition(position, accuracy);
-                } else if (event.data.type === 'RECORDING_LOCATIONS') {
-                    event.data.locations.forEach((loc: any) => {
-                        processNewPosition(loc.position, loc.accuracy);
-                    });
-                }
-            };
-
-            navigator.serviceWorker.addEventListener('message', messageHandler);
-
-            const watchId = navigator.geolocation.watchPosition(
-                (position) => {
-                    const newPosition = {
-                        lat: position.coords.latitude,
-                        lng: position.coords.longitude,
-                    };
-                    processNewPosition(newPosition, position.coords.accuracy);
-                },
-                (error) => console.error("Error watching location:", error),
-                {
-                    enableHighAccuracy: true,
-                    maximumAge: 0,
-                    timeout: 5000
-                }
-            );
-
-            return () => {
-                if (watchId) {
-                    navigator.geolocation.clearWatch(watchId);
-                }
-                navigator.serviceWorker.removeEventListener('message', messageHandler);
-                if (navigator.serviceWorker.controller) {
-                    navigator.serviceWorker.controller.postMessage({
-                        type: 'STOP_TRACKING'
-                    });
-                }
-            };
-        }
+        return () => {
+            if (watchId) {
+                navigator.geolocation.clearWatch(watchId);
+            }
+        };
     }, [addPathPosition]);
 
     const handleAddMarker = async () => {

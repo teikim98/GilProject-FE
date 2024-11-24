@@ -11,6 +11,7 @@ import { EditingMap } from '@/components/map/EditingMapProps';
 import BackHeader from '@/components/layout/BackHeader';
 import { calculatePathDistance } from '@/util/calculatePathDistance';
 import { createPath } from '@/api/route';
+import { convertCoordsToAddress } from '@/util/convertCoordsToAddress';
 
 
 export default function SaveRoutePage() {
@@ -28,53 +29,50 @@ export default function SaveRoutePage() {
         setIsSaving(true);
     }, []);
 
-    const handleSave = () => {
+    // 저장 함수 
+    const handleSave = async () => {
         if (pathPositions.length === 0) {
             alert('저장할 경로가 없습니다.');
             return;
         }
 
-        const time = recordStartTime
-            ? Math.round((Date.now() - recordStartTime) / (1000 * 60))
-            : 0;
+        try {
+            const startLat = parseFloat(pathPositions[0].latitude);
+            const startLng = parseFloat(pathPositions[0].longitude);
 
-        const distance = calculatePathDistance(pathPositions.map(coord => ({
-            lat: parseFloat(coord.latitude),
-            lng: parseFloat(coord.longitude)
-        })));
+            const startAddress = await convertCoordsToAddress(startLat, startLng);
 
+            const time = recordStartTime
+                ? Math.round((Date.now() - recordStartTime) / (1000 * 60))
+                : 0;
 
-        const path: CreatePostPath = {
-            content: description,
-            title,
-            time,
-            distance,
-            startLat: parseFloat(pathPositions[0].latitude),
-            startLong: parseFloat(pathPositions[0].longitude),
-            startAddr: null,
-            routeCoordinates: pathPositions,
-            pins
-        };
+            const distance = calculatePathDistance(pathPositions.map(coord => ({
+                lat: parseFloat(coord.latitude),
+                lng: parseFloat(coord.longitude)
+            })));
 
+            const path: CreatePostPath = {
+                content: description,
+                title,
+                time,
+                distance,
+                startLat: startLat,
+                startLong: startLng,
+                startAddr: startAddress,
+                routeCoordinates: pathPositions,
+                pins
+            };
 
-        // Create path using API
-        createPath(path)
-            .then(() => {
-                console.log('Path saved successfully');
-                // 임시 저장 데이터와 쿠키 삭제
-                localStorage.removeItem("savedPath");
-                document.cookie = 'has-temp-path=false;path=/;max-age=0';
-            })
-            .catch((error) => {
-                console.error('Error saving path:', error);
-                alert('경로 저장에 실패했습니다.');
-            });
-
-
-        resetRecord();
-
-        // 저장 후 메인 페이지로 이동
-        router.push('/main');
+            await createPath(path);
+            console.log('Path saved successfully');
+            localStorage.removeItem("savedPath");
+            document.cookie = 'has-temp-path=false;path=/;max-age=0';
+            resetRecord();
+            router.push('/main');
+        } catch (error) {
+            console.error('Error saving path:', error);
+            alert('경로 저장에 실패했습니다.');
+        }
     };
 
     return (
