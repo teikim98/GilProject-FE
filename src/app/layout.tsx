@@ -1,3 +1,4 @@
+import { Toaster } from "@/components/ui/toaster";
 import type { Metadata } from "next";
 import Script from "next/script";
 import { Suspense } from "react";
@@ -43,9 +44,9 @@ export default function RootLayout({
         >
           <Provider>
             {children}
+            <Toaster />
           </Provider>
         </Suspense>
-
       </body>
     </html>
   );

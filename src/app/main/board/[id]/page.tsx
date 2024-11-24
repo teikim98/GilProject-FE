@@ -251,10 +251,9 @@ export default function PostPage({ params }: PostPageProps) {
             </Link>
 
             <Separator className="my-4" />
-
             <div className="space-y-4">
                 <h3 className="font-semibold">댓글 {post.repliesCount}개</h3>
-                <CommentSection />
+                <CommentSection postId={parseInt(params.id)} />
             </div>
         </div>
     )

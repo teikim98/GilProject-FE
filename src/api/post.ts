@@ -60,16 +60,32 @@ export const createPost = async (formData: FormData) => {
   }
 };
 
-export const updatePost = async (id: number, formData: FormData) => {
+// 게시글 좋아요 토글
+export const togglePostLike = async (postId: number) => {
   try {
-    const response = await axios.put(`/api/posts/${id}`, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
-    console.log("Updated post data:", formData);
-    return response.data;
+    await api.post(`/${postId}/likes`);
   } catch (error) {
+    console.error("Error toggling post like:", error);
+    throw error;
+  }
+};
+
+// 게시글 삭제
+export const deletePost = async (postId: number) => {
+  try {
+    await api.delete(`/${postId}`);
+  } catch (error) {
+    console.error("Error deleting post:", error);
+    throw error;
+  }
+};
+
+// 게시글 수정
+export const updatePost = async (postId: number, formData: FormData) => {
+  try {
+    await api.patch(`/${postId}`, formData);
+  } catch (error) {
+    console.error("Error updating post:", error);
     throw error;
   }
 };

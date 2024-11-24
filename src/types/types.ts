@@ -168,7 +168,17 @@ export interface CreatePostPath {
     latitude: number; // 핀 위도
     longitude: number; // 핀 경도
     imageUrl?: string | null; // Base64 이미지 또는 null
-  }[]; // 
+  }[]; //
+}
+
+export interface Comment {
+  id: number;
+  userNickName: string;
+  profileImage: string;
+  content: string;
+  createdAt: string;
+  likesCount: number;
+  isLiked: boolean;
 }
 
 export interface CreatePostFormData {
