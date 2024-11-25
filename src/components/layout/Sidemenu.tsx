@@ -31,7 +31,7 @@ export default function Sidemenu() {
                 <SheetTrigger className="hover:bg-gray-100 p-1 rounded-full transition-colors">
                     <HamburgerMenuIcon className="w-7 h-7" />
                 </SheetTrigger>
-                <SheetContent side="right" className="w-[300px]">
+                <SheetContent side="right" className="w-[350px]">
                     <SheetHeader>
                         <SheetTitle className="text-left">메뉴</SheetTitle>
                     </SheetHeader>
