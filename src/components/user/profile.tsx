@@ -17,22 +17,30 @@ interface SimpleUserInfo {
     pathCount: number;
 }
 
-export default function Profile() {
+interface ProfileProps {
+    userId?: number;  // userId를 props로 받음
+}
+
+export default function Profile({ userId }: ProfileProps) {
     const [simpleInfo, setSimpleInfo] = useState<SimpleUserInfo | null>(null)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
     const user = useUserStore((state) => state.user)
+    const isCurrentUser = !userId || (user && user.id === userId);
 
     useEffect(() => {
         const fetchSimpleProfile = async () => {
-            if (!user) {
-                setError('로그인이 필요합니다')
-                setLoading(false)
-                return
-            }
-
             try {
-                const data = await getSimpleProfile(user.id)
+                // userId가 제공되면 해당 유저의 정보를, 아니면 현재 로그인한 유저의 정보를 가져옴
+                const targetUserId = userId || user?.id;
+                if (!targetUserId) {
+                    setError('사용자 정보를 찾을 수 없습니다');
+                    setLoading(false);
+                    return;
+                }
+
+                const data = await getSimpleProfile(targetUserId)
+                console.log(data)
                 setSimpleInfo(data)
                 setError(null)
             } catch (err) {
@@ -44,10 +52,10 @@ export default function Profile() {
         }
 
         fetchSimpleProfile()
-    }, [user])
+    }, [userId, user])
 
     const handleUpdateAddress = async (address: string, latitude: number, longitude: number) => {
-        if (!user) return;
+        if (!isCurrentUser || !user) return;
 
         try {
             setLoading(true)
@@ -63,13 +71,13 @@ export default function Profile() {
     }
 
     const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (!isCurrentUser || !user) return;
         const file = event.target.files?.[0]
-        if (!file || !user) return
+        if (!file) return;
 
         try {
             setLoading(true)
             await updateProfileImage(user.id, file)
-            // 이미지 업로드 후 심플 정보 다시 불러오기
             const updatedInfo = await getSimpleProfile(user.id)
             setSimpleInfo(updatedInfo)
         } catch (err) {
@@ -88,7 +96,7 @@ export default function Profile() {
         return <div className="text-red-500">{error}</div>
     }
 
-    if (!simpleInfo || !user) {
+    if (!simpleInfo) {
         return <div>프로필 정보를 불러올 수 없습니다</div>
     }
 
@@ -107,12 +115,14 @@ export default function Profile() {
                             ) : (
                                 <Camera className="w-10 h-10 p-2 bg-slate-100 rounded-full" />
                             )}
-                            <input
-                                type="file"
-                                className="absolute inset-0 opacity-0 cursor-pointer"
-                                onChange={handleImageUpload}
-                                accept="image/*"
-                            />
+                            {isCurrentUser && (
+                                <input
+                                    type="file"
+                                    className="absolute inset-0 opacity-0 cursor-pointer"
+                                    onChange={handleImageUpload}
+                                    accept="image/*"
+                                />
+                            )}
                         </div>
                         <div className="flex flex-col">
                             <div className="flex flex-row items-center">
@@ -128,10 +138,12 @@ export default function Profile() {
                             </p>
                         </div>
                     </div>
-                    <Pencil
-                        className="align-top cursor-pointer hover:text-slate-600"
-                        onClick={() => {/* 수정 모달 or 페이지로 이동 */ }}
-                    />
+                    {isCurrentUser && (
+                        <Pencil
+                            className="align-top cursor-pointer hover:text-slate-600"
+                            onClick={() => {/* 수정 모달 or 페이지로 이동 */ }}
+                        />
+                    )}
                 </div>
             </CardHeader>
             <CardContent className="mb-4">
@@ -162,15 +174,17 @@ export default function Profile() {
                     </div>
                 </div>
             </CardContent>
-            <CardFooter className="flex justify-center">
-                <Button
-                    disabled={loading}
-                    onClick={() => {/* 정보 수정 페이지로 이동 */ }}
-                    className="w-full max-w-[200px]"
-                >
-                    정보 수정하기
-                </Button>
-            </CardFooter>
+            {isCurrentUser && (
+                <CardFooter className="flex justify-center">
+                    <Button
+                        disabled={loading}
+                        onClick={() => {/* 정보 수정 페이지로 이동 */ }}
+                        className="w-full max-w-[200px]"
+                    >
+                        정보 수정하기
+                    </Button>
+                </CardFooter>
+            )}
         </Card>
     )
 }

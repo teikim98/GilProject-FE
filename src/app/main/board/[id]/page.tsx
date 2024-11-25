@@ -30,6 +30,7 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
+import ProfileDialog from '@/components/user/ProfileDialog';
 
 interface PostPageProps {
     params: {
@@ -197,10 +198,7 @@ export default function PostPage({ params }: PostPageProps) {
             </div>
 
             <div className="flex items-center gap-3 mb-4">
-                <Avatar>
-                    <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${post.nickName}`} />
-                    <AvatarFallback>{post.nickName}</AvatarFallback>
-                </Avatar>
+                <ProfileDialog nickName={post.nickName} userId={post.postUserId} />
                 <div>
                     <p className="font-semibold">{post.nickName}</p>
                     <p className="text-sm text-gray-500 dark:text-gray-400">

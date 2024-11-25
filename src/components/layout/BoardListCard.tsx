@@ -6,6 +6,7 @@ import { Card } from '../ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { ViewingMap } from '../map/ViewingMapProps';
 import Link from 'next/link';
+import ProfileDialog from '../user/ProfileDialog';
 
 interface BoardCardProps {
     post: Post;
@@ -29,16 +30,17 @@ function formatDate(dateString: string): string {
 }
 
 export default function BoardCard({ post }: BoardCardProps) {
-    console.log(post.pathResDTO)
+    console.log('Post Data:', {
+        postUserId: post.postUserId,
+        nickName: post.nickName,
+        postId: post.postId
+    });
 
     return (
         <Card className="p-4 hover:shadow-lg transition-shadow">
             <Link href={`/main/board/${post.postId}`}>
                 <div className="flex items-center gap-3 mb-3">
-                    <Avatar>
-                        <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${post.nickName}`} />
-                        <AvatarFallback>{post.nickName[0]}</AvatarFallback>
-                    </Avatar>
+                    <ProfileDialog nickName={post.nickName} userId={post.postUserId} />
                     <div>
                         <h3 className="font-semibold">{post.nickName}</h3>
                         <p className="text-sm text-gray-500 dark:text-gray-400">

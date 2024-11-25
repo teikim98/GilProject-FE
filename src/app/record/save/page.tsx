@@ -64,7 +64,7 @@ export default function SaveRoutePage() {
             };
 
             await createPath(path);
-            console.log('Path saved successfully');
+            console.log(path)
             localStorage.removeItem("savedPath");
             document.cookie = 'has-temp-path=false;path=/;max-age=0';
             resetRecord();

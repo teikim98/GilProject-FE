@@ -24,6 +24,7 @@ interface WritePostPageProps {
 
 const INITIAL_POST: Post = {
     postId: 0,
+    postUserId: 1,
     nickName: "테스트 사용자",
     pathId: 0,
     startLat: 37.5665,

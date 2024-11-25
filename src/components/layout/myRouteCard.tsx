@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Card } from '../ui/card'
 import { Separator } from '../ui/separator'
 import { ChevronDown, ChevronUp } from 'lucide-react'
@@ -18,6 +18,9 @@ import {
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Trash2 } from 'lucide-react';
+import { useUserStore } from '@/store/useUserStore'
+import { deletePath, getAllUserPaths } from '@/api/route'
+import { toast } from '@/hooks/use-toast'
 
 interface MyRouteCardProps {
     route: Path;
@@ -178,23 +181,73 @@ export default function MyRouteList({
     isWriteMode?: boolean;
     onRouteSelect?: (route: Path) => void
 }) {
-    const [routes, setRoutes] = React.useState<Path[]>([]);
+    const [routes, setRoutes] = useState<Path[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    const user = useUserStore((state) => state.user);
 
-    React.useEffect(() => {
-        const savedRoutes = localStorage.getItem('savedRoutes');
-        if (savedRoutes) {
-            const parsedRoutes = JSON.parse(savedRoutes);
-            setRoutes(parsedRoutes.sort((a: Path, b: Path) =>
-                new Date(b.createdDate).getTime() - new Date(a.createdDate).getTime()
-            ));
+    useEffect(() => {
+        const fetchRoutes = async () => {
+            if (!user) {
+                setError('로그인이 필요합니다.');
+                setLoading(false);
+                return;
+            }
+
+            try {
+                setLoading(true);
+                console.log('Fetching routes for user:', user.id);  // 사용자 ID 로깅
+                const data = await getAllUserPaths(user.id);
+                console.log('Fetched data:', data);
+
+                if (Array.isArray(data)) {
+                    const sortedPaths = data
+                        .filter(path => path?.createdDate)
+                        .sort((a, b) => {
+                            return new Date(b.createdDate).getTime() - new Date(a.createdDate).getTime();
+                        });
+                    setRoutes(sortedPaths);
+                } else {
+                    console.error('Received data is not an array:', data);
+                    setError('데이터 형식이 올바르지 않습니다.');
+                }
+            } catch (err) {
+                console.error('Error fetching routes:', err);
+                setError('경로를 불러오는데 실패했습니다.');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchRoutes();
+    }, [user]);
+
+    const handleDelete = async (routeId: number) => {
+        try {
+            await deletePath(routeId);
+            setRoutes(prevRoutes => prevRoutes.filter(route => route.id !== routeId));
+            toast({
+                description: "경로가 삭제되었습니다."
+            });
+        } catch (err) {
+            toast({
+                description: "경로 삭제에 실패했습니다.",
+                variant: "destructive"
+            });
         }
-    }, []);
-
-    const handleDelete = (routeId: number) => {
-        const updatedRoutes = routes.filter(route => route.id !== routeId);
-        setRoutes(updatedRoutes);
-        localStorage.setItem('savedRoutes', JSON.stringify(updatedRoutes));
     };
+
+    if (!user) {
+        return <div className="text-center py-8 text-gray-500">로그인이 필요합니다.</div>;
+    }
+
+    if (loading) {
+        return <div className="text-center py-8">로딩 중...</div>;
+    }
+
+    if (error) {
+        return <div className="text-center py-8 text-red-500">{error}</div>;
+    }
 
     if (routes.length === 0) {
         return (
@@ -206,9 +259,9 @@ export default function MyRouteList({
 
     return (
         <div className="space-y-4">
-            {routes.map((route, index) => (
+            {routes.map((route) => (
                 <RouteCard
-                    key={route.createdDate + index}
+                    key={route.id}
                     route={route}
                     isWriteMode={isWriteMode}
                     onSelect={onRouteSelect}

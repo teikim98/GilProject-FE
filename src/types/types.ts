@@ -44,6 +44,7 @@ export type PathsResponse = Path[];
 // 게시글 타입
 export interface Post {
   postId: number;
+  postUserId: number;
   nickName: string;
   pathId: number;
   startLat: number;
