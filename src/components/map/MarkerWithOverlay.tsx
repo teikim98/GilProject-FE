@@ -12,7 +12,7 @@ interface MarkerWithOverlayProps {
             lng: number;
         };
         content: string;
-        image?: string;
+        imageUrl?: string | null;
     };  // 카카오맵과 호환되는 형식으로 정의
     onMarkerClick?: () => void;
 }
@@ -29,7 +29,7 @@ export function MarkerWithOverlay({ marker, onMarkerClick }: MarkerWithOverlayPr
             />
             <MarkerOverlay
                 content={marker.content}
-                imageUrl={marker.image}  // image -> imageUrl
+                imageUrl={marker.imageUrl}  // image -> imageUrl
                 pinId={parseInt(marker.id)}  // markerId -> pinId, string -> number 변환
                 position={{  // KakaoPosition을 RouteCoordinate로 변환
                     latitude: marker.position.lat.toString(),
