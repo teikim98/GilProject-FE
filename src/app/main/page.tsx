@@ -14,8 +14,6 @@ import { useEffect } from 'react'
 
 export default function Page() {
     useEffect(() => {
-        console.log("main 도착");
-
         // 쿠키 확인 함수의 타입 정의
         const getCookie = (name: string): string | null => {
             const value = `; ${document.cookie}`;
@@ -28,7 +26,7 @@ export default function Page() {
         };
 
         const token = getCookie('authorization');
-        console.log(token);
+        console.log("쿠키에 있는 토큰 : " + token);
 
         if (token) {
             // 있으면

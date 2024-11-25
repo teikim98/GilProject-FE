@@ -32,12 +32,12 @@ export const emailLogin = async (email: string, password: string) => {
         "Content-Type": "multipart/form-data", // FormData의 경우 이 헤더를 설정합니다.
       },
     });
-    console.log(response.headers["authorization"]);
+    // console.log(response.headers["authorization"]);
     // 응답 헤더에서 JWT 토큰 추출
     const token = response.headers["authorization"];
     if (token) {
       const accessToken = token.split(" ")[1];
-      console.log(accessToken);
+      // console.log(accessToken);
       localStorage.setItem("access", accessToken);
 
       // JWT에서 id 추출
