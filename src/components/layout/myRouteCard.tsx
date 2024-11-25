@@ -196,21 +196,21 @@ export default function MyRouteList({
 
             try {
                 setLoading(true);
-                console.log('Fetching routes for user:', user.id);  // 사용자 ID 로깅
                 const data = await getAllUserPaths(user.id);
-                console.log('Fetched data:', data);
+                console.log('Fetched routes:', data); // 받아온 데이터 확인
 
-                if (Array.isArray(data)) {
-                    const sortedPaths = data
-                        .filter(path => path?.createdDate)
-                        .sort((a, b) => {
-                            return new Date(b.createdDate).getTime() - new Date(a.createdDate).getTime();
-                        });
-                    setRoutes(sortedPaths);
-                } else {
-                    console.error('Received data is not an array:', data);
-                    setError('데이터 형식이 올바르지 않습니다.');
-                }
+                // 좌표 데이터 변환 및 유효성 검사
+                const processedRoutes = data.map(route => ({
+                    ...route,
+                    routeCoordinates: route.routeCoordinates.map(coord => ({
+                        // 좌표값 순서 교정
+                        latitude: coord.longitude, // 백엔드에서 반대로 온 값 교정
+                        longitude: coord.latitude  // 백엔드에서 반대로 온 값 교정
+                    }))
+                }));
+
+                console.log('Processed routes:', processedRoutes); // 처리된 데이터 확인
+                setRoutes(processedRoutes);
             } catch (err) {
                 console.error('Error fetching routes:', err);
                 setError('경로를 불러오는데 실패했습니다.');

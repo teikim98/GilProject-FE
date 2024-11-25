@@ -71,58 +71,6 @@ export default function PostForm({ isEdit, postId }: WritePostPageProps) {
     const [deletedImageUrls, setDeletedImageUrls] = useState<string[]>([]);
 
     useEffect(() => {
-        // 로컬스토리지에서 'savedRoutes' 데이터를 가져오기
-        const savedRoutes = JSON.parse(localStorage.getItem("savedRoutes") || "[]");
-
-        // 'savedRoutes'가 비어 있으면 더미 데이터를 추가
-        if (!savedRoutes || savedRoutes.length === 0) {
-            const dummyData: Path[] = [
-                {
-                    id: 17,
-                    user: {
-                        id: 123,
-                    },
-                    content: "This is a sample path for testing.",
-                    state: 1,
-                    title: "Default Walking Route",
-                    time: 30, // 분 단위
-                    createdDate: "2024-11-23T12:00:00Z", // ISO 형식
-                    distance: 3.5, // km
-                    startLat: 126.978, // 시작점 위도
-                    startLong: 37.5665, // 시작점 경도
-                    startAddr: "San Francisco, CA", // 시작 주소
-                    routeCoordinates: [
-                        { latitude: '126.978', longitude: '37.5665' },
-                        { latitude: '126.979', longitude: '37.5675' },
-                        { latitude: '126.98', longitude: '37.5685' },
-                        { latitude: '126.981', longitude: '37.5695' }
-                    ],
-                    pins: [
-                        {
-                            id: 1,
-                            imageUrl: null,
-                            content: "Start Point",
-                            latitude: 37.7749,
-                            longitude: -122.4194,
-                        },
-                        {
-                            id: 2,
-                            imageUrl: "https://example.com/image.png",
-                            content: "End Point",
-                            latitude: 37.7750,
-                            longitude: -122.4180,
-                        },
-                    ],
-                },
-            ];
-
-            // 로컬스토리지에 저장
-            localStorage.setItem("savedRoutes", JSON.stringify(dummyData));
-            console.log("더미 데이터가 저장되었습니다:", dummyData);
-        }
-    }, []);
-
-    useEffect(() => {
         if (post.title || post.content) {
             setIsWriting(true);
         } else {
