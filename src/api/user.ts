@@ -12,8 +12,11 @@ const getAuthToken = (): string | null => {
   return localStorage.getItem("access");
 };
 
+//프론트가 보낸 요청 인터셉터
 api.interceptors.request.use(
   (config) => {
+    console.log("api.interceptors call");
+
     const token = getAuthToken();
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -21,6 +24,46 @@ api.interceptors.request.use(
     return config;
   },
   (error) => {
+    return Promise.reject(error);
+  }
+);
+
+//프론트가 받은 응답 인터셉터
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    //원래 요청
+    const originalRequest = error.config;
+
+    // 900에러 처리
+    if (error.response && error.response.status === 900) {
+      console.log("access 토큰이 만료되거나 정상이 아님");
+      const errorMessage = error.response.data;
+      console.log("백엔드에서 온 에러 메세지 : " + errorMessage);
+
+      try {
+        const reissueResponse = await axios.post("http://localhost:8080/reissue", null, {
+          withCredentials: true, // 쿠키 포함
+        });
+
+        //새로운 토큰을 헤더에서 찾음
+        const newAccessToken = reissueResponse.headers['newaccess'].split('Bearer ')[1];
+        
+        //새로운 토큰을 로컬스토리지에 저장
+        if (newAccessToken) {
+          localStorage.setItem("access", newAccessToken);
+          console.log("새로운 access 토큰 스토리지에 저장 = " + newAccessToken);
+
+          // 원래 요청 재시도
+          originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
+
+          return api(originalRequest);
+        }
+      } catch (reissueError) {
+        console.error("Token reissue failed:", reissueError);
+      }
+    }
+
     return Promise.reject(error);
   }
 );
@@ -121,7 +164,23 @@ export const updateProfileImage = async (userId: number, file: File) => {
   }
 };
 
-export const logout = () => {
+export const logout = async () => {
   localStorage.removeItem("access");
   useUserStore.getState().clearUser();
+
+  // 2. 서버 측 로그아웃 요청 (Refresh 토큰 전송)
+  try {
+    await axios.post(
+      "http://localhost:8080/logout",
+      {}, // 요청 바디는 비워둠
+      {
+        withCredentials: true, // 쿠키 포함
+      }
+    );
+    console.log("로그아웃 성공");
+  } catch (error) {
+    console.error("로그아웃 실패:", error);
+  }
+
+  window.location.href = "/auth/login";
 };
