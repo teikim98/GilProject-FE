@@ -143,31 +143,45 @@ export default function PostForm({ isEdit, postId }: WritePostPageProps) {
         try {
             const formData = new FormData();
 
-
-
             if (isEdit && postId) {
-                formData.append('postUpdateRequest', JSON.stringify({
+                // postUpdateRequest를 백엔드 DTO 구조에 맞게 수정
+                const postPatchRequestDTO = {
                     title: post.title.trim(),
                     content: post.content,
                     tag: post.tag,
                     deleteUrls: deletedImageUrls
-                }));
-                images.forEach(image => formData.append('images', image));
+                };
+
+                // JSON 문자열로 변환하지 않고 개별 필드로 전송
+                formData.append('title', postPatchRequestDTO.title);
+                formData.append('content', postPatchRequestDTO.content);
+                formData.append('tag', postPatchRequestDTO.tag);
+
+                // deleteUrls를 개별적으로 추가
+                deletedImageUrls.forEach(url => {
+                    formData.append('deleteUrls', url);
+                });
+
+                // 새 이미지들을 newImages로 추가
+                images.forEach(image => {
+                    formData.append('newImages', image);
+                });
+
                 await updatePost(postId, formData);
                 router.push(`/main/board/${postId}`);
             } else {
-
-                // FormData에 각 필드를 개별적으로 추가
+                // 새 게시글 생성 로직은 그대로 유지
                 formData.append("title", post.title.trim());
                 formData.append("content", post.content);
                 formData.append("tag", post.tag);
-                formData.append("pathId", selectedPath.id.toString());  // pathId를 문자열로 전송
+                formData.append("pathId", selectedPath.id.toString());
 
                 if (images.length > 0) {
                     Array.from(images).forEach((file) => {
                         formData.append("images", file);
                     });
                 }
+
                 const response = await createPost(formData);
                 router.push('/main/board');
             }
