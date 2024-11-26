@@ -52,7 +52,7 @@ export default function Profile({ userId, width = "w-350px" }: ProfileProps) {
 
         try {
             setLoading(true)
-            await updateAddress(user.id, address, latitude, longitude)
+            await updateAddress(address, latitude, longitude)
             const updatedInfo = await getSimpleProfile()
             setSimpleInfo(updatedInfo)
         } catch (err) {

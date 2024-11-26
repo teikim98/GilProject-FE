@@ -83,9 +83,9 @@ export const getSimpleProfile = async (): Promise<UserSimple> => {
 };
 
 // 전체 프로필 정보 조회 (마이페이지용)
-export const getDetailProfile = async (userId: number): Promise<User> => {
+export const getDetailProfile = async (): Promise<User> => {
   try {
-    const response = await api.get(`/mypage/${userId}`);
+    const response = await api.get(`/mypage`);
     return response.data;
   } catch (error) {
     throw error;
@@ -93,19 +93,16 @@ export const getDetailProfile = async (userId: number): Promise<User> => {
 };
 
 // 프로필 정보 수정
-export const updateProfile = async (
-  userId: number,
-  userData: Partial<User>
-) => {
+export const updateProfile = async (userData: Partial<User>) => {
   try {
-    const response = await api.put(`/mypage/update/${userId}`, userData, {
+    const response = await api.put(`/mypage/update`, userData, {
       headers: {
         "Content-Type": "application/json",
       },
     });
 
     // 프로필 업데이트 후 전체 정보를 다시 가져와서 store 업데이트
-    const updatedUser = await getDetailProfile(userId);
+    const updatedUser = await getDetailProfile();
 
     return updatedUser;
   } catch (error) {
@@ -115,14 +112,13 @@ export const updateProfile = async (
 
 // 주소 업데이트
 export const updateAddress = async (
-  userId: number,
   address: string,
   latitude: number,
   longitude: number
 ) => {
   try {
     const response = await api.put(
-      `/mypage/address/${userId}`,
+      `/mypage/address`,
       {
         address,
         latitude,
@@ -135,8 +131,8 @@ export const updateAddress = async (
       }
     );
 
-    // 주소 업데이트 후 전체 정보를 다시 가져와서 store 업데이트
-    const updatedUser = await getDetailProfile(userId);
+    // 주소 업데이트 후 전체 정보를 다시 가져와서  업데이트
+    const updatedUser = await getDetailProfile();
 
     return updatedUser;
   } catch (error) {
@@ -157,7 +153,7 @@ export const updateProfileImage = async (userId: number, file: File) => {
     });
 
     // 이미지 업로드 후 전체 정보를 다시 가져와서 store 업데이트
-    const updatedUser = await getDetailProfile(userId);
+    const updatedUser = await getDetailProfile();
 
     return updatedUser;
   } catch (error) {
