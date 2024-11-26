@@ -31,11 +31,16 @@ import {
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import ProfileDialog from '@/components/user/ProfileDialog';
+import { jwtDecode } from "jwt-decode";
 
 interface PostPageProps {
     params: {
         id: string;
     };
+}
+
+interface JWTPayload {
+    id: number;
 }
 
 export default function PostPage({ params }: PostPageProps) {
@@ -46,6 +51,10 @@ export default function PostPage({ params }: PostPageProps) {
     const [api, setApi] = useState<CarouselApi>()
     const [current, setCurrent] = useState(0)
     const [count, setCount] = useState(0)
+
+
+    const token = localStorage.getItem("access")!;
+    const decoded = jwtDecode<JWTPayload>(token);
 
     useEffect(() => {
         const fetchPost = async () => {
@@ -255,7 +264,7 @@ export default function PostPage({ params }: PostPageProps) {
                         </Button>
                     </div>
                     {/* 삭제버튼은 나중에 토큰에서 유저id를 빼와서 적용해야할듯 */}
-                    {/* {post.userId === post.user.id && (
+                    {post.postUserId === decoded?.id && (
                         <div className="flex gap-2">
                             <Link href={`/main/board/${params.id}/edit`}>
                                 <Button
@@ -297,7 +306,7 @@ export default function PostPage({ params }: PostPageProps) {
                                 </AlertDialogContent>
                             </AlertDialog>
                         </div>
-                    )} */}
+                    )}
                 </div>
             </Card>
 

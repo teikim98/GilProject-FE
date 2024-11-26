@@ -105,28 +105,28 @@ export default function TestFollowPage() {
 
             const testPost: Post = {
                 postId: 999,
-                nickName: "테스트 사용자",  // userNickName -> nickName
+                nickName: "테스트 사용자",
                 pathId: 999,
                 startLat: parseFloat(normalizedPath[0].latitude),
                 startLong: parseFloat(normalizedPath[0].longitude),
                 state: 1,
                 title: selectedRoute.title || "테스트 경로",
-                content: selectedRoute.description || "테스트 경로입니다.",  // description -> content
+                content: selectedRoute.description || "테스트 경로입니다.",
                 tag: "테스트",
                 writeDate: selectedRoute.createdAt,
                 updateDate: selectedRoute.createdAt,
                 readNum: 0,
-                likesCount: 0,  // postLikesNum -> likesCount
-                repliesCount: 0,  // repliesNum -> repliesCount
+                likesCount: 0,
+                repliesCount: 0,
                 postWishListsNum: 0,
                 userImgUrl: "",
-                pathResDTO: {  // routeData -> pathResDTO
+                pathResDTO: {
                     id: 999,
                     user: { id: 0 },
                     content: selectedRoute.description,
                     state: 0,
                     title: selectedRoute.title,
-                    time: selectedRoute.pathData.time || 0,  // recordedTime -> time
+                    time: selectedRoute.pathData.time || 0,
                     distance: distance,
                     createdDate: selectedRoute.createdAt,
                     startLat: parseFloat(normalizedPath[0].latitude),
@@ -137,7 +137,8 @@ export default function TestFollowPage() {
                 },
                 imageUrls: [],
                 liked: false,
-                wishListed: false
+                wishListed: false,
+                postUserId: 0
             };
 
 
