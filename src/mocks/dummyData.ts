@@ -4,6 +4,7 @@ import { convertSavedPathToPost } from "@/util/convertSavedPathToPath";
 export const dummyPosts: Post[] = [
   {
     postId: 1,
+    postUserId: 1,
     nickName: "러너김",
     pathId: 1,
     startLat: 37.5665,
@@ -57,6 +58,7 @@ export const dummyPosts: Post[] = [
   },
   {
     postId: 2,
+    postUserId: 1,
     nickName: "등산왕",
     pathId: 2,
     startLat: 37.6532,
@@ -109,6 +111,7 @@ export const dummyPosts: Post[] = [
   },
   {
     postId: 3,
+    postUserId: 1,
     nickName: "자전거매니아",
     pathId: 3,
     startLat: 37.5139,
@@ -154,6 +157,7 @@ export const dummyPosts: Post[] = [
   },
   {
     postId: 4,
+    postUserId: 1,
     nickName: "산책러버",
     pathId: 4,
     startLat: 37.5113,
@@ -206,6 +210,7 @@ export const dummyPosts: Post[] = [
   },
   {
     postId: 5,
+    postUserId: 1,
     nickName: "웨이트왕",
     pathId: 5,
     startLat: 37.5037,
