@@ -7,7 +7,7 @@ import { useState } from "react"
 
 interface ProfileDialogProps {
     nickName: string;
-    userId: number;  // userId 추가
+    userId: number;
     className?: string;
 }
 
@@ -53,7 +53,7 @@ export default function ProfileDialog({ nickName, userId, className }: ProfileDi
                 </div>
             </DialogTrigger>
             <DialogContent
-                className="sm:max-w-[425px] flex items-center justify-center p-6"
+                className="p-0 sm:max-w-[425px] flex flex-col min-h-[300px]"
                 onPointerDownOutside={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
@@ -68,12 +68,7 @@ export default function ProfileDialog({ nickName, userId, className }: ProfileDi
                     e.preventDefault();
                 }}
             >
-                <div onClick={(e) => {
-                    e.stopPropagation();
-                    e.preventDefault();
-                }}>
-                    <Profile userId={userId} />
-                </div>
+                <Profile userId={userId} width="w-full" />
             </DialogContent>
         </Dialog>
     )

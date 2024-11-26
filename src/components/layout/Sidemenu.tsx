@@ -13,6 +13,9 @@ import { Bell } from 'lucide-react'
 import Profile from "../user/profile";
 import { logout } from "@/api/user";
 import { useRouter } from 'next/navigation';
+import { useNotificationStore } from "@/store/useNotificationStore";
+import { Button } from "../ui/button";
+
 
 const navigationItems = [
     { name: '마이 페이지', href: '/main/mypage' },
@@ -24,6 +27,9 @@ const navigationItems = [
 export default function Sidemenu() {
     const pathname = usePathname();
     const router = useRouter();
+    const notifications = useNotificationStore((state) => state.notifications);
+    const unreadCount = notifications.length;
+
 
     const handleLogout = () => {
         logout();
@@ -31,10 +37,26 @@ export default function Sidemenu() {
     };
 
     return (
-        <div className='flex flex-row'>
-            <Bell size={28} className='mr-2' />
+        <div className='flex flex-row items-center'>
+            <Button
+                variant="ghost"
+                size="icon"
+                className="relative mr-2"
+                onClick={() => router.push('/main/notification')}
+            >
+                <Bell className="h-7 w-7" />
+                {unreadCount > 0 && (
+                    <div
+                        className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center rounded-full bg-red-500 text-white text-xs"
+                    >
+                        {unreadCount}
+                    </div>
+
+                )}
+            </Button>
+
             <Sheet>
-                <SheetTrigger className="hover:bg-gray-100 p-1 rounded-full transition-colors">
+                <SheetTrigger className="hover:bg-muted p-1 rounded-full transition-colors">
                     <HamburgerMenuIcon className="w-7 h-7" />
                 </SheetTrigger>
                 <SheetContent side="right" className="w-[350px]">
@@ -49,18 +71,24 @@ export default function Sidemenu() {
                                     <Link
                                         href={item.href}
                                         className={cn(
-                                            "block px-4 py-2 text-lg rounded-md transition-colors hover:bg-gray-100 dark:hover:bg-gray-600",
-                                            pathname === item.href && "bg-gray-100 font-medium"
+                                            "block px-4 py-2 text-lg rounded-md transition-colors hover:bg-muted",
+                                            pathname === item.href && "bg-muted font-medium",
+                                            item.href === '/notifications' && unreadCount > 0 && "flex justify-between items-center"
                                         )}
                                     >
                                         {item.name}
+                                        {item.href === '/main/notification' && unreadCount > 0 && (
+                                            <div className="ml-2 px-2 py-0.5 text-xs rounded-full bg-red-500 text-white">
+                                                {unreadCount}
+                                            </div>
+                                        )}
                                     </Link>
                                 </li>
                             ))}
                             <li>
                                 <button
                                     onClick={handleLogout}
-                                    className="block w-full text-left px-4 py-2 text-lg rounded-md transition-colors hover:bg-gray-100 dark:hover:bg-gray-600 text-red-500"
+                                    className="block w-full text-left px-4 py-2 text-lg rounded-md transition-colors hover:bg-muted text-destructive"
                                 >
                                     로그아웃
                                 </button>
@@ -70,5 +98,6 @@ export default function Sidemenu() {
                 </SheetContent>
             </Sheet>
         </div>
+
     )
 }

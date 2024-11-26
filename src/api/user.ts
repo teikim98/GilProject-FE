@@ -92,6 +92,41 @@ export const getDetailProfile = async (): Promise<User> => {
   }
 };
 
+// 구독하기
+export const subscribeUser = async (userId: number): Promise<number> => {
+  try {
+    const response = await axios.post(
+      `http://localhost:8080/subscribe/${userId}`,
+      null,
+      {
+        headers: {
+          Authorization: `Bearer ${getAuthToken()}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+// 구독 취소하기
+export const unsubscribeUser = async (userId: number): Promise<number> => {
+  try {
+    const response = await axios.delete(
+      `http://localhost:8080/subscribe/${userId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${getAuthToken()}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 // 프로필 정보 수정
 export const updateProfile = async (userData: Partial<User>) => {
   try {
