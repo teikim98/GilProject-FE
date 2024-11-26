@@ -54,7 +54,7 @@ const HomePage = () => {
     console.log("위도:", lat, "경도:", lon);
 
     //주소, 위도, 경도 회원테이블에 업데이트하기
-    await updateAddress(address, lat.toString(), lon.toString());
+    // await updateAddress(,address, lat.toString(), lon.toString());
 
     //메인 페이지로 이동
     router.push("http://localhost:3000/main");

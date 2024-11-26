@@ -10,10 +10,12 @@ import { DarkModeToggle } from '@/components/layout/DarkModeToggle'
 import { CurrentLocationMap } from '@/components/map/CurrentLocationMap'
 import { useEffect } from 'react'
 import { verifiRefreshToken } from '@/api/auth';
+import AddressChangePopup from '@/components/auth/AddressChangePopup';
 
 
 
 export default function Page() {
+    // 소셜로그인할때 access, refresh 토큰 저장
     useEffect(() => {
         const fetchData = async () => {
             console.log("쿠키를 가지고 백엔드에 전송");
@@ -101,6 +103,7 @@ export default function Page() {
                     </Card>
                 </Link>
             </div>
+            <AddressChangePopup/>
         </div>
     )
 }
