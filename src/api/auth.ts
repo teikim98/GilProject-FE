@@ -11,6 +11,7 @@ const api = axios.create({
   withCredentials: true,
 });
 
+
 interface JWTPayload {
   id: number;
 }
@@ -103,3 +104,10 @@ export const existEmail = async (email: string) => {
 
   return response.data;
 };
+
+
+export const verifiRefreshToken = async () =>{
+  const response = await api.post("/verification");
+
+  return response;
+}

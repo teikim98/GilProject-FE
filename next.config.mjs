@@ -2,7 +2,9 @@ import withPWA from "next-pwa";
 
 const isDev = process.env.NODE_ENV === "development";
 
-const nextConfig = {};
+const nextConfig = {
+  reactStrictMode: false, // Strict Mode 비활성화
+};
 
 export default withPWA({
   dest: "public",
@@ -17,5 +19,5 @@ export default withPWA({
       revision: "1",
     },
   ],
-  ...nextConfig,
-});
+  // ...nextConfig,
+})(nextConfig);

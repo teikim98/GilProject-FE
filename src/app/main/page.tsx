@@ -9,35 +9,28 @@ import Link from 'next/link'
 import { DarkModeToggle } from '@/components/layout/DarkModeToggle'
 import { CurrentLocationMap } from '@/components/map/CurrentLocationMap'
 import { useEffect } from 'react'
+import { verifiRefreshToken } from '@/api/auth';
 
 
 
 export default function Page() {
     useEffect(() => {
-        // 쿠키 확인 함수의 타입 정의
-        const getCookie = (name: string): string | null => {
-            const value = `; ${document.cookie}`;
-            const parts = value.split(`; ${name}=`);
-            if (parts.length === 2) {
-                const cookieValue = parts.pop();
-                return cookieValue ? cookieValue.split(';')[0] : null;
+        const fetchData = async () => {
+            console.log("쿠키를 가지고 백엔드에 전송");
+            try {
+            const response = await verifiRefreshToken();
+
+            const accessToken = response.headers["abc"].split('Bearer ')[1];
+
+            localStorage.setItem("access", accessToken);
+            console.log("Access Token 저장 완료:", accessToken);
+
+            } catch (error) {
+            console.error("Error fetching data:", error);
             }
-            return null;
         };
-
-        const token = getCookie('authorization');
-        console.log("쿠키에 있는 토큰 : " + token);
-
-        if (token) {
-            // 있으면
-            // 로컬스토리지에 저장
-            localStorage.setItem("access", token);
-            // 쿠키 삭제
-            document.cookie = 'authorization=; Max-Age=0; path=/';  // path 추가
-        } else {
-            // 없으면
-            console.log("쿠키가 없습니다");
-        }
+    
+        fetchData();
     }, []); // 의존성 배열 추가
 
     return (
