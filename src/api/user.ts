@@ -73,9 +73,9 @@ api.interceptors.response.use(
 );
 
 // 심플 프로필 정보 조회
-export const getSimpleProfile = async (): Promise<UserSimple> => {
+export const getSimpleProfile = async (userId: number): Promise<UserSimple> => {
   try {
-    const response = await api.get(`/simpleInfo`);
+    const response = await api.get(`/simpleInfo/${userId}`);
     return response.data;
   } catch (error) {
     throw error;

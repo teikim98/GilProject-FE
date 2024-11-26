@@ -2,7 +2,7 @@ import { emailFormProperty } from "@/types/types_JHW";
 import axios from "axios";
 
 //회원가입, 로그인 관련 API///////////////
-import { getSimpleProfile } from "./user";
+import { getDetailProfile } from "./user";
 
 const api = axios.create({
   baseURL: "http://localhost:8080/auth",
@@ -39,7 +39,7 @@ export const emailLogin = async (email: string, password: string) => {
       localStorage.setItem("access", accessToken);
 
       // 전체 유저 정보를 가져옴
-      const userResponse = await getSimpleProfile();
+      const userResponse = await getDetailProfile();
 
       return userResponse;
     } else {

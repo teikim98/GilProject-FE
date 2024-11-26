@@ -6,7 +6,6 @@ import { Button } from '@/components/ui/button';
 import { Bookmark, ChevronLeft, ChevronRight, Heart, MessageCircle, Navigation } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import BackHeader from '@/components/layout/BackHeader';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { getPost, togglePostLike, deletePost } from '@/api/post';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
