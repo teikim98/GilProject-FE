@@ -1,4 +1,3 @@
-import { useUserStore } from "./../store/useUserStore";
 import axios from "axios";
 import { Post, Path, CreatePostPath } from "@/types/types";
 
@@ -27,7 +26,7 @@ api.interceptors.request.use(
 );
 
 // 현재 로그인한 사용자의 경로 가져오기
-export const getAllUserPaths = async (userId: number): Promise<Path[]> => {
+export const getAllUserPaths = async (): Promise<Path[]> => {
   try {
     // 요청 전에 토큰 존재 여부 확인
     const token = getAuthToken();
@@ -35,7 +34,7 @@ export const getAllUserPaths = async (userId: number): Promise<Path[]> => {
       throw new Error("No authentication token found");
     }
 
-    const { data } = await api.get(`user/mypage/mypath/${userId}`);
+    const { data } = await api.get(`user/mypage/mypath`);
     console.log("API Response:", data);
     return data;
   } catch (error: any) {
@@ -82,6 +81,7 @@ export const createPath = async (
   }
 };
 
+//따라걷기 테스트용
 export const getPathById = async (id: number = 30): Promise<Path> => {
   try {
     const response = await api.get(`${id}`); // baseURL이 이미 포함되어 있으므로 /path/ 제거

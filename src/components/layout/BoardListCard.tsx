@@ -46,6 +46,7 @@ export default function BoardCard({ post }: BoardCardProps) {
                         <p className="text-sm text-gray-500 dark:text-gray-400">
                             {formatDate(post.writeDate)}
                         </p>
+                        <p>{post.readNum}</p>
                     </div>
                 </div>
 

@@ -2,15 +2,12 @@ import { emailFormProperty } from "@/types/types_JHW";
 import axios from "axios";
 
 //회원가입, 로그인 관련 API///////////////
-import { jwtDecode } from "jwt-decode";
-import { useUserStore } from "../store/useUserStore";
-import { getDetailProfile } from "./user";
+import { getSimpleProfile } from "./user";
 
 const api = axios.create({
   baseURL: "http://localhost:8080/auth",
   withCredentials: true,
 });
-
 
 interface JWTPayload {
   id: number;
@@ -41,12 +38,8 @@ export const emailLogin = async (email: string, password: string) => {
       // console.log(accessToken);
       localStorage.setItem("access", accessToken);
 
-      // JWT에서 id 추출
-      const decoded = jwtDecode<JWTPayload>(accessToken);
-
       // 전체 유저 정보를 가져옴
-      const userResponse = await getDetailProfile(decoded.id);
-      useUserStore.getState().setUser(userResponse);
+      const userResponse = await getSimpleProfile();
 
       return userResponse;
     } else {
@@ -105,9 +98,8 @@ export const existEmail = async (email: string) => {
   return response.data;
 };
 
-
-export const verifiRefreshToken = async () =>{
+export const verifiRefreshToken = async () => {
   const response = await api.post("/verification");
 
   return response;
-}
+};

@@ -184,19 +184,18 @@ export default function MyRouteList({
     const [routes, setRoutes] = useState<Path[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const user = useUserStore((state) => state.user);
 
     useEffect(() => {
         const fetchRoutes = async () => {
-            if (!user) {
-                setError('로그인이 필요합니다.');
-                setLoading(false);
-                return;
-            }
+            // if (!user) {
+            //     setError('로그인이 필요합니다.');
+            //     setLoading(false);
+            //     return;
+            // }
 
             try {
                 setLoading(true);
-                const data = await getAllUserPaths(user.id);
+                const data = await getAllUserPaths();
                 console.log('Fetched routes:', data); // 받아온 데이터 확인
 
                 // 좌표 데이터 변환 및 유효성 검사
@@ -204,8 +203,8 @@ export default function MyRouteList({
                     ...route,
                     routeCoordinates: route.routeCoordinates.map(coord => ({
                         // 좌표값 순서 교정
-                        latitude: coord.longitude, // 백엔드에서 반대로 온 값 교정
-                        longitude: coord.latitude  // 백엔드에서 반대로 온 값 교정
+                        latitude: coord.latitude, // 백엔드에서 반대로 온 값 교정
+                        longitude: coord.longitude  // 백엔드에서 반대로 온 값 교정
                     }))
                 }));
 
@@ -220,7 +219,7 @@ export default function MyRouteList({
         };
 
         fetchRoutes();
-    }, [user]);
+    }, []);
 
     const handleDelete = async (routeId: number) => {
         try {
@@ -237,9 +236,9 @@ export default function MyRouteList({
         }
     };
 
-    if (!user) {
-        return <div className="text-center py-8 text-gray-500">로그인이 필요합니다.</div>;
-    }
+    // if (!user) {
+    //     return <div className="text-center py-8 text-gray-500">로그인이 필요합니다.</div>;
+    // }
 
     if (loading) {
         return <div className="text-center py-8">로딩 중...</div>;

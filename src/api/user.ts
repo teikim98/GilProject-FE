@@ -1,4 +1,3 @@
-import { useUserStore } from "@/store/useUserStore";
 import { User, UserSimple } from "@/types/types";
 import axios from "axios";
 
@@ -42,20 +41,25 @@ api.interceptors.response.use(
       console.log("백엔드에서 온 에러 메세지 : " + errorMessage);
 
       try {
-        const reissueResponse = await axios.post("http://localhost:8080/reissue", null, {
-          withCredentials: true, // 쿠키 포함
-        });
+        const reissueResponse = await axios.post(
+          "http://localhost:8080/reissue",
+          null,
+          {
+            withCredentials: true, // 쿠키 포함
+          }
+        );
 
         //새로운 토큰을 헤더에서 찾음
-        const newAccessToken = reissueResponse.headers['newaccess'].split('Bearer ')[1];
-        
+        const newAccessToken =
+          reissueResponse.headers["newaccess"].split("Bearer ")[1];
+
         //새로운 토큰을 로컬스토리지에 저장
         if (newAccessToken) {
           localStorage.setItem("access", newAccessToken);
           console.log("새로운 access 토큰 스토리지에 저장 = " + newAccessToken);
 
           // 원래 요청 재시도
-          originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
+          originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
 
           return api(originalRequest);
         }
@@ -69,9 +73,9 @@ api.interceptors.response.use(
 );
 
 // 심플 프로필 정보 조회
-export const getSimpleProfile = async (userId: number): Promise<UserSimple> => {
+export const getSimpleProfile = async (): Promise<UserSimple> => {
   try {
-    const response = await api.get(`/simpleInfo/${userId}`);
+    const response = await api.get(`/simpleInfo`);
     return response.data;
   } catch (error) {
     throw error;
@@ -102,7 +106,6 @@ export const updateProfile = async (
 
     // 프로필 업데이트 후 전체 정보를 다시 가져와서 store 업데이트
     const updatedUser = await getDetailProfile(userId);
-    useUserStore.getState().setUser(updatedUser);
 
     return updatedUser;
   } catch (error) {
@@ -134,7 +137,6 @@ export const updateAddress = async (
 
     // 주소 업데이트 후 전체 정보를 다시 가져와서 store 업데이트
     const updatedUser = await getDetailProfile(userId);
-    useUserStore.getState().setUser(updatedUser);
 
     return updatedUser;
   } catch (error) {
@@ -156,7 +158,6 @@ export const updateProfileImage = async (userId: number, file: File) => {
 
     // 이미지 업로드 후 전체 정보를 다시 가져와서 store 업데이트
     const updatedUser = await getDetailProfile(userId);
-    useUserStore.getState().setUser(updatedUser);
 
     return updatedUser;
   } catch (error) {
@@ -166,7 +167,6 @@ export const updateProfileImage = async (userId: number, file: File) => {
 
 export const logout = async () => {
   localStorage.removeItem("access");
-  useUserStore.getState().clearUser();
 
   // 2. 서버 측 로그아웃 요청 (Refresh 토큰 전송)
   try {

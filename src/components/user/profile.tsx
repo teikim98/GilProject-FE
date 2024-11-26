@@ -32,15 +32,7 @@ export default function Profile({ userId, width = "w-350px" }: ProfileProps) {
     useEffect(() => {
         const fetchSimpleProfile = async () => {
             try {
-                // userId가 제공되면 해당 유저의 정보를, 아니면 현재 로그인한 유저의 정보를 가져옴
-                const targetUserId = userId || user?.id;
-                if (!targetUserId) {
-                    setError('사용자 정보를 찾을 수 없습니다');
-                    setLoading(false);
-                    return;
-                }
-
-                const data = await getSimpleProfile(targetUserId)
+                const data = await getSimpleProfile()
                 console.log(data)
                 setSimpleInfo(data)
                 setError(null)
@@ -61,7 +53,7 @@ export default function Profile({ userId, width = "w-350px" }: ProfileProps) {
         try {
             setLoading(true)
             await updateAddress(user.id, address, latitude, longitude)
-            const updatedInfo = await getSimpleProfile(user.id)
+            const updatedInfo = await getSimpleProfile()
             setSimpleInfo(updatedInfo)
         } catch (err) {
             console.error('주소 업데이트 에러:', err)
@@ -79,7 +71,7 @@ export default function Profile({ userId, width = "w-350px" }: ProfileProps) {
         try {
             setLoading(true)
             await updateProfileImage(user.id, file)
-            const updatedInfo = await getSimpleProfile(user.id)
+            const updatedInfo = await getSimpleProfile()
             setSimpleInfo(updatedInfo)
         } catch (err) {
             console.error('이미지 업로드 에러:', err)
