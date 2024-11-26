@@ -104,7 +104,7 @@ export default function Profile({ userId, width = "w-full" }: ProfileProps) {
 
     if (error) {
         return (
-            <Card className={`${width} border-0 shadow-none min-h-[300px] flex items-center justify-center`}>
+            <Card className={`${width} border-0 shadow-none min-h-[200px] flex items-center justify-center`}>
                 <div className="text-destructive">{error}</div>
             </Card>
         );
@@ -112,7 +112,7 @@ export default function Profile({ userId, width = "w-full" }: ProfileProps) {
 
     if (loading) {
         return (
-            <Card className={`${width} border-0 shadow-none min-h-[300px] flex items-center justify-center`}>
+            <Card className={`${width} border-0 shadow-none min-h-[200px] flex items-center justify-center`}>
                 <div className="flex flex-col items-center gap-2">
                     <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
                     <p className="text-sm text-muted-foreground">프로필 불러오는 중...</p>
@@ -123,7 +123,7 @@ export default function Profile({ userId, width = "w-full" }: ProfileProps) {
 
     if (!profileInfo) {
         return (
-            <Card className={`${width} border-0 shadow-none min-h-[300px] flex items-center justify-center`}>
+            <Card className={`${width} border-0 shadow-none min-h-[200px] flex items-center justify-center`}>
                 <div className="text-muted-foreground">프로필 정보를 불러올 수 없습니다</div>
             </Card>
         );

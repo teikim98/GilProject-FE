@@ -53,7 +53,7 @@ export default function ProfileDialog({ nickName, userId, className }: ProfileDi
                 </div>
             </DialogTrigger>
             <DialogContent
-                className="p-0 sm:max-w-[425px] flex flex-col min-h-[300px]"
+                className="p-0 sm:max-w-[425px] flex flex-col min-h-[200px]"
                 onPointerDownOutside={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
