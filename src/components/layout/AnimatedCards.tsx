@@ -67,7 +67,7 @@ const WalkingPathBackground: React.FC<BackgroundProps> = () => {
 
             {/* GPS 핀 */}
             <motion.div
-                className="absolute left-1/4 top-4"
+                className="absolute left-1/4 top-3"
                 animate={{
                     y: [-10, 10],
                     scale: [1, 1.2, 1],
@@ -78,11 +78,11 @@ const WalkingPathBackground: React.FC<BackgroundProps> = () => {
                     repeatType: "reverse",
                 }}
             >
-                <MapPin className="w-8 h-8 text-red-500" />
+                <MapPin className="w-8 h-8 text-red-800" fill="tomato" strokeWidth={1.5} />
             </motion.div>
 
             <motion.div
-                className="absolute right-1/3 bottom-10"
+                className="absolute right-1/3 bottom-5"
                 animate={{
                     y: [-15, 5],
                     scale: [1, 1.1, 1],
@@ -94,7 +94,7 @@ const WalkingPathBackground: React.FC<BackgroundProps> = () => {
                     delay: 0.5,
                 }}
             >
-                <MapPin className="w-6 h-6 text-red-400" />
+                <MapPin className="w-6 h-6 text-red-800" fill="tomato" strokeWidth={1.5} />
             </motion.div>
 
             {/* POI 점들 */}

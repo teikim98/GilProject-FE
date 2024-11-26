@@ -17,6 +17,7 @@ import Link from "next/link";
 import { useGeocoder } from "@/hooks/useGeocoder";
 import { updateAddress } from "@/api/user";
 import { useRouter } from "next/navigation";
+import { useUserStore } from "@/store/useUserStore";
 
 // declare const kakao : any;
 
@@ -26,7 +27,7 @@ const HomePage = () => {
   const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false);
 
   const { addressToCoords, isLoaded } = useGeocoder();
-
+  const user = useUserStore();
   // Kakao Maps SDK 동적 로드 상태 관리
   useEffect(() => {
     window.kakao.maps.load(() => {
@@ -54,7 +55,7 @@ const HomePage = () => {
     console.log("위도:", lat, "경도:", lon);
 
     //주소, 위도, 경도 회원테이블에 업데이트하기
-    await updateAddress(address, lat.toString(), lon.toString());
+    await updateAddress(, address, lat.toString(), lon.toString());
 
     //메인 페이지로 이동
     router.push("http://localhost:3000/main");

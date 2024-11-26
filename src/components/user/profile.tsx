@@ -19,9 +19,10 @@ interface SimpleUserInfo {
 
 interface ProfileProps {
     userId?: number;  // userId를 props로 받음
+    width?: string;
 }
 
-export default function Profile({ userId }: ProfileProps) {
+export default function Profile({ userId, width = "w-350px" }: ProfileProps) {
     const [simpleInfo, setSimpleInfo] = useState<SimpleUserInfo | null>(null)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
@@ -101,7 +102,7 @@ export default function Profile({ userId }: ProfileProps) {
     }
 
     return (
-        <Card className="w-[350px]">
+        <Card className={width}>
             <CardHeader className="mb-4">
                 <div className="flex flex-row justify-between items-center">
                     <div className="flex flex-row gap-4 items-center">
