@@ -9,6 +9,7 @@ import Link from 'next/link'
 import { DarkModeToggle } from '@/components/layout/DarkModeToggle'
 import { CurrentLocationMap } from '@/components/map/CurrentLocationMap'
 import { useEffect } from 'react'
+import AnimatedCards from '@/components/layout/AnimatedCards';
 import { verifiRefreshToken } from '@/api/auth';
 import AddressChangePopup from '@/components/auth/AddressChangePopup';
 
@@ -20,18 +21,18 @@ export default function Page() {
         const fetchData = async () => {
             console.log("쿠키를 가지고 백엔드에 전송");
             try {
-            const response = await verifiRefreshToken();
+                const response = await verifiRefreshToken();
 
-            const accessToken = response.headers["abc"].split('Bearer ')[1];
+                const accessToken = response.headers["abc"].split('Bearer ')[1];
 
-            localStorage.setItem("access", accessToken);
-            console.log("Access Token 저장 완료:", accessToken);
+                localStorage.setItem("access", accessToken);
+                console.log("Access Token 저장 완료:", accessToken);
 
             } catch (error) {
-            console.error("Error fetching data:", error);
+                console.error("Error fetching data:", error);
             }
         };
-    
+
         fetchData();
     }, []); // 의존성 배열 추가
 
@@ -104,6 +105,7 @@ export default function Page() {
                 </Link>
             </div>
             <AddressChangePopup/>
+            <AnimatedCards />
         </div>
     )
 }

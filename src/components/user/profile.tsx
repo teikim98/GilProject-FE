@@ -3,10 +3,15 @@ import { useEffect, useState } from 'react'
 import { Camera, Pencil } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
-import { updateAddress, updateProfileImage, getSimpleProfile } from '@/api/user'
+import { updateAddress, updateProfileImage, getSimpleProfile, getDetailProfile } from '@/api/user'
 import { useUserStore } from '@/store/useUserStore'
+import { jwtDecode } from 'jwt-decode'
 
-interface SimpleUserInfo {
+interface JWTPayload {
+    id: number;
+}
+
+interface ProfileInfo {
     id: number;
     nickName: string;
     imageUrl: string;
@@ -18,104 +23,140 @@ interface SimpleUserInfo {
 }
 
 interface ProfileProps {
-    userId?: number;  // userId를 props로 받음
+    userId?: number;
+    width?: string;
 }
 
-export default function Profile({ userId }: ProfileProps) {
-    const [simpleInfo, setSimpleInfo] = useState<SimpleUserInfo | null>(null)
+export default function Profile({ userId, width = "w-350px" }: ProfileProps) {
+    const [profileInfo, setProfileInfo] = useState<ProfileInfo | null>(null)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
     const user = useUserStore((state) => state.user)
-    const isCurrentUser = !userId || (user && user.id === userId);
+    const [isDetailView, setIsDetailView] = useState(false)
 
     useEffect(() => {
-        const fetchSimpleProfile = async () => {
+        const fetchProfile = async () => {
             try {
-                // userId가 제공되면 해당 유저의 정보를, 아니면 현재 로그인한 유저의 정보를 가져옴
-                const targetUserId = userId || user?.id;
-                if (!targetUserId) {
-                    setError('사용자 정보를 찾을 수 없습니다');
-                    setLoading(false);
-                    return;
+                let data: ProfileInfo;
+                const token = localStorage.getItem("access");
+
+                if (token) {
+                    const decoded = jwtDecode<JWTPayload>(token);
+                    // userId가 없거나 토큰의 id와 일치하면 상세 정보 조회
+                    if (!userId || decoded.id === userId) {
+                        setIsDetailView(true);
+                        const detailData = await getDetailProfile();
+                        // DetailProfile을 ProfileInfo 형식으로 변환
+                        data = {
+                            id: detailData.id,
+                            nickName: detailData.nickName,
+                            imageUrl: detailData.imageUrl,
+                            comment: detailData.comment,
+                            address: detailData.address,
+                            postCount: detailData.posts?.length ?? 0,
+                            likeCount: detailData.postLikes?.length ?? 0,
+                            pathCount: detailData.paths?.length ?? 0
+                        };
+                    } else {
+                        // 다른 사용자의 프로필은 심플 정보만 조회
+                        data = await getSimpleProfile(userId);
+                    }
+                    setProfileInfo(data);
+
+                    setError(null);
                 }
-
-                const data = await getSimpleProfile(targetUserId)
-                console.log(data)
-                setSimpleInfo(data)
-                setError(null)
             } catch (err) {
-                setError('프로필을 불러오는데 실패했습니다')
-                console.error('프로필 조회 에러:', err)
+                setError('프로필을 불러오는데 실패했습니다');
+                console.error('프로필 조회 에러:', err);
             } finally {
-                setLoading(false)
+                setLoading(false);
+                console.log(profileInfo)
             }
-        }
+        };
 
-        fetchSimpleProfile()
-    }, [userId, user])
+        fetchProfile();
+    }, [userId, user]);
 
     const handleUpdateAddress = async (address: string, latitude: number, longitude: number) => {
-        if (!isCurrentUser || !user) return;
+        if (!isDetailView || !user) return;
 
         try {
-            setLoading(true)
-            await updateAddress(user.id, address, latitude, longitude)
-            const updatedInfo = await getSimpleProfile(user.id)
-            setSimpleInfo(updatedInfo)
+            setLoading(true);
+            await updateAddress(address, latitude, longitude);
+            const updatedData = await getDetailProfile();
+            setProfileInfo({
+                id: updatedData.id,
+                nickName: updatedData.nickName,
+                imageUrl: updatedData.imageUrl,
+                comment: updatedData.comment,
+                address: updatedData.address,
+                postCount: updatedData.posts?.length ?? 0,
+                likeCount: updatedData.postLikes?.length ?? 0,
+                pathCount: updatedData.paths?.length ?? 0
+            });
         } catch (err) {
-            console.error('주소 업데이트 에러:', err)
-            setError('주소 업데이트에 실패했습니다')
+            console.error('주소 업데이트 에러:', err);
+            setError('주소 업데이트에 실패했습니다');
         } finally {
-            setLoading(false)
+            setLoading(false);
         }
-    }
+    };
 
     const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (!isCurrentUser || !user) return;
-        const file = event.target.files?.[0]
+        if (!isDetailView || !user) return;
+        const file = event.target.files?.[0];
         if (!file) return;
 
         try {
-            setLoading(true)
-            await updateProfileImage(user.id, file)
-            const updatedInfo = await getSimpleProfile(user.id)
-            setSimpleInfo(updatedInfo)
+            setLoading(true);
+            await updateProfileImage(user.id, file);
+            const updatedData = await getDetailProfile();
+            setProfileInfo({
+                id: updatedData.id,
+                nickName: updatedData.nickName,
+                imageUrl: updatedData.imageUrl,
+                comment: updatedData.comment,
+                address: updatedData.address,
+                postCount: updatedData.posts?.length ?? 0,
+                likeCount: updatedData.postLikes?.length ?? 0,
+                pathCount: updatedData.paths?.length ?? 0
+            });
         } catch (err) {
-            console.error('이미지 업로드 에러:', err)
-            setError('이미지 업로드에 실패했습니다')
+            console.error('이미지 업로드 에러:', err);
+            setError('이미지 업로드에 실패했습니다');
         } finally {
-            setLoading(false)
+            setLoading(false);
         }
-    }
+    };
 
     if (loading) {
-        return <div className="flex justify-center items-center">로딩중...</div>
+        return <div className="flex justify-center items-center">로딩중...</div>;
     }
 
     if (error) {
-        return <div className="text-red-500">{error}</div>
+        return <div className="text-red-500">{error}</div>;
     }
 
-    if (!simpleInfo) {
-        return <div>프로필 정보를 불러올 수 없습니다</div>
+    if (!profileInfo) {
+        return <div>프로필 정보를 불러올 수 없습니다</div>;
     }
 
     return (
-        <Card className="w-[350px]">
+        <Card className={width}>
             <CardHeader className="mb-4">
                 <div className="flex flex-row justify-between items-center">
                     <div className="flex flex-row gap-4 items-center">
                         <div className="relative">
-                            {simpleInfo.imageUrl ? (
+                            {profileInfo.imageUrl ? (
                                 <img
-                                    src={simpleInfo.imageUrl}
+                                    src={profileInfo.imageUrl}
                                     alt="Profile"
                                     className="w-10 h-10 rounded-full object-cover"
                                 />
                             ) : (
                                 <Camera className="w-10 h-10 p-2 bg-slate-100 rounded-full" />
                             )}
-                            {isCurrentUser && (
+                            {isDetailView && (
                                 <input
                                     type="file"
                                     className="absolute inset-0 opacity-0 cursor-pointer"
@@ -127,18 +168,18 @@ export default function Profile({ userId }: ProfileProps) {
                         <div className="flex flex-col">
                             <div className="flex flex-row items-center">
                                 <p className="mr-2 font-bold">
-                                    {simpleInfo.nickName}
+                                    {profileInfo.nickName}
                                 </p>
                                 <p className="text-xs text-slate-500">
-                                    {simpleInfo.address || '주소 미설정'}
+                                    {profileInfo.address || '주소 미설정'}
                                 </p>
                             </div>
                             <p className="text-xs text-slate-500">
-                                {simpleInfo.comment || '자기소개가 없습니다'}
+                                {profileInfo.comment || '자기소개가 없습니다'}
                             </p>
                         </div>
                     </div>
-                    {isCurrentUser && (
+                    {isDetailView && (
                         <Pencil
                             className="align-top cursor-pointer hover:text-slate-600"
                             onClick={() => {/* 수정 모달 or 페이지로 이동 */ }}
@@ -153,7 +194,7 @@ export default function Profile({ userId }: ProfileProps) {
                             내가 쓴 글
                         </p>
                         <p className="text-sm font-semibold">
-                            {simpleInfo.postCount}
+                            {profileInfo.postCount}
                         </p>
                     </div>
                     <div className="flex flex-col items-center">
@@ -161,7 +202,7 @@ export default function Profile({ userId }: ProfileProps) {
                             받은 좋아요
                         </p>
                         <p className="text-sm font-semibold">
-                            {simpleInfo.likeCount}
+                            {profileInfo.likeCount}
                         </p>
                     </div>
                     <div className="flex flex-col items-center">
@@ -169,12 +210,12 @@ export default function Profile({ userId }: ProfileProps) {
                             따라걷기
                         </p>
                         <p className="text-sm font-semibold">
-                            {simpleInfo.pathCount}
+                            {profileInfo.pathCount}
                         </p>
                     </div>
                 </div>
             </CardContent>
-            {isCurrentUser && (
+            {isDetailView && (
                 <CardFooter className="flex justify-center">
                     <Button
                         disabled={loading}
@@ -186,5 +227,5 @@ export default function Profile({ userId }: ProfileProps) {
                 </CardFooter>
             )}
         </Card>
-    )
+    );
 }

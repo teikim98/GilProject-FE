@@ -1,17 +1,26 @@
 import withPWA from "next-pwa";
 
-const isDev = process.env.NODE_ENV === "development";
-
 const nextConfig = {
-  reactStrictMode: false, // Strict Mode 비활성화
+  reactStrictMode: false,
 };
 
-export default withPWA({
+const pwaConfig = {
   dest: "public",
   register: true,
   skipWaiting: true,
-  disable: false, // 개발 모드에서도 PWA 활성화
-  runtimeCaching: [],
+  disable: process.env.NODE_ENV === "development" ? false : false, // 개발 환경에서도 PWA 활성화
+  runtimeCaching: [
+    {
+      urlPattern: /^https?.*/,
+      handler: "NetworkFirst",
+      options: {
+        cacheName: "offlineCache",
+        expiration: {
+          maxEntries: 200,
+        },
+      },
+    },
+  ],
   buildExcludes: [/middleware-manifest\.json$/],
   additionalManifestEntries: [
     {
@@ -19,5 +28,6 @@ export default withPWA({
       revision: "1",
     },
   ],
-  // ...nextConfig,
-})(nextConfig);
+};
+
+export default withPWA(pwaConfig)(nextConfig);
