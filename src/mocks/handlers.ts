@@ -38,6 +38,7 @@ export const handlers = [
 
     const post: Post = {
       postId: dummyPosts.length + 1, // id -> postId
+      postUserId: 1,
       nickName: "현재 로그인한 사용자", // userNickName -> nickName
       pathId: postData.pathId,
       startLat: 0, // pathResDTO에서 가져올 값
