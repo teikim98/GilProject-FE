@@ -137,14 +137,9 @@ export interface User {
   joinDate: string;
   updateDate: string;
   point: number;
-  state: number;
-  posts: Post[] | null;
-  paths: Path[] | null;
-  postLikes: number[] | null;
-  subscriptions: number[] | null;
-  notifications: any[] | null;
-  postWishLists: number[] | null;
-  replyLikes: number[] | null;
+  postCount: number;
+  pathCount: number;
+  subscribeByCount: number;
 }
 
 // 심플 유저 정보
@@ -155,8 +150,8 @@ export interface UserSimple {
   comment: string | null;
   address: string | null;
   postCount: number;
-  likeCount: number;
   pathCount: number;
+  subscribeByCount: number;
 }
 
 export interface UserUpdateDTO {
