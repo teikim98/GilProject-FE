@@ -3,7 +3,7 @@
 import { Input } from '@/components/ui/input'
 import { Search, X } from 'lucide-react'
 import { useSearchStore } from '@/store/useSearchStore'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
@@ -12,18 +12,30 @@ interface SearchPageProps {
 }
 
 export default function SearchPage({ onClose }: SearchPageProps) {
-    const { query, setQuery, submitSearch, searchHistory, removeHistoryItem, clearHistory } = useSearchStore()
-
+    const [localQuery, setLocalQuery] = useState('')
+    const { setQuery, searchHistory, removeHistoryItem, clearHistory, setSearchHistory } = useSearchStore()
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
-        submitSearch()
+        if (!localQuery.trim()) return;
+
+        const newHistory = [
+            localQuery,
+            ...searchHistory.filter((item) => item !== localQuery),
+        ].slice(0, 10);
+
+        if (typeof window !== "undefined") {
+            localStorage.setItem("searchHistory", JSON.stringify(newHistory));
+            useSearchStore.getState().setSearchHistory(newHistory);
+        }
+
+        setQuery(localQuery)
         onClose()
-        setQuery("")
+        setLocalQuery("")
     }
 
     const handleHistoryClick = (item: string, e: React.FormEvent) => {
         setQuery(item)
-        handleSubmit(e)
+        onClose()
     }
 
     useEffect(() => {
@@ -37,8 +49,8 @@ export default function SearchPage({ onClose }: SearchPageProps) {
                     <div className="flex items-center gap-2">
                         <Search className="h-5 w-5 text-muted-foreground" />
                         <Input
-                            value={query}
-                            onChange={(e) => setQuery(e.target.value)}
+                            value={localQuery}
+                            onChange={(e) => setLocalQuery(e.target.value)}
                             placeholder="산책로 검색..."
                             className="flex-1 border-none focus-visible:ring-0"
                             autoFocus
@@ -50,7 +62,7 @@ export default function SearchPage({ onClose }: SearchPageProps) {
                 </CardHeader>
                 <CardContent className="flex-1 p-0">
                     <div className="h-full">
-                        {!query && (
+                        {!localQuery && (
                             <div className="p-4 space-y-4">
                                 <div className="flex justify-between items-center">
                                     <CardTitle className="text-sm font-medium">최근 검색어</CardTitle>

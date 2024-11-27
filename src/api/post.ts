@@ -22,6 +22,7 @@ api.interceptors.request.use(
   }
 );
 
+//집 주변 산책길 리트 가져오기
 export const getPosts = async (
   page = 0,
   size = 10
@@ -32,12 +33,14 @@ export const getPosts = async (
   return response.data;
 };
 
+//게시글 상세보기
 export const getPost = async (id: number): Promise<Post> => {
   const response = await api.get(`/${id}`);
 
   return response.data;
 };
 
+//현재 위치 주변 산책길 가져오기
 export const getPostNear = async (
   lat: number,
   lng: number,
@@ -46,6 +49,18 @@ export const getPostNear = async (
 ): Promise<{ content: Post[]; totalElements: number }> => {
   const response = await api.get(`/${lat}/${lng}`, {
     params: { page, size },
+  });
+  return response.data;
+};
+
+//검색하고 필터링된 산책길 리스트 가져오기
+export const getPostsByKeyword = async (
+  keyword: string,
+  page = 0,
+  size = 10
+): Promise<{ content: Post[]; totalElements: number }> => {
+  const response = await api.get("/keyword", {
+    params: { keyword, page, size },
   });
   return response.data;
 };

@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Post } from '@/types/types';
 import BoardCard from '@/components/layout/BoardListCard';
-import { getPostNear, getPosts } from '@/api/post';
+import { getPostNear, getPosts, getPostsByKeyword } from '@/api/post';
 import { useSearchStore } from '@/store/useSearchStore';
 import { Search } from 'lucide-react';
 import { useLocationStore } from '@/store/useLocationStore';
@@ -13,51 +13,16 @@ export default function BoardList() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [initialUserLocation, setInitialUserLocation] = useState<{ lat: number; lng: number } | null>(null);
-    const { searchTerm } = useSearchStore();
+    const { query } = useSearchStore();
     const { selectedLocation } = useLocationStore();
     const [page, setPage] = useState(0);
     const [totalElements, setTotalElements] = useState(0);
     const size = 10;
 
-
-    const fetchPosts = async () => {
-        try {
-            setLoading(true);
-            let response;
-
-            if (selectedLocation === '내 현재위치') {
-                if (!initialUserLocation) return;
-                response = await getPostNear(initialUserLocation.lat, initialUserLocation.lng, page, size);
-            } else {
-                response = await getPosts(page, size);
-                console.log(response.content);
-            }
-
-            const fetchedPosts = response.content || [];
-            setTotalElements(response.totalElements);
-
-            if (initialUserLocation && selectedLocation === '내 현재위치') {
-                const postsWithDistance = fetchedPosts.map((post: Post) => ({
-                    ...post,
-                    distanceFromUser: calculateDistance(
-                        initialUserLocation,
-                        { lat: post.startLat, lng: post.startLong }
-                    )
-                }));
-                setPosts(prev => page === 0 ? postsWithDistance : [...prev, ...postsWithDistance]);
-            } else {
-                setPosts(prev => page === 0 ? fetchedPosts : [...prev, ...fetchedPosts]);
-            }
-        } catch (err) {
-            console.error('게시글 로딩 실패:', err);
-            setError('게시글을 불러오는데 실패했습니다.');
-        } finally {
-            setLoading(false);
-        }
-    };
-
     useEffect(() => {
         setPage(0); // 위치 변경 시 페이지 초기화
+        setPosts([]); // 위치 변경 시 posts 초기화
+        setError(null); // 에러 상태도 초기화
 
         if (selectedLocation === '내 현재위치') {
             setLoading(true);
@@ -86,32 +51,76 @@ export default function BoardList() {
 
     // 게시물 가져오기
     useEffect(() => {
-        if (selectedLocation === '집 주변') {
-            fetchPosts();
-        } else if (selectedLocation === '내 현재위치' && initialUserLocation) {
-            fetchPosts();
-        }
-    }, [page, searchTerm, selectedLocation]);
-
-    // `initialUserLocation` 변경 감지
-    useEffect(() => {
-        if (selectedLocation === '내 현재위치' && initialUserLocation) {
-            fetchPosts();
-        }
-    }, [initialUserLocation]);
+        fetchPosts();
+    }, [page, selectedLocation, initialUserLocation]);
 
     useEffect(() => {
+        if (query) {
+            setPage(0);
+            setPosts([]);
+            useLocationStore.getState().setSelectedLocation('검색결과');
+            fetchPosts();
+        }
+    }, [query]);
+
+
+    useEffect(() => {
+        // 컴포넌트 마운트 시 위치를 '내 현재위치'로 설정
+        useLocationStore.getState().setSelectedLocation('내 현재위치')
+
         return () => {
-            useSearchStore.getState().submitSearch()
+            // 컴포넌트 언마운트 시 검색어 초기화
             useSearchStore.getState().setQuery('')
-            useSearchStore.getState().setSearchTerm('')
         }
     }, [])
 
-    const filteredPosts = posts.filter(post =>
-        post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        post.content.toLowerCase().includes(searchTerm.toLowerCase())
-    )
+    const fetchPosts = async () => {
+        try {
+            setLoading(true);
+            setError(null); // 새 요청 시작할 때 에러 초기화
+            setPosts([]);
+
+            let response;
+            if (selectedLocation === '검색결과') {
+                console.log(query)
+                response = await getPostsByKeyword(query, page, size);
+
+                // 검색 결과가 없을 때 posts를 빈 배열로 설정
+                if (!response.content || response.content.length === 0) {
+                    setPosts([]);
+                    setTotalElements(0);
+                    return;
+                }
+            } else if (selectedLocation === '내 현재위치') {
+                if (!initialUserLocation) return;
+                response = await getPostNear(initialUserLocation.lat, initialUserLocation.lng, page, size);
+            } else {
+                response = await getPosts(page, size);
+            }
+
+            const fetchedPosts = response.content || [];
+            setTotalElements(response.totalElements);
+
+            if (initialUserLocation && selectedLocation === '내 현재위치') {
+                const postsWithDistance = fetchedPosts.map((post: Post) => ({
+                    ...post,
+                    distanceFromUser: calculateDistance(
+                        initialUserLocation,
+                        { lat: post.startLat, lng: post.startLong }
+                    )
+                }));
+                setPosts(prev => page === 0 ? postsWithDistance : [...prev, ...postsWithDistance]);
+            } else {
+                setPosts(prev => page === 0 ? fetchedPosts : [...prev, ...fetchedPosts]);
+            }
+        } catch (err) {
+            console.error('게시글 로딩 실패:', err);
+            setError('게시글을 불러오는데 실패했습니다.');
+            setPosts([]); // 에러 발생 시 posts 초기화
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <div className="space-y-4 mt-4">
@@ -127,9 +136,9 @@ export default function BoardList() {
                 </div>
             )}
 
-            {!loading && !error && filteredPosts.length > 0 ? (
+            {!loading && !error && posts.length > 0 ? (
                 <>
-                    {filteredPosts.map((post) => (
+                    {posts.map((post) => (
                         <BoardCard key={post.postId} post={post} />
                     ))}
                     {totalElements > (page + 1) * size && (

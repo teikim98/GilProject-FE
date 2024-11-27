@@ -8,8 +8,9 @@ import { ChevronsUpDown, Check } from 'lucide-react'
 import { useState } from 'react'
 import { useLocationStore } from '@/store/useLocationStore'
 
+
 type Location = {
-    value: '내 현재위치' | '집 주변';
+    value: '내 현재위치' | '집 주변' | '검색결과';  // 타입에 '검색결과' 추가
     label: string;
 }
 
@@ -22,7 +23,12 @@ const locations: Location[] = [
         value: "집 주변",
         label: "집 주변",
     },
+    {
+        value: "검색결과",
+        label: "검색결과",
+    }
 ]
+
 
 export default function LocationSelector() {
     const [open, setOpen] = useState(false)
