@@ -1,5 +1,6 @@
 import { User, UserSimple } from "@/types/types";
 import axios from "axios";
+import { cookies } from "next/headers";
 
 //유저(마이페이지) 관련 API///////////////
 
@@ -65,6 +66,11 @@ api.interceptors.response.use(
         }
       } catch (reissueError) {
         console.error("Token reissue failed:", reissueError);
+        
+        localStorage.removeItem("access");
+        //쿠키에 있는 refresh 토큰 삭제? -> 안해도됨 어차피 로그인하면 다시 저장됨
+        alert("로그인이 만료되었습니다 다시 로그인해주세요");
+        window.location.href = "/auth/login";
       }
     }
 
@@ -197,8 +203,7 @@ export const updateProfileImage = async (userId: number, file: File) => {
 };
 
 export const logout = async () => {
-  localStorage.removeItem("access");
-
+  
   // 2. 서버 측 로그아웃 요청 (Refresh 토큰 전송)
   try {
     await axios.post(
@@ -208,10 +213,12 @@ export const logout = async () => {
         withCredentials: true, // 쿠키 포함
       }
     );
-    console.log("로그아웃 성공");
+    localStorage.removeItem("access");
   } catch (error) {
     console.error("로그아웃 실패:", error);
   }
 
   window.location.href = "/auth/login";
+  console.log("로그아웃 성공");
+  
 };
