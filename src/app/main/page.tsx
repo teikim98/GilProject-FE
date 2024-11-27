@@ -8,14 +8,19 @@ import Sidemenu from "@/components/layout/Sidemenu";
 import Link from "next/link";
 import { DarkModeToggle } from "@/components/layout/DarkModeToggle";
 import { CurrentLocationMap } from "@/components/map/CurrentLocationMap";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import AnimatedCards from "@/components/layout/AnimatedCards";
 import { verifiRefreshToken } from "@/api/auth";
 import AddressChangePopup from "@/components/auth/AddressChangePopup";
+import { getDetailProfile } from "@/api/user";
 
 export default function Page() {
-  // 소셜로그인할때 access, refresh 토큰 저장
+  const [addressPopupOpen,setAddressPopUpOpen] = useState(false);
+
   useEffect(() => {
+    /**
+     * 소셜로그인할때 access, refresh 토큰 저장
+     */
     const fetchData = async () => {
       console.log("refresh 토큰을 백엔드에서 인증");
       try {
@@ -30,10 +35,44 @@ export default function Page() {
       }
     };
 
+    /**
+     * 주소 등록했는지 확인
+     */
+    const getUser = async () => {
+      console.log("refresh 토큰을 백엔드에서 인증");
+      try {
+        const response = await getDetailProfile();
+        console.log("lat : " + response.latitude + "lon" +response.longitude);
+        if(response.latitude && response.longitude){
+          localStorage.setItem("address-popup","0");
+        }
+        else{
+          localStorage.setItem("address-popup","1");
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
     if (localStorage.getItem("access") === null) {
       fetchData();
     }
-  }, []); // 의존성 배열 추가
+
+    const localStorageAddress = localStorage.getItem("address-popup");
+    if(localStorageAddress === null){ //로컬스토리지가 아예 없음
+      getUser();
+    }else{
+        if(localStorageAddress ==="0"){
+          //팝업을 열지않겠다
+          setAddressPopUpOpen(false);
+        }
+        else if(localStorageAddress === "1"){
+          //팝업을 열겠다
+          setAddressPopUpOpen(true);
+        }
+    }
+
+  }, []);
 
   return (
     <div className="w-full animate-fade-in flex flex-col bg-white dark:bg-gray-900 pb-20">
@@ -113,7 +152,7 @@ export default function Page() {
           </Card>
         </Link>
       </div>
-      <AddressChangePopup />
+      {addressPopupOpen && <AddressChangePopup />}
       <AnimatedCards />
     </div>
   );

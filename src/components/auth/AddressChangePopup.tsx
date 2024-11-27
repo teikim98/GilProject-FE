@@ -1,16 +1,6 @@
 import React, { useState } from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "../ui/card";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
-import DaumPostcodeEmbed from "react-daum-postcode";
-import Link from "next/link";
 import { Label } from "../ui/label";
 import {
   Dialog,
@@ -20,28 +10,34 @@ import {
   DialogTitle,
 } from "../ui/dialog";
 import DaumPostcode from "react-daum-postcode";
-import { CheckboxIcon } from "@radix-ui/react-icons";
-import { CheckboxItem } from "@radix-ui/react-dropdown-menu";
 import { Checkbox } from "@/components/ui/checkbox";
 import { updateAddress } from "@/api/user";
 
+/**
+ * 주소변경 컴포넌트
+ * @returns 
+ */
 const AddressChangePopup = () => {
   const [isRouteListOpen, setIsRouteListOpen] = useState(true);
   const [openDaumPost, setOpenDaumPost] = useState(false);
   const [address, setAddress] = useState("");
+  const [lat, setLat] = useState(0); //위도
+  const [lon,setLon] = useState(0); //경도
+  const [isChecked, setIsChecked] = useState(false); //다시보지않기 체크
 
   const handleComplete = (data: any) => {
     console.log(data);
-    setAddress(data.address); // 선택한 주소 인풋필드에 올리기
-    setOpenDaumPost(false); // 팝업 닫기
-
-    updateAddr();
+    
+    setAddress(data.address); //주소 설정
+    updateAddr(); //위도 경도로 변환
+    setOpenDaumPost(false); //팝업 닫기
   };
 
-  const handleSave = ()=>{
+  const handleSave = async ()=>{
     //주소, 위도, 경도 회원테이블에 업데이트하기
-    console.log("DB에 저장");
-    // await updateAddress(,address, lat.toString(), lon.toString());
+    console.log("DB에 주소변경");
+    localStorage.setItem("address-popup","0");
+    await updateAddress(address,lat,lon);
   }
 
   /**
@@ -51,6 +47,8 @@ const AddressChangePopup = () => {
   const updateAddr = async () => {
     const { lat, lon } = await conversionAddr(address);
     console.log("위도:", lat, "경도:", lon);
+    setLat(lat);
+    setLon(lon);
   };
 
   /**
@@ -78,6 +76,27 @@ const AddressChangePopup = () => {
     });
   };
 
+  /**
+   * 체크박스 체크 이벤트
+   * @param checked
+   */
+  const handleCheckboxChange = (checked: boolean) => {
+    setIsChecked(checked);
+    if(checked){
+      localStorage.setItem("address-popup","0");
+    }
+    else{
+      localStorage.setItem("address-popup","1");
+    }
+  };
+
+  /**
+   * 다음에할래요 클릭 이벤트
+   */
+  const handleNextTimeButtonClick = ()=>{
+    setIsRouteListOpen(false);
+  }
+
   return (
     <>
       <Dialog open={isRouteListOpen} onOpenChange={setIsRouteListOpen}>
@@ -103,7 +122,6 @@ const AddressChangePopup = () => {
               {openDaumPost && (
                 <div className="bg-white p-4 rounded shadow-md w-full max-w-md">
                   <DaumPostcode onComplete={handleComplete} />
-                 
                 </div>
               )}
               {address && (
@@ -120,7 +138,6 @@ const AddressChangePopup = () => {
                     onClick={handleSave}
                   >
                     저장
-                    {/* 인풋필드가 비었으면 안되게 */}
                   </Button>
                 </>
               )}
@@ -128,15 +145,15 @@ const AddressChangePopup = () => {
           </div>
           <DialogFooter>
             <div className="flex justify-between items-center">
-              {/* 왼쪽 끝: 체크박스와 멘트 */}
+
               <div className="flex items-center space-x-2">
-                <Checkbox id="terms"/>
+                <Checkbox id="terms" checked={isChecked} onCheckedChange={handleCheckboxChange}/>
                 <label htmlFor="terms">다시보지 않기</label>
               </div>
 
-              {/* 오른쪽 끝: Link */}
               <div
-                onClick={()=>{setIsRouteListOpen(false)}}
+                // onClick={()=>{setIsRouteListOpen(false)}}
+                onClick={handleNextTimeButtonClick}
                 className="text-right text-blue-500 flex-shrink-0 cursor-pointer"
               >
                 다음에 할래요
