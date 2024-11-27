@@ -18,71 +18,87 @@ export default function BoardList() {
     const [page, setPage] = useState(0);
     const [totalElements, setTotalElements] = useState(0);
     const size = 10;
-    const [isInitialLocationSet, setIsInitialLocationSet] = useState(false);
 
 
+    const fetchPosts = async () => {
+        try {
+            setLoading(true);
+            let response;
 
-    // 현재 위치 가져오기
-    useEffect(() => {
-        if (!isInitialLocationSet && selectedLocation === '내 현재위치' && navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    setInitialUserLocation({
-                        lat: position.coords.latitude,
-                        lng: position.coords.longitude
-                    });
-                    setIsInitialLocationSet(true);
-                },
-                (error) => {
-                    console.error('위치 가져오기 실패:', error);
-                    setError('위치 정보를 가져오는데 실패했습니다.');
-                    setIsInitialLocationSet(true);
-                }
-            );
-        }
-    }, [selectedLocation, isInitialLocationSet]);
-
-    // API로 게시글 데이터 가져오기
-    useEffect(() => {
-        const fetchPosts = async () => {
-            try {
-                setLoading(true);
-                let response;
-
-                if (selectedLocation === '내 현재위치' && initialUserLocation) {
-                    response = await getPostNear(initialUserLocation.lat, initialUserLocation.lng, page, size);
-                } else {
-                    response = await getPosts(page, size);
-                }
-
-                const fetchedPosts = response.content || [];
-                setTotalElements(response.totalElements);
-
-                // 초기 위치가 있고 현재 위치 모드일 때만 거리 계산
-                if (initialUserLocation && selectedLocation === '내 현재위치') {
-                    const postsWithDistance = fetchedPosts.map((post: Post) => ({
-                        ...post,
-                        distanceFromUser: calculateDistance(
-                            initialUserLocation,
-                            { lat: post.startLat, lng: post.startLong }
-                        )
-                    }));
-                    setPosts(prev => page === 0 ? postsWithDistance : [...prev, ...postsWithDistance]);
-                } else {
-                    setPosts(prev => page === 0 ? fetchedPosts : [...prev, ...fetchedPosts]);
-                }
-            } catch (err) {
-                console.error('게시글 로딩 실패:', err);
-                setError('게시글을 불러오는데 실패했습니다.');
-            } finally {
-                setLoading(false);
+            if (selectedLocation === '내 현재위치') {
+                if (!initialUserLocation) return;
+                response = await getPostNear(initialUserLocation.lat, initialUserLocation.lng, page, size);
+            } else {
+                response = await getPosts(page, size);
+                console.log(response.content);
             }
-        };
 
-        if (isInitialLocationSet || selectedLocation === '집 주변') {
+            const fetchedPosts = response.content || [];
+            setTotalElements(response.totalElements);
+
+            if (initialUserLocation && selectedLocation === '내 현재위치') {
+                const postsWithDistance = fetchedPosts.map((post: Post) => ({
+                    ...post,
+                    distanceFromUser: calculateDistance(
+                        initialUserLocation,
+                        { lat: post.startLat, lng: post.startLong }
+                    )
+                }));
+                setPosts(prev => page === 0 ? postsWithDistance : [...prev, ...postsWithDistance]);
+            } else {
+                setPosts(prev => page === 0 ? fetchedPosts : [...prev, ...fetchedPosts]);
+            }
+        } catch (err) {
+            console.error('게시글 로딩 실패:', err);
+            setError('게시글을 불러오는데 실패했습니다.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        setPage(0); // 위치 변경 시 페이지 초기화
+
+        if (selectedLocation === '내 현재위치') {
+            setLoading(true);
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        setInitialUserLocation({
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude
+                        });
+                        setLoading(false);
+                    },
+                    (error) => {
+                        console.error('위치 가져오기 실패:', error);
+                        setError('위치 정보를 가져오는데 실패했습니다.');
+                        setLoading(false);
+                    }
+                );
+            }
+        } else {
+            // "집 주변" 선택 시 위치 정보 초기화
+            setInitialUserLocation(null);
+            setLoading(false);
+        }
+    }, [selectedLocation]);
+
+    // 게시물 가져오기
+    useEffect(() => {
+        if (selectedLocation === '집 주변') {
+            fetchPosts();
+        } else if (selectedLocation === '내 현재위치' && initialUserLocation) {
             fetchPosts();
         }
-    }, [initialUserLocation, page, searchTerm, selectedLocation, isInitialLocationSet]);
+    }, [page, searchTerm, selectedLocation]);
+
+    // `initialUserLocation` 변경 감지
+    useEffect(() => {
+        if (selectedLocation === '내 현재위치' && initialUserLocation) {
+            fetchPosts();
+        }
+    }, [initialUserLocation]);
 
     useEffect(() => {
         return () => {

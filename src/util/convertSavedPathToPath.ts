@@ -37,6 +37,7 @@ export const convertSavedPathToPost = (): Post | null => {
     // 새로운 Post 형식으로 변환
     const convertedPost: Post = {
       postId: 999,
+      postUserId: 999,
       nickName: "테스트 사용자",
       pathId: 999,
       startLat: savedPath.path[0]?.lat || 0,
