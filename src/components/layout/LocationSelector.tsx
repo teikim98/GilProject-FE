@@ -6,13 +6,14 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { cn } from '@/lib/utils'
 import { ChevronsUpDown, Check } from 'lucide-react'
 import { useState } from 'react'
+import { useLocationStore } from '@/store/useLocationStore'
 
 type Location = {
-    value: string;
+    value: '내 현재위치' | '집 주변';
     label: string;
 }
 
-const location: Location[] = [
+const locations: Location[] = [
     {
         value: "내 현재위치",
         label: "내 현재위치",
@@ -23,15 +24,15 @@ const location: Location[] = [
     },
 ]
 
-
 export default function LocationSelector() {
     const [open, setOpen] = useState(false)
-    const [value, setValue] = useState("내 현재위치")
+    const { selectedLocation, setSelectedLocation } = useLocationStore()
 
     const handleSelect = (currentValue: string) => {
-        setValue(currentValue)
+        setSelectedLocation(currentValue as '내 현재위치' | '집 주변')
         setOpen(false)
     }
+
     return (
         <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
@@ -41,9 +42,9 @@ export default function LocationSelector() {
                     aria-expanded={open}
                     className="w-[200px] justify-between"
                 >
-                    {value
-                        ? location.find((location) => location.value === value)?.label
-                        : "Select location..."}
+                    {selectedLocation
+                        ? locations.find((location) => location.value === selectedLocation)?.label
+                        : "위치 선택..."}
                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
             </PopoverTrigger>
@@ -51,7 +52,7 @@ export default function LocationSelector() {
                 <Command>
                     <CommandList>
                         <CommandGroup>
-                            {location.map((location) => (
+                            {locations.map((location) => (
                                 <CommandItem
                                     key={location.value}
                                     value={location.value}
@@ -61,7 +62,7 @@ export default function LocationSelector() {
                                     <Check
                                         className={cn(
                                             "ml-auto h-4 w-4",
-                                            value === location.value ? "opacity-100" : "opacity-0"
+                                            selectedLocation === location.value ? "opacity-100" : "opacity-0"
                                         )}
                                     />
                                 </CommandItem>
@@ -70,5 +71,6 @@ export default function LocationSelector() {
                     </CommandList>
                 </Command>
             </PopoverContent>
-        </Popover>)
+        </Popover>
+    )
 }

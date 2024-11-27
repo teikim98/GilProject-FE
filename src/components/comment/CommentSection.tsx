@@ -149,7 +149,7 @@ export function CommentSection({ postId }: CommentSectionProps) {
                     <div key={comment.replyId} className="flex gap-3 py-3">
                         <Avatar className="w-10 h-10 flex-shrink-0">
                             <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${comment.nickName}`} />
-                            <AvatarFallback>{comment.nickName[0]}</AvatarFallback>
+                            <AvatarFallback>{comment.nickName}</AvatarFallback>
                         </Avatar>
 
                         <div className="flex-1 space-y-1">

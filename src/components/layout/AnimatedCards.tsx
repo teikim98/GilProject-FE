@@ -234,7 +234,7 @@ const AnimatedCard: React.FC<AnimatedCardProps> = ({ href, title, Background, cl
 
 const AnimatedCards: React.FC = () => {
     return (
-        <div className="flex flex-col">
+        <div className="flex flex-col h-full">
             <div className="flex flex-row justify-between" style={{ height: '20vh' }}>
                 <AnimatedCard
                     href="/main/board"

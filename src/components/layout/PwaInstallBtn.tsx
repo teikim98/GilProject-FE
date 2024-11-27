@@ -67,7 +67,7 @@ const PWAInstallButton = () => {
     return (
         <Button
             onClick={handleInstallClick}
-            className=" shadow-lg"
+            className=" shadow-lg mb-4"
             size="lg"
         >
             <Download className="mr-2 h-5 w-5" />

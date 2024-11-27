@@ -22,8 +22,13 @@ api.interceptors.request.use(
   }
 );
 
-export const getPosts = async (): Promise<Post[]> => {
-  const response = await api.get("/nearAddr");
+export const getPosts = async (
+  page = 0,
+  size = 10
+): Promise<{ content: Post[]; totalElements: number }> => {
+  const response = await api.get("/nearAddr", {
+    params: { page, size },
+  });
   return response.data;
 };
 
@@ -33,10 +38,16 @@ export const getPost = async (id: number): Promise<Post> => {
   return response.data;
 };
 
-export const getPostNear = async (): Promise<Post[]> => {
-  const response = await api.get("/37/126?page=0&size=10");
-
-  return response.data.content;
+export const getPostNear = async (
+  lat: number,
+  lng: number,
+  page = 0,
+  size = 10
+): Promise<{ content: Post[]; totalElements: number }> => {
+  const response = await api.get(`/${lat}/${lng}`, {
+    params: { page, size },
+  });
+  return response.data;
 };
 
 export const createPost = async (formData: FormData) => {

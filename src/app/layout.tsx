@@ -43,7 +43,7 @@ export default function RootLayout({
             <div className="animate-fade-in min-h-screen " />
           }
         >
-          <NotificationInitializer />
+          {/* <NotificationInitializer /> */}
 
           <Provider>
             {children}
