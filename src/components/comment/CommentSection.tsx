@@ -9,6 +9,7 @@ import { useState, useEffect } from "react";
 import { getComments, createComment, deleteComment, toggleCommentLike } from "@/api/comment";
 import { toast } from "@/hooks/use-toast";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import ProfileDialog from "../user/ProfileDialog";
 
 interface CommentSectionProps {
     postId: number;
@@ -17,6 +18,7 @@ interface CommentSectionProps {
 // ReplyDTO 타입 정의
 interface Reply {
     replyId: number;      // id → replyId
+    replyUserId: number;
     content: string;
     replyDate: string;    // writeDate → replyDate
     nickName: string;
@@ -147,10 +149,7 @@ export function CommentSection({ postId }: CommentSectionProps) {
             <div className="space-y-3">
                 {comments.map((comment) => (
                     <div key={comment.replyId} className="flex gap-3 py-3">
-                        <Avatar className="w-10 h-10 flex-shrink-0">
-                            <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${comment.nickName}`} />
-                            <AvatarFallback>{comment.nickName}</AvatarFallback>
-                        </Avatar>
+                        <ProfileDialog userId={comment.replyUserId} />
 
                         <div className="flex-1 space-y-1">
                             <div className="flex items-center gap-2">
@@ -170,7 +169,7 @@ export function CommentSection({ postId }: CommentSectionProps) {
                                     variant="ghost"
                                     size="sm"
                                     className="h-8 px-2"
-                                    onClick={() => handleLikeToggle(comment.replyId)}  // id 확실히 전달
+                                    onClick={() => handleLikeToggle(comment.replyId)}
                                 >
                                     <Heart
                                         className={`w-4 h-4 mr-1 ${comment.isLiked ? 'fill-red-500 text-red-500' : ''}`}

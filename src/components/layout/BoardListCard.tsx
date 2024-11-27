@@ -40,7 +40,7 @@ export default function BoardCard({ post }: BoardCardProps) {
         <Card className="p-4 hover:shadow-lg transition-shadow">
             <Link href={`/main/board/${post.postId}`}>
                 <div className="flex items-center gap-3 mb-3">
-                    <ProfileDialog nickName={post.nickName} userId={post.postUserId} />
+                    <ProfileDialog userId={post.postUserId} />
                     <div>
                         <h3 className="font-semibold">{post.nickName}</h3>
                         <p className="text-sm text-gray-500 dark:text-gray-400">

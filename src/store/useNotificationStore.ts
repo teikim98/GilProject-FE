@@ -40,14 +40,9 @@ export const useNotificationStore = create<NotificationStore>((set) => ({
     let eventSource: EventSource | null = null;
 
     const connectSSE = () => {
-      const token = localStorage.getItem("access");
-      if (!token) return;
-
       eventSource = new EventSource(
         `http://localhost:8080/notifications/subscribe`,
-        {
-          withCredentials: true,
-        }
+        { withCredentials: true }
       );
 
       eventSource.onopen = () => {
@@ -89,7 +84,6 @@ export function NotificationInitializer() {
     initializeSSE();
   }, [initializeSSE]);
 
-  // 알림이 추가될 때마다 토스트 표시
   useEffect(() => {
     const unsubscribe = useNotificationStore.subscribe((state, prevState) => {
       const notifications = state.notifications;

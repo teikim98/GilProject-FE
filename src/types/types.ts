@@ -192,6 +192,7 @@ export interface CreatePostPath {
 
 export interface Comment {
   id: number;
+  replyUserId: number;
   userNickName: string;
   profileImage: string;
   content: string;

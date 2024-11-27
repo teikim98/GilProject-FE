@@ -1,14 +1,8 @@
 'use client'
-import { useEffect, useState } from 'react'
 import { Camera, Loader2, Pencil, Users } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
-import { updateAddress, updateProfileImage, getSimpleProfile, getDetailProfile, unsubscribeUser, subscribeUser } from '@/api/user'
-import { jwtDecode } from 'jwt-decode'
-
-interface JWTPayload {
-    id: number;
-}
+import { updateProfileImage } from '@/api/user'
 
 interface ProfileInfo {
     id: number;
@@ -23,85 +17,22 @@ interface ProfileInfo {
 }
 
 interface ProfileProps {
-    userId?: number;
+    profileInfo: ProfileInfo | null;
+    loading: boolean;
+    error: string | null;
+    isDetailView: boolean;
+    onSubscribeToggle: () => Promise<void>;
     width?: string;
 }
 
-export default function Profile({ userId, width = "w-full" }: ProfileProps) {
-    const [profileInfo, setProfileInfo] = useState<ProfileInfo | null>(null)
-    const [loading, setLoading] = useState(true)
-    const [error, setError] = useState<string | null>(null)
-    const [isDetailView, setIsDetailView] = useState(false)
-
-    useEffect(() => {
-        const fetchProfile = async () => {
-            try {
-                const token = localStorage.getItem("access");
-                if (!token) {
-                    setError('인증 정보가 없습니다');
-                    return;
-                }
-
-                const decoded = jwtDecode<JWTPayload>(token);
-                // userId가 없거나 토큰의 id와 일치하면 본인 프로필
-                if (!userId || decoded.id === userId) {
-                    setIsDetailView(true);
-                    const detailData = await getDetailProfile();
-                    setProfileInfo({
-                        id: detailData.id,
-                        nickName: detailData.nickName,
-                        imageUrl: detailData.imageUrl,
-                        comment: detailData.comment,
-                        address: detailData.address,
-                        postCount: detailData.posts?.length ?? 0,
-                        likeCount: detailData.postLikes?.length ?? 0,
-                        pathCount: detailData.paths?.length ?? 0
-                    });
-                } else {
-                    const data = await getSimpleProfile(userId);
-                    setProfileInfo(data);
-                }
-                setError(null);
-            } catch (err) {
-                setError('프로필을 불러오는데 실패했습니다');
-                console.error('프로필 조회 에러:', err);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchProfile();
-    }, [userId]);
-
-    const handleSubscribeToggle = async () => {
-        if (!profileInfo || !userId) return;
-
-        try {
-            setLoading(true);
-            if (profileInfo.isSubscribed) {
-                await unsubscribeUser(userId);
-            } else {
-                await subscribeUser(userId);
-            }
-
-            setProfileInfo(prev => prev ? {
-                ...prev,
-                isSubscribed: !prev.isSubscribed
-            } : null);
-        } catch (err) {
-            console.error('구독 처리 실패:', err);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-
-    const handleViewPosts = () => {
-        // if (userId) {
-        //     window.location.href = `/posts/user/${userId}`;
-        // }
-    };
-
+export default function Profile({
+    profileInfo,
+    loading,
+    error,
+    isDetailView,
+    onSubscribeToggle,
+    width = "w-full"
+}: ProfileProps) {
     if (error) {
         return (
             <Card className={`${width} border-0 shadow-none min-h-[200px] flex items-center justify-center`}>
@@ -129,7 +60,6 @@ export default function Profile({ userId, width = "w-full" }: ProfileProps) {
         );
     }
 
-
     return (
         <Card className={`${width} border-0 shadow-none`}>
             <CardHeader className="px-6 pb-3">
@@ -151,7 +81,7 @@ export default function Profile({ userId, width = "w-full" }: ProfileProps) {
                                     className="absolute inset-0 opacity-0 cursor-pointer"
                                     onChange={(e) => {
                                         const file = e.target.files?.[0];
-                                        if (file && profileInfo) {
+                                        if (file) {
                                             updateProfileImage(profileInfo.id, file);
                                         }
                                     }}
@@ -210,7 +140,7 @@ export default function Profile({ userId, width = "w-full" }: ProfileProps) {
                     <>
                         <Button
                             variant={profileInfo.isSubscribed ? "outline" : "default"}
-                            onClick={handleSubscribeToggle}
+                            onClick={onSubscribeToggle}
                             disabled={loading}
                             className="flex-1 flex items-center justify-center gap-2"
                         >
@@ -219,7 +149,7 @@ export default function Profile({ userId, width = "w-full" }: ProfileProps) {
                         </Button>
                         <Button
                             variant="secondary"
-                            onClick={handleViewPosts}
+                            onClick={() => {/* 글 목록 보기 */ }}
                             disabled={loading}
                             className="flex-1"
                         >
