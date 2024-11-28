@@ -1,5 +1,5 @@
+import { NotificationInitializer } from "@/components/notification/NotificationInitializer";
 import { Toaster } from "@/components/ui/toaster";
-import { NotificationInitializer } from "@/store/useNotificationStore";
 import type { Metadata } from "next";
 import Script from "next/script";
 import { Suspense } from "react";
@@ -43,7 +43,7 @@ export default function RootLayout({
             <div className="animate-fade-in min-h-screen " />
           }
         >
-          {/* <NotificationInitializer /> */}
+          <NotificationInitializer />
 
           <Provider>
             {children}

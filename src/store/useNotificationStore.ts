@@ -1,22 +1,18 @@
-"use client";
-
 import { create } from "zustand";
-import { useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
-
-interface NotificationEvent {
-  id: string;
-  type: string;
-  message: string;
-  timestamp: string;
-}
+import { Notification } from "@/types/types";
+import { jwtDecode } from "jwt-decode";
 
 interface NotificationStore {
-  notifications: NotificationEvent[];
-  addNotification: (notification: NotificationEvent) => void;
+  notifications: Notification[];
+  addNotification: (notification: Notification) => void;
   clearNotifications: () => void;
-  markAsRead: (id: string) => void;
+  deleteNotification: (id: number) => void;
   initializeSSE: () => void;
+}
+
+interface JWTPayload {
+  id: number;
 }
 
 export const useNotificationStore = create<NotificationStore>((set) => ({
@@ -29,10 +25,10 @@ export const useNotificationStore = create<NotificationStore>((set) => ({
 
   clearNotifications: () => set({ notifications: [] }),
 
-  markAsRead: (id) =>
+  deleteNotification: (id) =>
     set((state) => ({
       notifications: state.notifications.filter(
-        (notification) => notification.id !== id
+        (notification) => notification.data.id !== id
       ),
     })),
 
@@ -40,8 +36,21 @@ export const useNotificationStore = create<NotificationStore>((set) => ({
     let eventSource: EventSource | null = null;
 
     const connectSSE = () => {
+      const token = localStorage.getItem("access");
+      if (!token) {
+        return;
+      }
+
+      const decoded = jwtDecode<JWTPayload>(token);
+
+      if (eventSource) {
+        eventSource.close();
+      }
+
       eventSource = new EventSource(
-        `http://localhost:8080/notifications/subscribe`,
+        `${
+          process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"
+        }/notifications/subscribe/${decoded.id}`,
         { withCredentials: true }
       );
 
@@ -49,15 +58,10 @@ export const useNotificationStore = create<NotificationStore>((set) => ({
         console.log("SSE 연결 성공");
       };
 
+      // 모든 메시지 확인용
       eventSource.onmessage = (event) => {
-        try {
-          const data = JSON.parse(event.data);
-          set((state) => ({
-            notifications: [data, ...state.notifications],
-          }));
-        } catch (error) {
-          console.error("알림 데이터 파싱 에러:", error);
-        }
+        console.log("일반 메시지 수신:", event);
+        console.log("메시지 데이터:", event.data);
       };
 
       eventSource.onerror = (error) => {
@@ -74,31 +78,3 @@ export const useNotificationStore = create<NotificationStore>((set) => ({
     };
   },
 }));
-
-// SSE 초기화를 위한 컴포넌트
-export function NotificationInitializer() {
-  const initializeSSE = useNotificationStore((state) => state.initializeSSE);
-  const { toast } = useToast();
-
-  useEffect(() => {
-    initializeSSE();
-  }, [initializeSSE]);
-
-  useEffect(() => {
-    const unsubscribe = useNotificationStore.subscribe((state, prevState) => {
-      const notifications = state.notifications;
-      const prevNotifications = prevState.notifications;
-      if (notifications.length > prevNotifications.length) {
-        const newNotification = notifications[0];
-        toast({
-          title: newNotification.type,
-          description: newNotification.message,
-        });
-      }
-    });
-
-    return () => unsubscribe();
-  }, [toast]);
-
-  return null;
-}

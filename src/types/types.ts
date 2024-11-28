@@ -218,14 +218,15 @@ export interface UpdatePostFormData {
   images: File[]; // 새로 추가할 이미지 파일들
 }
 
-// 사용 예시를 위한 타입
-export interface PostAPI {
-  // 게시글 생성
-  createPost: (data: CreatePostRequest, images?: File[]) => Promise<Post>;
-  // 게시글 수정
-  updatePost: (
-    postId: number,
-    data: UpdatePostRequest,
-    images?: File[]
-  ) => Promise<Post>;
+export interface NotificationData {
+  id: number;
+  userId: number;
+  content: string;
+  date: string;
+}
+
+export interface Notification {
+  name: "CommentNotify" | "PostNotify";
+  comment: string;
+  data: NotificationData;
 }
