@@ -10,6 +10,7 @@ import { jwtDecode } from 'jwt-decode'
 interface ProfileDialogProps {
     userId: number;
     className?: string;
+    onOpenChange?: (open: boolean) => void;
 }
 
 interface ProfileInfo {
@@ -28,15 +29,34 @@ interface JWTPayload {
     id: number;
 }
 
-export default function ProfileDialog({ userId, className }: ProfileDialogProps) {
+export default function ProfileDialog({ userId, className, onOpenChange }: ProfileDialogProps) {
     const [open, setOpen] = useState(false);
     const [profileInfo, setProfileInfo] = useState<ProfileInfo | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [isDetailView, setIsDetailView] = useState(false);
 
+
+
     useEffect(() => {
-        const fetchProfile = async () => {
+        const fetchInitialProfile = async () => {
+            try {
+                const data = await getSimpleProfile(userId);
+                setProfileInfo(data);
+                setError(null);
+            } catch (err) {
+                console.error('초기 프로필 조회 에러:', err);
+                setError('프로필을 불러오는데 실패했습니다');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchInitialProfile();
+    }, [userId]);
+
+    useEffect(() => {
+        const fetchFullProfile = async () => {
             if (!open) return;
 
             try {
@@ -50,32 +70,28 @@ export default function ProfileDialog({ userId, className }: ProfileDialogProps)
                 if (decoded.id === userId) {
                     setIsDetailView(true);
                     const detailData = await getDetailProfile();
-                    setProfileInfo({
-                        id: detailData.id,
-                        nickName: detailData.nickName,
-                        imageUrl: detailData.imageUrl,
-                        comment: detailData.comment,
-                        address: detailData.address,
-                        postCount: detailData.posts?.length ?? 0,
-                        likeCount: detailData.postLikes?.length ?? 0,
-                        pathCount: detailData.paths?.length ?? 0
-                    });
+                    setProfileInfo(prev => prev ? {
+                        ...prev,
+                        ...detailData,
+                        imageUrl: prev.imageUrl || detailData.imageUrl,
+                    } : null);
                 } else {
                     const data = await getSimpleProfile(userId);
-                    setProfileInfo(data);
+                    setProfileInfo(prev => prev ? {
+                        ...prev,
+                        ...data,
+                        imageUrl: prev.imageUrl || data.imageUrl
+                    } : null);
                 }
                 setError(null);
             } catch (err) {
                 setError('프로필을 불러오는데 실패했습니다');
                 console.error('프로필 조회 에러:', err);
-            } finally {
-                setLoading(false);
             }
         };
 
         if (open) {
-            setLoading(true);
-            fetchProfile();
+            fetchFullProfile();
         }
     }, [userId, open]);
 
@@ -89,13 +105,8 @@ export default function ProfileDialog({ userId, className }: ProfileDialogProps)
     };
 
     const handleOpenChange = (newOpen: boolean) => {
-        if (!newOpen) {
-            setTimeout(() => {
-                setOpen(false);
-            }, 0);
-        } else {
-            setOpen(true);
-        }
+        setOpen(newOpen);
+        onOpenChange?.(newOpen);
     };
 
     return (
@@ -113,7 +124,7 @@ export default function ProfileDialog({ userId, className }: ProfileDialogProps)
                 >
                     <Avatar className={`cursor-pointer hover:opacity-80 transition-opacity ${className}`}>
                         <AvatarImage src={profileInfo?.imageUrl} />
-                        <AvatarFallback>{profileInfo?.nickName}</AvatarFallback>
+                        <AvatarFallback>{profileInfo?.nickName?.[0]}</AvatarFallback>
                     </Avatar>
                 </div>
             </DialogTrigger>
@@ -149,5 +160,5 @@ export default function ProfileDialog({ userId, className }: ProfileDialogProps)
                 />
             </DialogContent>
         </Dialog>
-    )
+    );
 }

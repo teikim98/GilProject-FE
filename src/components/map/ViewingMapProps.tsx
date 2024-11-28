@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { BaseKakaoMap } from "./BaseKakaoMap";
 import { MarkerWithOverlay } from "./MarkerWithOverlay";
 import { RoutePolyline } from "./RoutePolyline";
-
 import { createStartMarker, createEndMarker } from "./CustomMarkerIcon";
 import { MapMarker } from "react-kakao-maps-sdk";
 
@@ -17,12 +16,9 @@ interface ViewingMapProps {
     };
 }
 
-
 export function ViewingMap({ route, width, height }: ViewingMapProps) {
-
     const [center, setCenter] = useState<KakaoPosition>({ lat: 37.5665, lng: 126.9780 });
 
-    // Hook들을 최상단으로 이동
     useEffect(() => {
         if (route.routeCoordinates && Array.isArray(route.routeCoordinates) && route.routeCoordinates.length > 0) {
             const firstPosition = {
@@ -57,37 +53,45 @@ export function ViewingMap({ route, width, height }: ViewingMapProps) {
     const startPoint = positions[0];
     const endPoint = positions[positions.length - 1];
 
+    const handleMapInteraction = (e: React.MouseEvent | React.TouchEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+    };
 
     return (
-        <BaseKakaoMap width={width} height={height} center={center}>
-            <RoutePolyline path={positions} />
-            {startPoint && (
-                <MapMarker
-                    position={startPoint}
-                    image={{
-                        src: createStartMarker(),
-                        size: { width: 32, height: 32 },
-                        options: { offset: { x: 0, y: 0 } },
-                    }}
-                />
-            )}
-            {endPoint && positions.length > 1 && (
-                <MapMarker
-                    position={endPoint}
-                    image={{
-                        src: createEndMarker(),
-                        size: { width: 32, height: 32 },
-                        options: { offset: { x: 0, y: 0 } },
-                    }}
-                />
-            )}
-            {route.pins.map(pin => (
-                <MarkerWithOverlay
-                    key={pin.id}
-                    marker={convertPinToMarker(pin)}
-                />
-            ))}
-        </BaseKakaoMap>
-
+        <div
+            onClick={handleMapInteraction}
+            className={`${width} ${height}`}
+        >
+            <BaseKakaoMap width={width} height={height} center={center}>
+                <RoutePolyline path={positions} />
+                {startPoint && (
+                    <MapMarker
+                        position={startPoint}
+                        image={{
+                            src: createStartMarker(),
+                            size: { width: 32, height: 32 },
+                            options: { offset: { x: 0, y: 0 } },
+                        }}
+                    />
+                )}
+                {endPoint && positions.length > 1 && (
+                    <MapMarker
+                        position={endPoint}
+                        image={{
+                            src: createEndMarker(),
+                            size: { width: 32, height: 32 },
+                            options: { offset: { x: 0, y: 0 } },
+                        }}
+                    />
+                )}
+                {route.pins.map(pin => (
+                    <MarkerWithOverlay
+                        key={pin.id}
+                        marker={convertPinToMarker(pin)}
+                    />
+                ))}
+            </BaseKakaoMap>
+        </div>
     );
 }

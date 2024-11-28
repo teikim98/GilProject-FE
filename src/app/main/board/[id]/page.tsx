@@ -204,9 +204,8 @@ export default function PostPage({ params }: PostPageProps) {
                     )}
                 </Carousel>
             </div>
-
             <div className="flex items-center gap-3 mb-4">
-                <ProfileDialog nickName={post.nickName} userId={post.postUserId} />
+                <ProfileDialog userId={post.postUserId} />
                 <div>
                     <p className="font-semibold">{post.nickName}</p>
                     <p className="text-sm text-gray-500 dark:text-gray-400">

@@ -7,6 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { ViewingMap } from '../map/ViewingMapProps';
 import Link from 'next/link';
 import ProfileDialog from '../user/ProfileDialog';
+import { useState } from 'react';
 
 interface BoardCardProps {
     post: Post;
@@ -30,17 +31,39 @@ function formatDate(dateString: string): string {
 }
 
 export default function BoardCard({ post }: BoardCardProps) {
-    console.log('Post Data:', {
-        postUserId: post.postUserId,
-        nickName: post.nickName,
-        postId: post.postId
-    });
+
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [preventNavigation, setPreventNavigation] = useState(false);
+
+    const handleClick = (e: React.MouseEvent) => {
+        // Dialog가 열려있거나 방금 닫혔을 때는 이동을 막습니다
+        if (isDialogOpen || preventNavigation) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            if (preventNavigation) {
+                setTimeout(() => {
+                    setPreventNavigation(false);
+                }, 100);
+            }
+        }
+    };
+
 
     return (
         <Card className="p-4 hover:shadow-lg transition-shadow">
-            <Link href={`/main/board/${post.postId}`}>
+            <Link href={`/main/board/${post.postId}`} onClick={handleClick}>
                 <div className="flex items-center gap-3 mb-3">
-                    <ProfileDialog userId={post.postUserId} />
+                    <ProfileDialog
+                        userId={post.postUserId}
+                        onOpenChange={(open) => {
+                            setIsDialogOpen(open);
+                            if (!open) {
+                                setPreventNavigation(true);
+                            }
+                        }}
+                    />
+
                     <div>
                         <h3 className="font-semibold">{post.nickName}</h3>
                         <p className="text-sm text-gray-500 dark:text-gray-400">

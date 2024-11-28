@@ -64,7 +64,6 @@ export default function Sidemenu() {
                         <SheetTitle className="text-left">메뉴</SheetTitle>
                     </SheetHeader>
                     <nav className="mt-8">
-                        <Profile width="w-[300px]" />
                         <ul className="space-y-4">
                             {navigationItems.map((item) => (
                                 <li key={item.href}>
