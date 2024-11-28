@@ -15,6 +15,7 @@ import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { emailJoin, emailLogin, existEmail, existNickname } from "@/api/auth";
 import { redirect, useRouter } from "next/navigation";
+import EmailPopup from "../../../components/auth/EmailPopup";
 import { emailSend } from "@/api/mail";
 import {
   checkLength,
@@ -26,6 +27,26 @@ import ValidateMessage from "@/components/auth/ValidateMessage";
 import EmailVerificationPopup, {
   EmailCertification,
 } from "@/components/auth/EmailVerification";
+
+//유효성 검사 - 이름 필드
+export const nameValidation = (
+  value: string,
+  setIsNameValid: (isValid: boolean) => void,
+  setNameValidMessage: (message: string) => void
+) => {
+  value = value.replace(/[<>]/g, "").trim();
+
+  if (checkLength(value, 2, 12) === false) {
+    setIsNameValid(false);
+    setNameValidMessage("2글자 이상 12글자 이하만 가능합니다");
+  } else if (checkKor(value) === false) {
+    setIsNameValid(false);
+    setNameValidMessage("한글만 입력 가능합니다");
+  } else {
+    setIsNameValid(true);
+    setNameValidMessage("사용 가능");
+  }
+};
 
 const HomePage = () => {
   let router = useRouter();
@@ -40,32 +61,49 @@ const HomePage = () => {
   const [isNameValid, setIsNameValid] = useState(false);
   const [isNickNameValid, setIsNickNameValid] = useState(false);
   const [isNickNameDuplicationValid, setIsNickNameDuplicationValid] = useState(false);
-  const [isEmailValid, setIsEmailValid] =useState(false);
-  const [isPasswordValid,setIsPasswordValid] =useState(false);
-
+  const [isEmailValid, setIsEmailValid] = useState(false);
+  const [isPasswordValid, setIsPasswordValid] = useState(false);
 
   //하단 유효성 검사 안내 메세지
   const [nameValidMessage, setNameValidMessage] = useState("");
   const [nickNameValidMessage, setnickNameValidMessage] = useState("");
   const [passwordValidMessage, setPasswordValidMessage] = useState("");
+  const [emailValidMessage,setEmailValidMessage] = useState("");
 
-  //유효성 검사 - 이름 필드
-  const nameValidation = (e: any) => {
-    let value = e.target.value;
-    value = value.replace(/[<>]/g, "").trim();
-    setName(value);
+  const [isEmailPopupOpen, setIsEmailPopupOpen] = useState(false);
 
-    if (checkLength(value, 2, 12) === false) {
-      setIsNameValid(false);
-      setNameValidMessage("2글자 이상 12글자 이하만 가능합니다");
-    } else if (checkKor(value) === false) {
-      setIsNameValid(false);
-      setNameValidMessage("한글만 입력 가능합니다");
-    } else {
-      setIsNameValid(true);
-      setNameValidMessage("사용 가능");
+  const handleEmailVerified = (email: string) => {
+    if(email !==""){
+      console.log(`인증된 이메일: ${email}`);
+      setEmail(email);
+      setIsEmailValid(true);
+      setEmailValidMessage(`인증 완료 / ${email} `);
     }
   };
+
+
+  const handleEmailPopup = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsEmailPopupOpen(true);
+  };
+
+  //유효성 검사 - 이름 필드
+  // const nameValidation = (e: any) => {
+  //   let value = e.target.value;
+  //   value = value.replace(/[<>]/g, "").trim();
+  //   setName(value);
+
+  //   if (checkLength(value, 2, 12) === false) {
+  //     setIsNameValid(false);
+  //     setNameValidMessage("2글자 이상 12글자 이하만 가능합니다");
+  //   } else if (checkKor(value) === false) {
+  //     setIsNameValid(false);
+  //     setNameValidMessage("한글만 입력 가능합니다");
+  //   } else {
+  //     setIsNameValid(true);
+  //     setNameValidMessage("사용 가능");
+  //   }
+  // };
 
   //유효성 검사 - 닉네임 필드
   const nickNameValidation = (e: any) => {
@@ -90,41 +128,40 @@ const HomePage = () => {
   };
 
   //유효성 검사 - 비밀번호 필드
-const passwordValidation = (e: any) => {
-  let value = e.target.value;
-  value = value.replace(/[<>]/g, "").trim();
-  setPassword(value); 
+  const passwordValidation = (e: any) => {
+    let value = e.target.value;
+    value = value.replace(/[<>]/g, "").trim();
+    setPassword(value);
 
-  if (checkLength(value, 8, 30) === false) {
-    setIsPasswordValid(false);
-    setPasswordValidMessage("8글자 이상 30글자 이하만 가능합니다");
-  } else if (value !== passwordConfirm) {
-    setIsPasswordValid(false);
-    setPasswordValidMessage("비밀번호가 일치하지 않습니다");
-  } else {
-    setIsPasswordValid(true);
-    setPasswordValidMessage("사용가능한 비밀번호입니다");
+    if (checkLength(value, 8, 30) === false) {
+      setIsPasswordValid(false);
+      setPasswordValidMessage("8글자 이상 30글자 이하만 가능합니다");
+    } else if (value !== passwordConfirm) {
+      setIsPasswordValid(false);
+      setPasswordValidMessage("비밀번호가 일치하지 않습니다");
+    } else {
+      setIsPasswordValid(true);
+      setPasswordValidMessage("사용가능한 비밀번호입니다");
+    }
+  };
 
-  }
-};
+  //유효성 검사 - 비밀번호 확인 필드
+  const passwordConfirmValidation = (e: any) => {
+    let value = e.target.value;
+    value = value.replace(/[<>]/g, "").trim();
+    setPasswordConfirm(value);
 
-//유효성 검사 - 비밀번호 확인 필드
-const passwordConfirmValidation = (e: any) => {
-  let value = e.target.value;
-  value = value.replace(/[<>]/g, "").trim();
-  setPasswordConfirm(value); 
-
-  if (value !== password) {
-    setIsPasswordValid(false);
-    setPasswordValidMessage("비밀번호가 일치하지 않습니다");
-  } else if (checkLength(password, 8, 30) === false) {
-    setIsPasswordValid(false);
-    setPasswordValidMessage("8글자 이상 30글자 이하만 가능합니다");
-  } else {
-    setIsPasswordValid(true);
-    setPasswordValidMessage("사용가능한 비밀번호입니다");
-  }
-};
+    if (value !== password) {
+      setIsPasswordValid(false);
+      setPasswordValidMessage("비밀번호가 일치하지 않습니다");
+    } else if (checkLength(password, 8, 30) === false) {
+      setIsPasswordValid(false);
+      setPasswordValidMessage("8글자 이상 30글자 이하만 가능합니다");
+    } else {
+      setIsPasswordValid(true);
+      setPasswordValidMessage("사용가능한 비밀번호입니다");
+    }
+  };
 
   const handleJoin = async () => {
     // console.log(name,nickName,email,password);
@@ -174,7 +211,11 @@ const passwordConfirmValidation = (e: any) => {
                 <Input
                   name="name"
                   value={name}
-                  onChange={nameValidation}
+                  onChange={(e) => {
+                    let value = e.target.value;
+                    setName(value);
+                    nameValidation(value, setIsNameValid, setNameValidMessage);
+                  }}
                   placeholder="이름을 입력해주세요"
                 />
                 <ValidateMessage
@@ -207,11 +248,28 @@ const passwordConfirmValidation = (e: any) => {
                 />
               </div>
               <div className="flex flex-col space-y-1.5">
-                {/* 이메일 입력 컴포넌트 */}
-                <EmailCertification parentSetEmail={setEmail} parentSetEmailValid={setIsEmailValid}/>
-                  {/* {"email : " + email }<br></br> */}
-                  {/* {"isEmailValid  " + isEmailValid} */}
+                <Label htmlFor="name">이메일</Label>
+                {/* 기존 */}
+                {/* <EmailCertification parentSetEmail={setEmail} parentSetEmailValid={setIsEmailValid}/> */}
+                {/* 수정 */}
+                <Button
+                  name="nickNameCheckBtn"
+                  variant="outline"
+                  className="w-auto"
+                  onClick={(e) => {
+                    handleEmailPopup(e);
+                  }}
+                >
+                 {!isEmailValid ? "이메일 인증" : "이메일 변경"}
+                </Button>
+                <EmailPopup
+                  isPopupOpen={isEmailPopupOpen}
+                  setIsPopupOpen={setIsEmailPopupOpen}
+                  callback={handleEmailVerified}
+                />
+                <ValidateMessage validCondition={isEmailValid} message={emailValidMessage}/>
               </div>
+
               <div className="flex flex-col space-y-1.5">
                 <Label htmlFor="name">비밀번호</Label>
                 <Input
@@ -239,8 +297,20 @@ const passwordConfirmValidation = (e: any) => {
           </form>
         </CardContent>
         <CardFooter className="flex justify-center flex-col">
-          <Button variant="outline" className="w-full" onClick={handleJoin} 
-          disabled={!(isNameValid && isNickNameValid && isNickNameDuplicationValid && isEmailValid && isPasswordValid)}>
+          <Button
+            variant="outline"
+            className="w-full"
+            onClick={handleJoin}
+            disabled={
+              !(
+                isNameValid &&
+                isNickNameValid &&
+                isNickNameDuplicationValid &&
+                isEmailValid &&
+                isPasswordValid
+              )
+            }
+          >
             Sign up
           </Button>
         </CardFooter>

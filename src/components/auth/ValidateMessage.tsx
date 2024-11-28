@@ -15,6 +15,7 @@ const ValidateMessage = (props: { validCondition: boolean, message: string }) =>
           ? "text-green-500"
           : "text-red-500"
       }`}
+      // style={{ whiteSpace: "pre-line" }} // 줄 바꿈 적용
     >
       {message}
     </p>
