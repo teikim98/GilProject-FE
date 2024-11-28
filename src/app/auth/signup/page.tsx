@@ -217,6 +217,9 @@ const HomePage = () => {
                     nameValidation(value, setIsNameValid, setNameValidMessage);
                   }}
                   placeholder="이름을 입력해주세요"
+                  onInput={(e: any) => {
+                    e.target.value = e.target.value.replace(/\s/g, ""); // 공백 제거
+                  }}
                 />
                 <ValidateMessage
                   validCondition={isNameValid}
@@ -266,6 +269,7 @@ const HomePage = () => {
                   isPopupOpen={isEmailPopupOpen}
                   setIsPopupOpen={setIsEmailPopupOpen}
                   callback={handleEmailVerified}
+                  duplicateCheck={true}
                 />
                 <ValidateMessage validCondition={isEmailValid} message={emailValidMessage}/>
               </div>

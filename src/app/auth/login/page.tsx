@@ -116,7 +116,7 @@ const HomePage = () => {
                       "http://localhost:8080/oauth2/authorization/naver";
                   }}
                 >
-                  Continue with Facebook
+                  Continue with Naver
                 </Button>
               </div>
             </div>

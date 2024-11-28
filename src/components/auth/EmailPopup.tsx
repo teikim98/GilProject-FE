@@ -11,19 +11,22 @@ import Timer from "./Timer";
 
 /**
  * 이메일 인증 컴포넌트
+ * @param isPopupOpen 컴포넌트 여는 상태
+ * @param setIsPopupOpen 컴포넌트 열어주는 함수
+ * @param callback 완료됐을때 실행해줄 함수
  * @returns
  */
-const EmailPopup = ({ isPopupOpen, setIsPopupOpen, callback }: { isPopupOpen: boolean; setIsPopupOpen: React.Dispatch<React.SetStateAction<boolean>>; callback: (email: string) => void }) => {
+const EmailPopup = ({ isPopupOpen, setIsPopupOpen, callback, duplicateCheck }: { isPopupOpen: boolean; setIsPopupOpen: React.Dispatch<React.SetStateAction<boolean>>; callback: (email: string) => void; duplicateCheck: boolean }) => {
   const [email, setEmail] = useState("");
   const [emailValidate, setEmailValidate] = useState(false);
   const [emailValidateMessage, setEmailValidateMessage] = useState("");
   const [emailInputLock, setEmailInputLock] = useState(false);
   const [certifyButtonLock, setCertifyButtonLock] = useState(true);
   const [certifyCode, setCertifyCode] = useState("");
-  const [userInputCertifyCode,setUserInputCertifyCode] = useState("");
+  const [userInputCertifyCode, setUserInputCertifyCode] = useState("");
   const [codeValidate, setCodeValidate] = useState(false);
   const [codeValidateMessage, setCodeValidateMessage] = useState("");
-  const [useButtonLock,setUseButtonLock] = useState(true);
+  const [useButtonLock, setUseButtonLock] = useState(true);
   const [certifyConfirmButtonLock, setCertifyConfirmButtonLock] = useState(false);
 
   //타이머 제한 시간
@@ -52,66 +55,67 @@ const EmailPopup = ({ isPopupOpen, setIsPopupOpen, callback }: { isPopupOpen: bo
 
   /**
    * 인증코드 발송 Button
-   * @param e
+   * @param duplicateCheck 이메일 중복여부를 확인할건지
    */
-  const handleCertifyCode = async (e: React.MouseEvent) => {
+  const handleCertifyCode = async (e: React.MouseEvent, duplicateCheck: boolean) => {
     e.preventDefault();
     setCertifyButtonLock(true);
     setEmailInputLock(true);
 
-    //이메일 중복 체크
-    if (await isEmailDuplicate(email)) {
-      setEmailValidate(false);
-      setEmailValidateMessage("중복된 이메일입니다 다른 이메일을 사용해주세요");
+    if (duplicateCheck) {
+      //이메일 중복 체크
+      if (await isEmailDuplicate(email)) {
+        setEmailValidate(false);
+        setEmailValidateMessage("중복된 이메일입니다 다른 이메일을 사용해주세요");
 
-      setEmailInputLock(false);
-    } else {
-      //인증코드 전송
-      const code = await sendEmail(email);
-      setCertifyCode(code);
+        setEmailInputLock(false);
+        return;
+      }
     }
+
+    //인증코드 전송
+    const code = await sendEmail(email);
+    setCertifyCode(code);
   };
 
   /**
    * 인증코드 입력 Input
    */
-  const handleUserCertifyCode =(e:any)=>{
+  const handleUserCertifyCode = (e: any) => {
     let value = e.target.value;
     value = value.replace(/[<>]/g, ""); //< > 입력 금지
     setUserInputCertifyCode(value);
-  }
+  };
 
   /**
    * 인증코드 확인 Button
    */
-  const handleCertifyCodeConfirm = (e:React.MouseEvent)=>{
+  const handleCertifyCodeConfirm = (e: React.MouseEvent) => {
     e.preventDefault();
 
-    if(certifyCode === userInputCertifyCode){
+    if (certifyCode === userInputCertifyCode) {
       setCodeValidate(true);
       setCodeValidateMessage("인증코드 확인완료");
       setCertifyButtonLock(true);
       setCertifyConfirmButtonLock(true);
       setUseButtonLock(false);
-      
-    }
-    else{
+    } else {
       setCodeValidate(false);
       setCodeValidateMessage("잘못된 인증코드입니다");
     }
-  }
+  };
 
   /**
    * 닫기 Button
    */
-  const handleClose = (e:React.MouseEvent)=>{
+  const handleClose = (e: React.MouseEvent) => {
     reset();
-  }
+  };
 
   /**
    * 로컬 상태 모두 초기화
    */
-  const reset = ()=>{
+  const reset = () => {
     setEmail("");
     setEmailValidate(false);
     setEmailValidateMessage("");
@@ -123,23 +127,23 @@ const EmailPopup = ({ isPopupOpen, setIsPopupOpen, callback }: { isPopupOpen: bo
     setCodeValidateMessage("");
     setUseButtonLock(true);
     setCertifyConfirmButtonLock(false);
-  }
+  };
 
   /**
    * 사용 Button
    */
-  const handleUse = (e:React.MouseEvent)=>{
+  const handleUse = (e: React.MouseEvent) => {
     callback(email);
     reset();
-  }
+  };
 
   /**
    * 인증 제한시간 타이머
    */
-  const handleTimer =()=>{
+  const handleTimer = () => {
     alert("코드입력 시간만료");
     reset();
-  }
+  };
 
   /**
    * 이메일 중복체크
@@ -159,7 +163,6 @@ const EmailPopup = ({ isPopupOpen, setIsPopupOpen, callback }: { isPopupOpen: bo
     return response + "";
   };
 
-
   return (
     <>
       <AlertDialog open={isPopupOpen} onOpenChange={setIsPopupOpen}>
@@ -171,32 +174,76 @@ const EmailPopup = ({ isPopupOpen, setIsPopupOpen, callback }: { isPopupOpen: bo
             <Label htmlFor="address">보안을 위해 이메일 인증을 진행해주세요</Label>
 
             <div className="flex flex-col space-y-1.5">
-              <Input name="email" type="email" value={email} onChange={(e) => handleEmail(e)} placeholder="이메일을 입력해주세요" readOnly={emailInputLock} />
+              <Input
+                name="email"
+                type="email"
+                value={email}
+                onChange={(e) => handleEmail(e)}
+                placeholder="이메일을 입력해주세요"
+                readOnly={emailInputLock}
+                onInput={(e: any) => {
+                  e.target.value = e.target.value.replace(/\s/g, ""); // 공백 제거
+                }}
+              />
               <ValidateMessage validCondition={emailValidate} message={emailValidateMessage} />
 
               <Button
                 variant="outline"
                 className={`w-auto`}
                 onClick={(e) => {
-                  handleCertifyCode(e);
+                  handleCertifyCode(e, duplicateCheck);
                 }}
                 disabled={certifyButtonLock}
               >
                 인증코드 발송
               </Button>
 
-              {certifyCode !== "" && <>
-              <Input value={userInputCertifyCode} onChange={(e) => {handleUserCertifyCode(e)}} placeholder="인증코드를 입력해주세요" readOnly={codeValidate}/>
-              {!codeValidate && <Timer initialTime={initialTime} onComplete={handleTimer}/>}
-              <Button variant="outline" className={`w-auto`} onClick={(e) => { handleCertifyCodeConfirm(e);}} disabled={certifyConfirmButtonLock} > 인증코드 확인 </Button>
-              <ValidateMessage validCondition={codeValidate} message={codeValidateMessage}/>
-              </>
-              }
+              {certifyCode !== "" && (
+                <>
+                  <Input
+                    value={userInputCertifyCode}
+                    onChange={(e) => {
+                      handleUserCertifyCode(e);
+                    }}
+                    placeholder="인증코드를 입력해주세요"
+                    readOnly={codeValidate}
+                    onInput={(e: any) => {
+                      e.target.value = e.target.value.replace(/\s/g, ""); // 공백 제거
+                    }}
+                  />
+                  {!codeValidate && <Timer initialTime={initialTime} onComplete={handleTimer} />}
+                  <Button
+                    variant="outline"
+                    className={`w-auto`}
+                    onClick={(e) => {
+                      handleCertifyCodeConfirm(e);
+                    }}
+                    disabled={certifyConfirmButtonLock}
+                  >
+                    {" "}
+                    인증코드 확인{" "}
+                  </Button>
+                  <ValidateMessage validCondition={codeValidate} message={codeValidateMessage} />
+                </>
+              )}
             </div>
           </div>
           <AlertDialogFooter>
-            <AlertDialogCancel onClick={(e) => {handleClose(e)}}>닫기</AlertDialogCancel>
-            <AlertDialogAction onClick={(e) => {handleUse(e)}} disabled={useButtonLock}>사용</AlertDialogAction>
+            <AlertDialogCancel
+              onClick={(e) => {
+                handleClose(e);
+              }}
+            >
+              닫기
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={(e) => {
+                handleUse(e);
+              }}
+              disabled={useButtonLock}
+            >
+              사용
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
