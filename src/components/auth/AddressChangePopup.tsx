@@ -36,8 +36,10 @@ const AddressChangePopup = () => {
   const handleSave = async ()=>{
     //주소, 위도, 경도 회원테이블에 업데이트하기
     console.log("DB에 주소변경");
-    localStorage.setItem("address-popup","0");
     await updateAddress(address,lat,lon);
+    localStorage.setItem("address-popup","0");
+    alert("저장 되었습니다!");
+    setIsRouteListOpen(false);
   }
 
   /**

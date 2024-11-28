@@ -57,6 +57,7 @@ const HomePage = () => {
     const result = await passWordEmail(name,email);
     setFindButtonLock(false);
 
+    // console.log(result);
     if(result === 1){
       alert("새 비밀번호가 발급되었습니다. 이메일을 확인해주세요");
     }

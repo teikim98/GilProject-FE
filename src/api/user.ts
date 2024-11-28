@@ -59,9 +59,9 @@ api.interceptors.response.use(
           localStorage.setItem("access", newAccessToken);
           console.log("새로운 access 토큰 스토리지에 저장 = " + newAccessToken);
 
+          ///////// !!!!맞는지 잘모르겠는 부분
           // 원래 요청 재시도
           originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
-
           return api(originalRequest);
         }
       } catch (reissueError) {
