@@ -1,8 +1,7 @@
 'use client'
-
+import { useEffect } from 'react';
+import { useNotificationStore } from '@/store/useNotificationStore';
 import { useToast } from "@/hooks/use-toast";
-import { useNotificationStore } from "@/store/useNotificationStore";
-import { useEffect } from "react";
 
 export function NotificationInitializer() {
     const initializeSSE = useNotificationStore((state) => state.initializeSSE);
@@ -20,7 +19,7 @@ export function NotificationInitializer() {
             if (notifications.length > prevNotifications.length) {
                 const newNotification = notifications[0];
                 toast({
-                    title: newNotification.name === 'CommentNotify' ? '새로운 댓글' : '새로운 게시글',
+                    title: newNotification.data.type === 'CommentNotify' ? '새로운 댓글' : '새로운 게시글',
                     description: newNotification.comment,
                 });
             }
@@ -31,3 +30,4 @@ export function NotificationInitializer() {
 
     return null;
 }
+

@@ -217,16 +217,19 @@ export interface UpdatePostFormData {
   postUpdateRequest: string; // JSON.stringify(UpdatePostRequest)
   images: File[]; // 새로 추가할 이미지 파일들
 }
-
 export interface NotificationData {
   id: number;
+  type: "CommentNotify" | "PostNotify";
   userId: number;
+  postId: number;
+  userImageUrl: string;
   content: string;
   date: string;
+  state: number;
 }
 
 export interface Notification {
-  name: "CommentNotify" | "PostNotify";
+  name: string;
   comment: string;
   data: NotificationData;
 }

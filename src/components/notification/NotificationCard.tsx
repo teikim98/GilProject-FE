@@ -1,9 +1,9 @@
 import { Card } from '@/components/ui/card';
 import { formatDistanceToNow } from 'date-fns';
 import { ko } from 'date-fns/locale';
+import { MessageCircle, FileText } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useNotificationStore } from '@/store/useNotificationStore';
-import { MessageCircle, FileText } from 'lucide-react';
 import { Notification } from '@/types/types';
 
 interface NotificationCardProps {
@@ -15,13 +15,8 @@ export function NotificationCard({ notification }: NotificationCardProps) {
     const deleteNotification = useNotificationStore((state) => state.deleteNotification);
 
     const handleClick = () => {
-        // 알림 타입에 따라 다른 페이지로 라우팅
-        if (notification.name === 'CommentNotify') {
-            router.push(`/posts/${notification.data.content}`); // 댓글이 달린 게시글로 이동
-        } else if (notification.name === 'PostNotify') {
-            router.push(`/posts/${notification.data.content}`); // 새로운 게시글로 이동
-        }
         deleteNotification(notification.data.id);
+        router.push(`/posts/${notification.data.postId}`);
     };
 
     return (
@@ -31,7 +26,7 @@ export function NotificationCard({ notification }: NotificationCardProps) {
         >
             <div className="flex items-start gap-3">
                 <div className="rounded-full bg-primary/10 p-2">
-                    {notification.name === 'CommentNotify' ? (
+                    {notification.data.type === 'CommentNotify' ? (
                         <MessageCircle className="h-4 w-4 text-primary" />
                     ) : (
                         <FileText className="h-4 w-4 text-primary" />
