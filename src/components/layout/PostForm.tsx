@@ -51,7 +51,7 @@ const INITIAL_POST: Post = {
         startLat: 37.5665,
         startLong: 126.978,
         startAddr: null,
-        createdDate: new Date().toISOString(),
+        createDate: new Date().toISOString(),
         routeCoordinates: [],
         pins: []
     },

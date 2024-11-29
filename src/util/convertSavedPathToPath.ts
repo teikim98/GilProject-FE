@@ -20,7 +20,7 @@ export const convertSavedPathToPost = (): Post | null => {
       startLat: savedPath.path[0]?.lat || 0,
       startLong: savedPath.path[0]?.lng || 0,
       startAddr: null,
-      createdDate: now,
+      createDate: now,
       routeCoordinates: savedPath.path.map((pos: any) => ({
         latitude: pos.lat.toString(),
         longitude: pos.lng.toString(),
