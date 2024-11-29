@@ -116,7 +116,7 @@ const HomePage = () => {
                       "http://localhost:8080/oauth2/authorization/naver";
                   }}
                 >
-                  Continue with Facebook
+                  Continue with Naver
                 </Button>
               </div>
             </div>
@@ -138,11 +138,11 @@ const HomePage = () => {
           </h2>
 
           <h2>
-            계정을 잊으셨다면{" "}
-            <a href="" className=" bg-slate-500">
+            비밀번호를 잊으셨다면{" "}
+            <a href="/auth/find" className=" bg-slate-500">
               여기를
             </a>{" "}
-            눌러 아이디/비밀번호 찾기
+            눌러 비밀번호 찾기
           </h2>
         </CardFooter>
       </Card>

@@ -11,8 +11,8 @@ interface ProfileInfo {
     comment: string | null;
     address: string | null;
     postCount: number;
-    likeCount: number;
     pathCount: number;
+    subscribeByCount: number,
     isSubscribed?: boolean;
 }
 
@@ -118,12 +118,12 @@ export default function Profile({
                         <p className="text-lg font-semibold text-foreground">{profileInfo.postCount}</p>
                     </div>
                     <div className="flex flex-col items-center">
-                        <p className="text-sm text-muted-foreground">받은 좋아요</p>
-                        <p className="text-lg font-semibold text-foreground">{profileInfo.likeCount}</p>
-                    </div>
-                    <div className="flex flex-col items-center">
                         <p className="text-sm text-muted-foreground">따라걷기</p>
                         <p className="text-lg font-semibold text-foreground">{profileInfo.pathCount}</p>
+                    </div>
+                    <div className="flex flex-col items-center">
+                        <p className="text-sm text-muted-foreground">구독자 수</p>
+                        <p className="text-lg font-semibold text-foreground">{profileInfo.subscribeByCount}</p>
                     </div>
                 </div>
             </CardContent>
