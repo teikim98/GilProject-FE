@@ -38,16 +38,18 @@ export default function Page() {
     /**
      * 주소 등록했는지 확인
      */
-    const getUser = async () => {
-      console.log("refresh 토큰을 백엔드에서 인증");
+    const createAddressCondition = async () => {
       try {
         const response = await getDetailProfile();
         console.log("lat : " + response.latitude + "lon" + response.longitude);
+
         if (response.latitude && response.longitude) {
           localStorage.setItem("address-popup", "0");
+          setAddressPopUpOpen(false);
         }
         else {
           localStorage.setItem("address-popup", "1");
+          setAddressPopUpOpen(true);
         }
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -60,7 +62,7 @@ export default function Page() {
 
     const localStorageAddress = localStorage.getItem("address-popup");
     if (localStorageAddress === null) { //로컬스토리지가 아예 없음
-      getUser();
+      createAddressCondition();
     } else {
       if (localStorageAddress === "0") {
         //팝업을 열지않겠다
@@ -106,7 +108,7 @@ export default function Page() {
 
       <PWAInstallButton />
 
-      <AddressChangePopup />
+      {addressPopupOpen && <AddressChangePopup />}
       <AnimatedCards />
     </div>
   );
