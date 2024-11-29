@@ -20,7 +20,7 @@ interface ProfileInfo {
     comment: string | null;
     address: string | null;
     postCount: number;
-    likeCount: number;
+    subscribeByCount: number;
     pathCount: number;
     isSubscribed?: boolean;
 }

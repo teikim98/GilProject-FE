@@ -5,7 +5,7 @@ import PointProgress from '@/components/point/PointProgress';
 
 export default function PointPage() {
     const [points, setPoints] = useState(0);
-    
+
     useEffect(() => {
         const getPoints = async () => {
             try {
@@ -15,7 +15,6 @@ export default function PointPage() {
                 console.error('포인트 조회 실패:', error);
             }
         };
-        
         getPoints();
     }, []);
 
