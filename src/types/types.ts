@@ -212,6 +212,7 @@ export interface UpdatePostFormData {
   postUpdateRequest: string; // JSON.stringify(UpdatePostRequest)
   images: File[]; // 새로 추가할 이미지 파일들
 }
+
 export interface NotificationData {
   id: number;
   type: "POST_NOTIFY" | "COMMENT_NOTIFY"; // 백엔드의 실제 타입 값으로 수정
@@ -227,18 +228,4 @@ export interface Notification {
   name: string;
   comment: string;
   data: NotificationData;
-}
-
-//알림 내용
-export interface Notification {
-    name: string,            // 알림 종류(CommentNotify | PostNotify)
-    comment: string,         // 알림 안내(ex. 게시글에 댓글이 달렸어요~)
-    data: NotificationData,  // 가져오는 데이터들(아래에 있음)
-}
-
-export interface NotificationData {
-    id: number,              // 알림 번호(삭제할때 필요함)
-    userId: number,          // 알림 받는 유저 아이디
-    content: string,         // 알림 내용 (ex. 댓글 상세, 게시글 제목)
-    date: string             // 알림 발생 시간
 }
