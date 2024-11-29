@@ -314,7 +314,7 @@ export default function PostPage({ params }: PostPageProps) {
                 </div>
             </Card>
 
-            <Link href={`/follow/${params.id}`}>
+            <Link href={`/follow/${post.pathId}`}>
                 <Button
                     className="w-full my-4 bg-primary hover:bg-primary/90 text-white"
                     size="lg"

@@ -61,7 +61,8 @@ export const deletePath = async (pathId: number): Promise<void> => {
 // 모든 API 요청에서 api 인스턴스 사용
 export const getRouteById = async (id: number): Promise<Post> => {
   try {
-    const response = await api.get(`${id}`); // baseURL이 이미 포함되어 있으므로 path/ 제거
+    const response = await api.get(`/path/${id}`); // baseURL이 이미 포함되어 있으므로 path/ 제거
+    console.log(response.data);
     return response.data;
   } catch (error) {
     console.error("Error fetching route:", error);
