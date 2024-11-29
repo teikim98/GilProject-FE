@@ -30,7 +30,7 @@ export interface Path {
   state: number;
   title: string;
   time: number;
-  createdDate: string;
+  createDate: string;
   distance: number;
   startLat: number;
   startLong: number;
