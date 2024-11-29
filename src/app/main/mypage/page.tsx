@@ -112,19 +112,19 @@ export default function Page() {
                         <div className="flex flex-col items-center">
                             <p className="text-sm text-muted-foreground">내가 쓴 글</p>
                             <p className="text-lg font-semibold text-foreground">
-                                {profileInfo?.posts?.length ?? 0}
+                                {profileInfo?.postCount ?? 0}
                             </p>
                         </div>
                         <div className="flex flex-col items-center">
-                            <p className="text-sm text-muted-foreground">받은 좋아요</p>
+                            <p className="text-sm text-muted-foreground">구독자 수</p>
                             <p className="text-lg font-semibold text-foreground">
-                                {profileInfo?.postLikes?.length ?? 0}
+                                {profileInfo?.subscribeByCount ?? 0}
                             </p>
                         </div>
                         <div className="flex flex-col items-center">
-                            <p className="text-sm text-muted-foreground">따라걷기</p>
+                            <p className="text-sm text-muted-foreground">따라걷기 수</p>
                             <p className="text-lg font-semibold text-foreground">
-                                {profileInfo?.paths?.length ?? 0}
+                                {profileInfo?.pathCount ?? 0}
                             </p>
                         </div>
                     </div>
