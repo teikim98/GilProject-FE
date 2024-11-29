@@ -212,6 +212,7 @@ export interface UpdatePostFormData {
   postUpdateRequest: string; // JSON.stringify(UpdatePostRequest)
   images: File[]; // 새로 추가할 이미지 파일들
 }
+
 export interface NotificationData {
   id: number;
   type: "POST_NOTIFY" | "COMMENT_NOTIFY"; // 백엔드의 실제 타입 값으로 수정
