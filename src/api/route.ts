@@ -3,7 +3,7 @@ import { Post, Path, CreatePostPath } from "@/types/types";
 
 // 단일 axios 인스턴스 생성
 const api = axios.create({
-  baseURL: "http://localhost:8080",
+  baseURL: `${process.env.NEXT_PUBLIC_API_URL}`,
 });
 
 // 토큰 가져오는 함수

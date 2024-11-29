@@ -5,7 +5,7 @@ import { cookies } from "next/headers";
 //유저(마이페이지) 관련 API///////////////
 
 const api = axios.create({
-  baseURL: "http://localhost:8080/user",
+  baseURL: `${process.env.NEXT_PUBLIC_API_URL}/user`,
 });
 
 const getAuthToken = (): string | null => {
@@ -43,7 +43,7 @@ api.interceptors.response.use(
 
       try {
         const reissueResponse = await axios.post(
-          "http://localhost:8080/reissue",
+          `${process.env.NEXT_PUBLIC_API_URL}/reissue`,
           null,
           {
             withCredentials: true, // 쿠키 포함
@@ -66,7 +66,7 @@ api.interceptors.response.use(
         }
       } catch (reissueError) {
         console.error("Token reissue failed:", reissueError);
-        
+
         localStorage.removeItem("access");
         //쿠키에 있는 refresh 토큰 삭제? -> 안해도됨 어차피 로그인하면 다시 저장됨
         alert("로그인이 만료되었습니다 다시 로그인해주세요");
@@ -102,7 +102,7 @@ export const getDetailProfile = async (): Promise<User> => {
 export const subscribeUser = async (userId: number): Promise<number> => {
   try {
     const response = await axios.post(
-      `http://localhost:8080/subscribe/${userId}`,
+      `${process.env.NEXT_PUBLIC_API_URL}/${userId}`,
       null,
       {
         headers: {
@@ -120,7 +120,7 @@ export const subscribeUser = async (userId: number): Promise<number> => {
 export const unsubscribeUser = async (userId: number): Promise<number> => {
   try {
     const response = await axios.delete(
-      `http://localhost:8080/subscribe/${userId}`,
+      `${process.env.NEXT_PUBLIC_API_URL}/subscribe/${userId}`,
       {
         headers: {
           Authorization: `Bearer ${getAuthToken()}`,
@@ -203,11 +203,10 @@ export const updateProfileImage = async (userId: number, file: File) => {
 };
 
 export const logout = async () => {
-  
   // 2. 서버 측 로그아웃 요청 (Refresh 토큰 전송)
   try {
     await axios.post(
-      "http://localhost:8080/logout",
+      `${process.env.NEXT_PUBLIC_API_URL}/logout`,
       {}, // 요청 바디는 비워둠
       {
         withCredentials: true, // 쿠키 포함
@@ -220,5 +219,4 @@ export const logout = async () => {
 
   window.location.href = "/auth/login";
   console.log("로그아웃 성공");
-  
 };

@@ -2,7 +2,7 @@ import axios from "axios";
 import { Post } from "@/types/types";
 
 const api = axios.create({
-  baseURL: "http://localhost:8080/posts",
+  baseURL: `${process.env.NEXT_PUBLIC_API_URL}/posts`,
 });
 
 const getAuthToken = (): string | null => {
@@ -50,6 +50,7 @@ export const getPostNear = async (
   const response = await api.get(`/${lat}/${lng}`, {
     params: { page, size },
   });
+  console.log(response.data);
   return response.data;
 };
 
