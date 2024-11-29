@@ -19,8 +19,8 @@ export function NotificationInitializer() {
             if (notifications.length > prevNotifications.length) {
                 const newNotification = notifications[0];
                 toast({
-                    title: newNotification.data.type === 'CommentNotify' ? '새로운 댓글' : '새로운 게시글',
-                    description: newNotification.comment,
+                    title: newNotification.type === "POST_NOTIFY" ? "새로운 글" : "새로운 댓글",
+                    description: newNotification.content,
                 });
             }
         });
