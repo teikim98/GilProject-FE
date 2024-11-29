@@ -6,7 +6,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { FollowMap } from '@/components/map/FollowMap';
 import { useFollowStore } from '@/store/useFollowStore';
 import { getRouteById } from '@/api/route';
-import { Post, RouteCoordinate } from '@/types/types';
+import { Path, Post, RouteCoordinate } from '@/types/types';
 import { calculatePathDistance, calculateRouteDistance } from '@/util/calculatePathDistance';
 import { Navigation, AlertCircle } from 'lucide-react';
 import { ProgressDisplay } from '@/components/layout/ProgressDisplay';
@@ -28,7 +28,7 @@ function checkDistanceToStart(position: RouteCoordinate, startPosition: RouteCoo
 
 export default function FollowPage({ params }: PostPageProps) {
     const router = useRouter();
-    const [route, setRoute] = useState<Post | null>(null);
+    const [route, setRoute] = useState<Path | null>(null);
     const [currentPosition, setCurrentPosition] = useState<RouteCoordinate | null>(null);
     const [isNearStart, setIsNearStart] = useState(false);
     const [loading, setLoading] = useState(true);
@@ -60,10 +60,10 @@ export default function FollowPage({ params }: PostPageProps) {
                     setCurrentPosition(newPosition);
 
                     // 경로가 있는 경우, 시작점과의 거리 체크
-                    if (route?.pathResDTO.routeCoordinates[0]) {
+                    if (route?.routeCoordinates[0]) {
                         const isNear = checkDistanceToStart(
                             newPosition,
-                            route.pathResDTO.routeCoordinates[0]
+                            route.routeCoordinates[0]
                         );
                         setIsNearStart(isNear);
                     }
