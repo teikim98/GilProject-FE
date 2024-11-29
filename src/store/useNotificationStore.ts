@@ -1,11 +1,11 @@
 import { create } from "zustand";
 import { useToast } from "@/hooks/use-toast";
-import { Notification } from "@/types/types";
+import { Notification, NotificationData } from "@/types/types";
 import { jwtDecode } from "jwt-decode";
 
 interface NotificationStore {
-  notifications: Notification[];
-  addNotification: (notification: Notification) => void;
+  notifications: NotificationData[];
+  addNotification: (notification: NotificationData) => void;
   clearNotifications: () => void;
   deleteNotification: (id: number) => void;
   initializeSSE: () => void;
@@ -28,7 +28,7 @@ export const useNotificationStore = create<NotificationStore>((set) => ({
   deleteNotification: (id) =>
     set((state) => ({
       notifications: state.notifications.filter(
-        (notification) => notification.data.id !== id
+        (notification) => notification.id !== id
       ),
     })),
 
@@ -50,6 +50,20 @@ export const useNotificationStore = create<NotificationStore>((set) => ({
         `${process.env.NEXT_PUBLIC_API_URL}/notifications/subscribe/${decoded.id}`,
         { withCredentials: true }
       );
+
+      eventSource.addEventListener("myNotifications", (event) => {
+        try {
+          console.log("받은 원본 데이터:", event.data);
+          const notifications: NotificationData[] = JSON.parse(event.data);
+          console.log("파싱된 데이터:", notifications);
+          set((state) => ({
+            notifications: notifications,
+          }));
+        } catch (error) {
+          console.error("myNotification 파싱 에러:", error);
+          console.log("파싱 실패한 원본 데이터:", event.data);
+        }
+      });
 
       // CommentNotify 이벤트 리스너
       eventSource.addEventListener("CommentNotify", (event) => {

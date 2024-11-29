@@ -19,7 +19,7 @@ import {
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import BackHeader from '@/components/layout/BackHeader'
-import { Notification } from '@/types/types'
+import { NotificationData } from '@/types/types'
 
 export default function NotificationsPage() {
     const notifications = useNotificationStore((state) => state.notifications);
@@ -29,15 +29,9 @@ export default function NotificationsPage() {
 
     console.log("NotificationsPage - 현재 notifications:", notifications);
 
-
-    const handleNotificationClick = (notification: Notification) => {
-        deleteNotification(notification.data.id);
-        // // 알림 타입에 따라 다른 페이지로 라우팅
-        // if (notification.name === 'CommentNotify') {
-        //     router.push(`/main/board/${notification.data.content}`); // 댓글이 달린 게시글로 이동
-        // } else if (notification.name === 'PostNotify') {
-        //     router.push(`/posts/${notification.data.content}`); // 새로운 게시글로 이동
-        // }
+    const handleNotificationClick = (notification: NotificationData) => {
+        deleteNotification(notification.id);
+        router.push(`/main/board/${notification.postId}`);
     };
 
     return (
@@ -46,7 +40,6 @@ export default function NotificationsPage() {
 
             <div className='flex flex-row items-center justify-between mb-8'>
                 <div className='flex items-center gap-2'>
-                    {/* 필요한 경우 여기에 추가 버튼이나 필터 추가 가능 */}
                 </div>
                 {notifications.length > 0 && (
                     <AlertDialog>
@@ -77,13 +70,13 @@ export default function NotificationsPage() {
                 {notifications.length > 0 ? (
                     notifications.map((notification) => (
                         <Card
-                            key={notification.data.id}
+                            key={notification.id}
                             className='p-4 hover:bg-muted/50 transition-colors cursor-pointer'
                             onClick={() => handleNotificationClick(notification)}
                         >
                             <div className="flex items-start gap-3">
                                 <div className="rounded-full bg-primary/10 p-2">
-                                    {notification.name === 'CommentNotify' ? (
+                                    {notification.type === 'COMMENT_NOTIFY' ? (
                                         <MessageCircle className="h-4 w-4 text-primary" />
                                     ) : (
                                         <FileText className="h-4 w-4 text-primary" />
@@ -91,13 +84,15 @@ export default function NotificationsPage() {
                                 </div>
                                 <div className="flex flex-col gap-1">
                                     <div className="font-semibold text-sm">
-                                        {notification.comment}
+                                        {notification.type === 'COMMENT_NOTIFY'
+                                            ? '새로운 댓글이 달렸습니다'
+                                            : '새로운 게시글이 등록되었습니다'}
                                     </div>
                                     <div className="text-sm text-muted-foreground">
-                                        {notification.data.content}
+                                        {notification.content}
                                     </div>
                                     <div className="text-xs text-muted-foreground">
-                                        {formatDistanceToNow(new Date(notification.data.date), {
+                                        {formatDistanceToNow(new Date(notification.date), {
                                             addSuffix: true,
                                             locale: ko
                                         })}

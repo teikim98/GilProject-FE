@@ -4,10 +4,10 @@ import { ko } from 'date-fns/locale';
 import { MessageCircle, FileText } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useNotificationStore } from '@/store/useNotificationStore';
-import { Notification } from '@/types/types';
+import { NotificationData } from '@/types/types';
 
 interface NotificationCardProps {
-    notification: Notification;
+    notification: NotificationData;  // 변경된 타입 사용
 }
 
 export function NotificationCard({ notification }: NotificationCardProps) {
@@ -15,8 +15,8 @@ export function NotificationCard({ notification }: NotificationCardProps) {
     const deleteNotification = useNotificationStore((state) => state.deleteNotification);
 
     const handleClick = () => {
-        deleteNotification(notification.data.id);
-        router.push(`/posts/${notification.data.postId}`);
+        deleteNotification(notification.id);
+        router.push(`/posts/${notification.postId}`);
     };
 
     return (
@@ -26,7 +26,7 @@ export function NotificationCard({ notification }: NotificationCardProps) {
         >
             <div className="flex items-start gap-3">
                 <div className="rounded-full bg-primary/10 p-2">
-                    {notification.data.type === 'CommentNotify' ? (
+                    {notification.type === 'COMMENT_NOTIFY' ? (
                         <MessageCircle className="h-4 w-4 text-primary" />
                     ) : (
                         <FileText className="h-4 w-4 text-primary" />
@@ -34,13 +34,13 @@ export function NotificationCard({ notification }: NotificationCardProps) {
                 </div>
                 <div className="flex flex-col gap-1">
                     <div className="font-semibold text-sm">
-                        {notification.comment}
+                        {notification.type === 'COMMENT_NOTIFY' ? '새로운 댓글' : '새로운 게시글'}
                     </div>
                     <div className="text-sm text-muted-foreground">
-                        {notification.data.content}
+                        {notification.content}
                     </div>
                     <div className="text-xs text-muted-foreground">
-                        {formatDistanceToNow(new Date(notification.data.date), {
+                        {formatDistanceToNow(new Date(notification.date), {
                             addSuffix: true,
                             locale: ko,
                         })}
