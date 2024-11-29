@@ -71,8 +71,7 @@ const PointProgress = ({ currentPoints }: PointProgressProps) => {
                     <div className="mt-4 p-4 bg-gray-50 rounded-lg">
                         <h4 className="font-semibold mb-2">포인트 획득 방법</h4>
                         <p className="text-sm text-gray-600">
-                            • 100m 걸을 때마다 10포인트 획득<br />
-                            • 하루 최대 1000포인트까지 획득 가능
+                            • 100m 걸을 때마다 10포인트 획득<br/>
                         </p>
                     </div>
                 </div>
