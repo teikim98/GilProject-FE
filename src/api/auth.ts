@@ -5,7 +5,7 @@ import axios from "axios";
 import { getDetailProfile } from "./user";
 
 const api = axios.create({
-  baseURL: `${process.env.NEXT_PUBLIC_API_URL}/auth`,
+  baseURL: `http://169.211.207.96:8080/auth`,
   withCredentials: true,
 });
 
