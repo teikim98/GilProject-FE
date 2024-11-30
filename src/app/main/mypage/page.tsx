@@ -137,7 +137,7 @@ export default function Page() {
             <Separator className='my-4' />
             <MypageBtn link='myRoute' content='나의 경로 기록' /> <br/>
 
-            <MypageBtn link='myRoute' content='내가 작성한 산책길 글목록' /> <br/>
+            <MypageBtn link='myPost' content='내가 작성한 산책길 글목록' /> <br/>
             
             <MypageBtn link='myRoute' content='내가 찜한 산책길 글목록' /> <br/>
 
