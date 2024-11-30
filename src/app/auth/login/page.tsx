@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { emailLogin } from "@/api/auth";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { NoticeContainer } from "@/components/notice/NoticeContainer";
 
 const HomePage = () => {
   const router = useRouter();
@@ -31,7 +32,9 @@ const HomePage = () => {
   };
 
   return (
+    <>
     <div className="w-full max-w-screen-md p-4 space-y-4 animate-fade-in">
+      <NoticeContainer/>
       {/* Card Component */}
       <Card className="max-w-screen-md">
         <CardHeader>
@@ -141,6 +144,7 @@ const HomePage = () => {
         </CardFooter>
       </Card>
     </div>
+    </>
   );
 };
 

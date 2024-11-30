@@ -34,6 +34,8 @@ api.interceptors.response.use(
   async (error) => {
     //원래 요청
     const originalRequest = error.config;
+    console.log("원래 요청" + originalRequest);
+    console.log(originalRequest);
 
     // 900에러 처리
     if (error.response && error.response.status === 900) {
@@ -62,6 +64,7 @@ api.interceptors.response.use(
           ///////// !!!!맞는지 잘모르겠는 부분
           // 원래 요청 재시도
           originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
+
           return api(originalRequest);
         }
       } catch (reissueError) {
