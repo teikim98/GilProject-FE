@@ -1,5 +1,5 @@
 'use client'
-
+import { AnimatePresence } from 'framer-motion';
 import { useNotificationStore } from '@/store/useNotificationStore'
 import { Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -56,18 +56,20 @@ export default function NotificationsPage() {
             </div>
 
             <div className='flex flex-col gap-3'>
-                {notifications.length > 0 ? (
-                    notifications.map((notification) => (
-                        <NotificationCard
-                            key={notification.id}
-                            notification={notification}
-                        />
-                    ))
-                ) : (
-                    <div className='text-center text-muted-foreground py-8'>
-                        새로운 알림이 없습니다
-                    </div>
-                )}
+                <AnimatePresence mode="popLayout">
+                    {notifications.length > 0 ? (
+                        notifications.map((notification) => (
+                            <NotificationCard
+                                key={notification.id}
+                                notification={notification}
+                            />
+                        ))
+                    ) : (
+                        <div className='text-center text-muted-foreground py-8'>
+                            새로운 알림이 없습니다
+                        </div>
+                    )}
+                </AnimatePresence>
             </div>
         </div>
     )
