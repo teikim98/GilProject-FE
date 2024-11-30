@@ -1,7 +1,9 @@
+// components/MyPostList.tsx
+
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Post } from '@/types/types';
+import { Post, GetUserPostsResponse } from '@/types/types';
 import { Heart, MessageCircle, Trash2 } from 'lucide-react';
 import { Card } from '../ui/card';
 import { Button } from '../ui/button';
@@ -17,7 +19,8 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import { getUserPosts, deletePost } from '@/api/post';
+import { deletePost } from '@/api/post';
+import { getUserPosts } from '@/api/user';
 import { toast } from '@/hooks/use-toast';
 
 const MyPostList: React.FC = () => {
@@ -26,21 +29,34 @@ const MyPostList: React.FC = () => {
     const [error, setError] = useState<string | null>(null); // 에러 상태
     const [page, setPage] = useState(0); // 페이지 번호
     const size = 10; // 한 페이지에 가져올 게시글 수
+    const [hasMore, setHasMore] = useState(true); // 더 불러올 게시글 여부
 
     // 게시글 목록 가져오기
     useEffect(() => {
         const fetchPosts = async () => {
             try {
                 setLoading(true);
-                const response = await getUserPosts(page, size); // API 호출
-                console.log('Fetched posts:', response); // 응답 데이터 확인
+                setError(null); // 에러 초기화
+                const response: GetUserPostsResponse = await getUserPosts(page, size); // API 호출
+                console.log("API 응답 데이터 구조:", response);
 
-                if (!response || !Array.isArray(response.content)) {
-                    console.error('Invalid response format:', response);
+
+                // 응답 데이터 검증
+                const { content, totalElements } = response;
+                console.log('content:', content);
+                console.log('totalElements:', totalElements);
+
+                if (!content || !Array.isArray(content)) {
+                    console.error('잘못된 응답 데이터 구조:', response);
                     throw new Error('잘못된 응답 형식');
                 }
 
-                setPosts((prev) => [...prev, ...response.content]); // 기존 게시물에 추가
+                setPosts((prev) => [...prev, ...content]); // 기존 게시물에 추가
+
+                // 더 이상 불러올 데이터가 없으면 hasMore 업데이트
+                if (posts.length + content.length >= totalElements) {
+                    setHasMore(false);
+                }
             } catch (err: any) {
                 console.error('게시글 목록 불러오기 실패:', err);
                 if (err.response) {
@@ -160,7 +176,7 @@ const MyPostList: React.FC = () => {
                 </Card>
             ))}
 
-            {posts.length > 0 && !loading && page < Math.ceil(7 / size) && ( // totalElements:7, size:10 -> last page
+            {posts.length > 0 && !loading && hasMore && (
                 <div className="text-center mt-4">
                     <Button
                         onClick={() => setPage((prev) => prev + 1)}
@@ -176,3 +192,42 @@ const MyPostList: React.FC = () => {
 };
 
 export default MyPostList;
+
+
+
+// 'use client';
+
+// import React, { useEffect } from 'react';
+// import {getPostsByKeyword, getPostNear } from '@/api/post';
+// import {getUserPosts} from '@/api/user'
+
+// const MyPostList: React.FC = () => {
+//     useEffect(() => {
+//         const fetchPosts = async () => {
+//             try {
+//                 // 기존 getUserPosts 호출
+//                 const userPostsResponse = await getUserPosts(0, 10); // page=0, size=10
+//                 console.log("getUserPosts API 응답 데이터 구조:", userPostsResponse);
+
+//                 // 추가: getPostsByKeyword 호출
+//                 // const keyword = '산책';
+//                 // const keywordResponse = await getPostsByKeyword(keyword, 0, 10);
+//                 // console.log("getPostsByKeyword API 응답 데이터 구조:", keywordResponse);
+
+//                 // 추가: getPostNear 호출
+//                 // const latitude = 37.5665;
+//                 // const longitude = 126.978;
+//                 // const nearbyPostsResponse = await getPostNear(latitude, longitude, 0, 10);
+//                 // console.log("getPostNear API 응답 데이터 구조:", nearbyPostsResponse);
+//             } catch (err) {
+//                 console.error('API 호출 실패:', err);
+//             }
+//         };
+
+//         fetchPosts();
+//     }, []);
+
+//     return <div>API 호출 테스트</div>;
+// };
+
+// export default MyPostList;

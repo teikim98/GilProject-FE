@@ -1,5 +1,6 @@
 import axios from "axios";
 import { Post } from "@/types/types";
+import { GetUserPostsResponse} from "@/types/types";
 
 const api = axios.create({
   baseURL: "http://localhost:8080/posts",
@@ -53,16 +54,7 @@ export const getPostNear = async (
   return response.data;
 };
 
-//현재 로그인한 사용자가 작성한 산책길 가져오기
-export const getUserPosts = async (
-  page = 0,
-  size = 10
-): Promise<{ content: Post[]; totalElements: number }> => {
-  const response = await api.get(`/user/mypage/myPost`, {
-    params: { page, size },
-  });
-  return response.data;
-};
+
 
 //현재 로그인한 사용자가 찜한 산책길 가져오기
 export const getUserPostWishlist = async (

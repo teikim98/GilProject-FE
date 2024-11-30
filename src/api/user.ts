@@ -1,6 +1,7 @@
 import { User, UserSimple } from "@/types/types";
 import axios from "axios";
 import { cookies } from "next/headers";
+import { GetUserPostsResponse} from "@/types/types";
 
 //유저(마이페이지) 관련 API///////////////
 
@@ -221,4 +222,39 @@ export const logout = async () => {
   window.location.href = "/auth/login";
   console.log("로그아웃 성공");
   
+};
+
+//현재 로그인한 사용자가 작성한 산책길 가져오기
+// export const getUserPosts = async (
+//   page = 0,
+//   size = 10
+// ): Promise<{ content: Post[]; totalElements: number }> => {
+//   const response = await api.get(`/user/mypage/myPost`, {
+//     params: { page, size },
+//   });
+//   return response.data;
+// };
+export const getUserPosts = async (
+  page = 0,
+  size = 10
+): Promise<GetUserPostsResponse> => {
+  try {
+    const response = await api.get<GetUserPostsResponse>("/mypage/myPost", {
+      params: { page, size },
+    });
+    //console.log("getUserPosts 응답 데이터:", response.data); // 응답 데이터 확인
+    return response.data; // 전체 데이터를 반환
+  } catch (error: any) {
+    if (error.response) {
+      // 서버 응답 에러
+      console.error("getUserPosts 실패 (서버 응답):", error.response);
+    } else if (error.request) {
+      // 요청이 전송되었으나 응답이 없는 경우
+      console.error("getUserPosts 실패 (응답 없음):", error.request);
+    } else {
+      // 요청 설정 중 에러
+      console.error("getUserPosts 실패 (요청 설정 에러):", error.message);
+    }
+    throw error;
+  }
 };
