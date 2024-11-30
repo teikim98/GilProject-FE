@@ -217,6 +217,7 @@ export const logout = async () => {
       }
     );
     localStorage.removeItem("access");
+    localStorage.removeItem("address-popup");
   } catch (error) {
     console.error("로그아웃 실패:", error);
   }
