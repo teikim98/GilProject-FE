@@ -214,7 +214,7 @@ export interface UpdatePostFormData {
 }
 export interface NotificationData {
   id: number;
-  type: "POST_NOTIFY" | "COMMENT_NOTIFY"; // 백엔드의 실제 타입 값으로 수정
+  type: "POST_NOTIFY" | "COMMENT_NOTIFY";
   userId: number;
   postId: number;
   userImageUrl: string;

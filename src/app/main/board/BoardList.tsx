@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { Post } from '@/types/types';
 import BoardCard from '@/components/layout/BoardListCard';
 import { getPostNear, getPosts, getPostsByKeyword } from '@/api/post';
@@ -16,13 +16,28 @@ export default function BoardList() {
     const { query } = useSearchStore();
     const { selectedLocation } = useLocationStore();
     const [page, setPage] = useState(0);
+    const [hasMore, setHasMore] = useState(true);
     const [totalElements, setTotalElements] = useState(0);
     const size = 10;
 
+    const observer = useRef<IntersectionObserver>();
+    const lastPostElementRef = useCallback((node: HTMLDivElement) => {
+        if (loading) return;
+        if (observer.current) observer.current.disconnect();
+        observer.current = new IntersectionObserver(entries => {
+            if (entries[0].isIntersecting && hasMore) {
+                setPage(prevPage => prevPage + 1);
+            }
+        });
+        if (node) observer.current.observe(node);
+    }, [loading, hasMore]);
+
     useEffect(() => {
-        setPage(0); // 위치 변경 시 페이지 초기화
-        setPosts([]); // 위치 변경 시 posts 초기화
-        setError(null); // 에러 상태도 초기화
+        // 위치나 검색어 변경 시 초기화
+        setPage(0);
+        setPosts([]);
+        setHasMore(true);
+        setError(null);
 
         if (selectedLocation === '내 현재위치') {
             setLoading(true);
@@ -43,54 +58,39 @@ export default function BoardList() {
                 );
             }
         } else {
-            // "집 주변" 선택 시 위치 정보 초기화
             setInitialUserLocation(null);
             setLoading(false);
         }
     }, [selectedLocation]);
+
+    useEffect(() => {
+        if (query) {
+            setPage(0);
+            setPosts([]);
+            setHasMore(true);
+            useLocationStore.getState().setSelectedLocation('검색결과');
+        }
+    }, [query]);
+
+    useEffect(() => {
+        return () => {
+            useSearchStore.getState().setQuery('');
+        }
+    }, []);
 
     // 게시물 가져오기
     useEffect(() => {
         fetchPosts();
     }, [page, selectedLocation, initialUserLocation]);
 
-    useEffect(() => {
-        if (query) {
-            setPage(0);
-            setPosts([]);
-            useLocationStore.getState().setSelectedLocation('검색결과');
-            fetchPosts();
-        }
-    }, [query]);
-
-
-    useEffect(() => {
-        // 컴포넌트 마운트 시 위치를 '내 현재위치'로 설정
-        useLocationStore.getState().setSelectedLocation('내 현재위치')
-
-        return () => {
-            // 컴포넌트 언마운트 시 검색어 초기화
-            useSearchStore.getState().setQuery('')
-        }
-    }, [])
-
     const fetchPosts = async () => {
         try {
             setLoading(true);
-            setError(null); // 새 요청 시작할 때 에러 초기화
-            setPosts([]);
+            setError(null);
 
             let response;
             if (selectedLocation === '검색결과') {
-                console.log(query)
                 response = await getPostsByKeyword(query, page, size);
-
-                // 검색 결과가 없을 때 posts를 빈 배열로 설정
-                if (!response.content || response.content.length === 0) {
-                    setPosts([]);
-                    setTotalElements(0);
-                    return;
-                }
             } else if (selectedLocation === '내 현재위치') {
                 if (!initialUserLocation) return;
                 response = await getPostNear(initialUserLocation.lat, initialUserLocation.lng, page, size);
@@ -100,6 +100,7 @@ export default function BoardList() {
 
             const fetchedPosts = response.content || [];
             setTotalElements(response.totalElements);
+            setHasMore(response.totalElements > (page + 1) * size);
 
             if (initialUserLocation && selectedLocation === '내 현재위치') {
                 const postsWithDistance = fetchedPosts.map((post: Post) => ({
@@ -109,14 +110,13 @@ export default function BoardList() {
                         { lat: post.startLat, lng: post.startLong }
                     )
                 }));
-                setPosts(prev => page === 0 ? postsWithDistance : [...prev, ...postsWithDistance]);
+                setPosts(prev => [...prev, ...postsWithDistance]);
             } else {
-                setPosts(prev => page === 0 ? fetchedPosts : [...prev, ...fetchedPosts]);
+                setPosts(prev => [...prev, ...fetchedPosts]);
             }
         } catch (err) {
             console.error('게시글 로딩 실패:', err);
             setError('게시글을 불러오는데 실패했습니다.');
-            setPosts([]); // 에러 발생 시 posts 초기화
         } finally {
             setLoading(false);
         }
@@ -124,8 +124,17 @@ export default function BoardList() {
 
     return (
         <div className="space-y-4 mt-4">
+            {posts.map((post, index) => (
+                <div
+                    key={post.postId}
+                    ref={posts.length === index + 1 ? lastPostElementRef : undefined}
+                >
+                    <BoardCard post={post} />
+                </div>
+            ))}
+
             {loading && (
-                <div className="flex justify-center items-center h-40">
+                <div className="flex justify-center items-center h-20">
                     <p className="text-gray-500">로딩 중...</p>
                 </div>
             )}
@@ -136,21 +145,7 @@ export default function BoardList() {
                 </div>
             )}
 
-            {!loading && !error && posts.length > 0 ? (
-                <>
-                    {posts.map((post) => (
-                        <BoardCard key={post.postId} post={post} />
-                    ))}
-                    {totalElements > (page + 1) * size && (
-                        <button
-                            onClick={() => setPage(prev => prev + 1)}
-                            className="w-full py-2 text-center text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
-                        >
-                            더 보기
-                        </button>
-                    )}
-                </>
-            ) : (
+            {!loading && !error && posts.length === 0 && (
                 <div className="flex flex-col items-center justify-center py-10 text-gray-500">
                     <Search className="w-12 h-12 mb-4" />
                     <p className="text-lg mb-2">검색 결과가 없습니다</p>

@@ -1,6 +1,5 @@
 import { create } from "zustand";
-import { useToast } from "@/hooks/use-toast";
-import { Notification, NotificationData } from "@/types/types";
+import { NotificationData } from "@/types/types";
 import { jwtDecode } from "jwt-decode";
 
 interface NotificationStore {
@@ -9,6 +8,7 @@ interface NotificationStore {
   clearNotifications: () => void;
   deleteNotification: (id: number) => void;
   initializeSSE: () => void;
+  updateNotificationState: (id: number, state: number) => void;
 }
 
 interface JWTPayload {
@@ -29,6 +29,13 @@ export const useNotificationStore = create<NotificationStore>((set) => ({
     set((state) => ({
       notifications: state.notifications.filter(
         (notification) => notification.id !== id
+      ),
+    })),
+
+  updateNotificationState: (id, state) =>
+    set((store) => ({
+      notifications: store.notifications.map((notification) =>
+        notification.id === id ? { ...notification, state } : notification
       ),
     })),
 
