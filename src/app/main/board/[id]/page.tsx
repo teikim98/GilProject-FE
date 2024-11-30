@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Bookmark, ChevronLeft, ChevronRight, Heart, MessageCircle, Navigation } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import BackHeader from '@/components/layout/BackHeader';
-import { getPost, togglePostLike, deletePost } from '@/api/post';
+import { getPost, togglePostLike, deletePost, togglePostWishlist } from '@/api/post';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
@@ -100,6 +100,22 @@ export default function PostPage({ params }: PostPageProps) {
         } catch (error) {
             toast({
                 description: "좋아요 처리에 실패했습니다."
+            });
+        }
+    };
+
+    const handleWishlistToggle = async () => {
+        if (!post) return;
+        try {
+            await togglePostWishlist(post.postId);
+            const updatedPost = await getPost(post.postId);
+            setPost(updatedPost);
+            toast({
+                description: updatedPost.wishListed ? "찜 목록에 추가되었습니다." : "찜 목록에서 제거되었습니다."
+            });
+        } catch (error) {
+            toast({
+                description: "찜하기 처리에 실패했습니다."
             });
         }
     };
@@ -262,10 +278,16 @@ export default function PostPage({ params }: PostPageProps) {
                             <MessageCircle className="w-5 h-5" />
                             <span>{post.repliesCount}</span>
                         </Button>
-                        <Button variant="ghost" size="sm" className="flex items-center gap-1">
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            className="flex items-center gap-1"
+                            onClick={handleWishlistToggle}
+                        >
                             <Bookmark className={`w-5 h-5 ${post.wishListed ? 'fill-current' : ''}`} />
                             <span>{post.postWishListsNum}</span>
                         </Button>
+
                     </div>
                     {/* 삭제버튼은 나중에 토큰에서 유저id를 빼와서 적용해야할듯 */}
                     {post.postUserId === userId && (

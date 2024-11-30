@@ -78,7 +78,7 @@ export const createPost = async (formData: FormData) => {
         "Content-Type": "multipart/form-data",
         Authorization: `Bearer ${token}`,
       },
-      withCredentials: true, // 이 옵션 추가
+      withCredentials: true,
     });
     return response.data;
   } catch (error) {
@@ -93,6 +93,15 @@ export const togglePostLike = async (postId: number) => {
     await api.post(`/${postId}/likes`);
   } catch (error) {
     console.error("Error toggling post like:", error);
+    throw error;
+  }
+};
+
+export const togglePostWishlist = async (postId: number) => {
+  try {
+    await api.post(`/wishlist/${postId}`);
+  } catch (error) {
+    console.error("Error toggling post wishlist:", error);
     throw error;
   }
 };
