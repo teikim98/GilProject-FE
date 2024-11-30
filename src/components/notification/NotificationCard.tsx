@@ -54,10 +54,6 @@ export function NotificationCard({ notification }: NotificationCardProps) {
             await new Promise(resolve => setTimeout(resolve, 500));
             await deleteNotification(notification.id);
             deleteNotificationFromStore(notification.id);
-            toast({
-                title: "알림 삭제",
-                description: "알림이 삭제되었습니다.",
-            });
         } catch (error) {
             toast({
                 title: "오류",

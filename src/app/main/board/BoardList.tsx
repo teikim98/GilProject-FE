@@ -5,7 +5,7 @@ import { Post } from '@/types/types';
 import BoardCard from '@/components/layout/BoardListCard';
 import { getPostNear, getPosts, getPostsByKeyword } from '@/api/post';
 import { useSearchStore } from '@/store/useSearchStore';
-import { Search } from 'lucide-react';
+import { Loader, Search } from 'lucide-react';
 import { useLocationStore } from '@/store/useLocationStore';
 
 export default function BoardList() {
@@ -135,7 +135,7 @@ export default function BoardList() {
 
             {loading && (
                 <div className="flex justify-center items-center h-20">
-                    <p className="text-gray-500">로딩 중...</p>
+                    <Loader className="w-6 h-6 animate-spin text-primary" />
                 </div>
             )}
 
@@ -145,13 +145,14 @@ export default function BoardList() {
                 </div>
             )}
 
-            {!loading && !error && posts.length === 0 && (
+            {!loading && !error && posts.length === 0 && query && (
                 <div className="flex flex-col items-center justify-center py-10 text-gray-500">
                     <Search className="w-12 h-12 mb-4" />
                     <p className="text-lg mb-2">검색 결과가 없습니다</p>
                     <p className="text-sm">다른 키워드로 검색해보세요</p>
                 </div>
             )}
+
         </div>
     );
 }
