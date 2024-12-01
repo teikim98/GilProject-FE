@@ -26,25 +26,26 @@ const NoticeComponent = ({ notice }: { notice: Notice }) => {
   }
 
   return (
-    <div className="flex items-center justify-between">
+    <Button className="w-full h-full flex bg-transparent hover:bg-gray-100 text-black transition duration-200"
+    onClick={(e)=>{handleNotice(e)}} >
       {/* 날짜 */}
-      <div className="text-sm font-semibold">
+      <div className="text-sm font-semibold px-2 py-1 border rounded-full bg-purple-200 text-gray-700">
         {formatDate(notice.writeDate)}
       </div>
 
       {/* 제목 */}
-      <div className="flex-grow mx-4 text-xl font-bold text-center">
+      <div className="flex-grow mx-4 text-xl font-bold text-center ">
         {notice.title}
       </div>
 
-      <Button onClick={(e)=>{handleNotice(e)}}>확인</Button>
+      {/* <Button onClick={(e)=>{handleNotice(e)}}>확인</Button> */}
 
       {isDialogOpen && 
         <NoticeDetail 
           notice={notice} 
           onClose={() => setIsDialogOpen(false)} // 닫기 함수 전달
         />}
-    </div>
+    </Button>
   );
 };
 

@@ -7,7 +7,7 @@ import { Notice } from "@/types/types_JHW";
 import Autoplay from "embla-carousel-autoplay";
 
 export function NoticeContainer() {
-  const plugin = React.useRef(Autoplay({ delay: 5000, stopOnInteraction: false }));
+  const plugin = React.useRef(Autoplay({ delay: 4000, stopOnInteraction: false }));
   const [notices, setNotices] = useState<Notice[]>([]);
 
   useEffect(() => {
