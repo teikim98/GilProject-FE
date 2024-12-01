@@ -1,46 +1,42 @@
 'use client'
 
 import { useEffect, useState, useRef, useCallback } from 'react';
-import { Post } from '@/types/types';
 import BoardCard from '@/components/layout/BoardListCard';
-import { getPostNear, getPosts, getPostsByKeyword } from '@/api/post';
-import { useSearchStore } from '@/store/useSearchStore';
 import { Loader, Search } from 'lucide-react';
+import { useSearchStore } from '@/store/useSearchStore';
 import { useLocationStore } from '@/store/useLocationStore';
+import { useBoardListQuery } from '@/hooks/queries/usePostQuery';
 
 export default function BoardList() {
-    const [posts, setPosts] = useState<Post[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
     const [initialUserLocation, setInitialUserLocation] = useState<{ lat: number; lng: number } | null>(null);
     const { query } = useSearchStore();
     const { selectedLocation } = useLocationStore();
-    const [page, setPage] = useState(0);
-    const [hasMore, setHasMore] = useState(true);
-    const [totalElements, setTotalElements] = useState(0);
-    const size = 10;
 
+    const {
+        data,
+        fetchNextPage,
+        hasNextPage,
+        isFetchingNextPage,
+        isLoading,
+        isError,
+    } = useBoardListQuery(selectedLocation, query, initialUserLocation);
+
+    // Intersection Observer 설정
     const observer = useRef<IntersectionObserver>();
     const lastPostElementRef = useCallback((node: HTMLDivElement) => {
-        if (loading) return;
+        if (isFetchingNextPage) return;
         if (observer.current) observer.current.disconnect();
         observer.current = new IntersectionObserver(entries => {
-            if (entries[0].isIntersecting && hasMore) {
-                setPage(prevPage => prevPage + 1);
+            if (entries[0].isIntersecting && hasNextPage) {
+                fetchNextPage();
             }
         });
         if (node) observer.current.observe(node);
-    }, [loading, hasMore]);
+    }, [isFetchingNextPage, hasNextPage, fetchNextPage]);
 
+    // 위치 관련 효과
     useEffect(() => {
-        // 위치나 검색어 변경 시 초기화
-        setPage(0);
-        setPosts([]);
-        setHasMore(true);
-        setError(null);
-
         if (selectedLocation === '내 현재위치') {
-            setLoading(true);
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
                     (position) => {
@@ -48,121 +44,84 @@ export default function BoardList() {
                             lat: position.coords.latitude,
                             lng: position.coords.longitude
                         });
-                        setLoading(false);
                     },
                     (error) => {
                         console.error('위치 가져오기 실패:', error);
-                        setError('위치 정보를 가져오는데 실패했습니다.');
-                        setLoading(false);
                     }
                 );
             }
         } else {
             setInitialUserLocation(null);
-            setLoading(false);
         }
     }, [selectedLocation]);
 
+    // 검색어 변경 시 처리
     useEffect(() => {
         if (query) {
-            setPage(0);
-            setPosts([]);
-            setHasMore(true);
             useLocationStore.getState().setSelectedLocation('검색결과');
         }
     }, [query]);
 
+    // 컴포넌트 언마운트 시 검색어 초기화
     useEffect(() => {
         return () => {
             useSearchStore.getState().setQuery('');
         }
     }, []);
 
-    // 게시물 가져오기
-    useEffect(() => {
-        fetchPosts();
-    }, [page, selectedLocation, initialUserLocation]);
+    // 모든 페이지의 게시물을 하나의 배열로 병합
+    const posts = data?.pages.flatMap(page => page.content) ?? [];
 
-    const fetchPosts = async () => {
-        try {
-            setLoading(true);
-            setError(null);
-
-            let response;
-            if (selectedLocation === '검색결과') {
-                response = await getPostsByKeyword(query, page, size);
-            } else if (selectedLocation === '내 현재위치') {
-                if (!initialUserLocation) return;
-                response = await getPostNear(initialUserLocation.lat, initialUserLocation.lng, page, size);
-            } else {
-                response = await getPosts(page, size);
-            }
-
-            const fetchedPosts = response.content || [];
-            setTotalElements(response.totalElements);
-            setHasMore(response.totalElements > (page + 1) * size);
-
-            if (initialUserLocation && selectedLocation === '내 현재위치') {
-                const postsWithDistance = fetchedPosts.map((post: Post) => ({
-                    ...post,
-                    distanceFromUser: calculateDistance(
-                        initialUserLocation,
-                        { lat: post.startLat, lng: post.startLong }
-                    )
-                }));
-                setPosts(prev => [...prev, ...postsWithDistance]);
-            } else {
-                setPosts(prev => [...prev, ...fetchedPosts]);
-            }
-        } catch (err) {
-            console.error('게시글 로딩 실패:', err);
-            setError('게시글을 불러오는데 실패했습니다.');
-        } finally {
-            setLoading(false);
-        }
-    };
+    // 거리 계산이 필요한 경우 처리
+    const postsWithDistance = initialUserLocation && selectedLocation === '내 현재위치'
+        ? posts.map(post => ({
+            ...post,
+            distanceFromUser: calculateDistance(
+                initialUserLocation,
+                { lat: post.startLat, lng: post.startLong }
+            )
+        }))
+        : posts;
 
     return (
         <div className="space-y-4 mt-4">
-            {posts.map((post, index) => (
+            {postsWithDistance.map((post, index) => (
                 <div
                     key={post.postId}
-                    ref={posts.length === index + 1 ? lastPostElementRef : undefined}
+                    ref={postsWithDistance.length === index + 1 ? lastPostElementRef : undefined}
                 >
                     <BoardCard post={post} />
                 </div>
             ))}
 
-            {posts.length === 0 && (
+            {postsWithDistance.length === 0 && !isLoading && (
                 <div className='flex justify-center items-center h-40'>
                     <p className="text-gray-500">게시물이 없습니다...</p>
                 </div>
             )}
 
-            {loading && (
+            {(isLoading || isFetchingNextPage) && (
                 <div className="flex justify-center items-center h-20">
                     <Loader className="w-6 h-6 animate-spin text-primary" />
                 </div>
             )}
 
-            {error && (
+            {isError && (
                 <div className="flex justify-center items-center h-40">
-                    <p className="text-red-500">{error}</p>
+                    <p className="text-red-500">게시글을 불러오는데 실패했습니다.</p>
                 </div>
             )}
 
-            {!loading && !error && posts.length === 0 && query && (
+            {!isLoading && !isError && postsWithDistance.length === 0 && query && (
                 <div className="flex flex-col items-center justify-center py-10 text-gray-500">
                     <Search className="w-12 h-12 mb-4" />
                     <p className="text-lg mb-2">검색 결과가 없습니다</p>
                     <p className="text-sm">다른 키워드로 검색해보세요</p>
                 </div>
             )}
-
         </div>
     );
 }
-
 // 거리 계산 함수 (km)
 function calculateDistance(
     point1: { lat: number; lng: number },

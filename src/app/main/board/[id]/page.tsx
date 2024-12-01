@@ -1,5 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react'
+import { usePostDetailQuery, usePostMutations } from '@/hooks/queries/usePostQuery';
 import { Card } from '@/components/ui/card';
 import { ViewingMap } from '@/components/map/ViewingMapProps';
 import { Button } from '@/components/ui/button';
@@ -43,14 +44,22 @@ interface JWTPayload {
 }
 
 export default function PostPage({ params }: PostPageProps) {
+    const postId = parseInt(params.id);
     const router = useRouter();
-    const [post, setPost] = useState<Post | null>(null)
-    const [loading, setLoading] = useState(true)
-    const [error, setError] = useState<string | null>(null)
     const [api, setApi] = useState<CarouselApi>()
     const [current, setCurrent] = useState(0)
     const [count, setCount] = useState(0)
     const [userId, setUserId] = useState<number | null>(null);
+
+    const {
+        data: post,
+        isLoading,
+        isError
+    } = usePostDetailQuery(postId);
+
+    const { like, wishlist, remove } = usePostMutations(postId);
+
+
 
     useEffect(() => {
         const token = localStorage.getItem("access");
@@ -62,42 +71,25 @@ export default function PostPage({ params }: PostPageProps) {
 
 
     useEffect(() => {
-        const fetchPost = async () => {
-            try {
-                const data = await getPost(parseInt(params.id))
-                setPost(data)
-                setCount(1 + (data.imageUrls?.length || 0))
-            } catch (err) {
-                setError('게시글을 불러오는데 실패했습니다.')
-                console.error('Error fetching post:', err)
-            } finally {
-                setLoading(false)
-            }
-        }
-
-        fetchPost()
-    }, [params.id])
-
-    useEffect(() => {
-        if (!api) {
-            return
-        }
-
+        if (!api) return;
         api.on("select", () => {
             setCurrent(api.selectedScrollSnap())
-        })
-    }, [api])
+        });
+    }, [api]);
+
+    useEffect(() => {
+        if (post) {
+            setCount(1 + (post.imageUrls?.length || 0));
+        }
+    }, [post]);
 
     const handleLikeToggle = async () => {
-        if (!post) return;
         try {
-            await togglePostLike(post.postId);
-            const updatedPost = await getPost(post.postId);
-            setPost(updatedPost);
+            await like();
             toast({
-                description: updatedPost.liked ? "좋아요를 눌렀습니다." : "좋아요를 취소했습니다."
+                description: post?.liked ? "좋아요를 취소했습니다." : "좋아요를 눌렀습니다."
             });
-        } catch (error) {
+        } catch {
             toast({
                 description: "좋아요 처리에 실패했습니다."
             });
@@ -105,15 +97,12 @@ export default function PostPage({ params }: PostPageProps) {
     };
 
     const handleWishlistToggle = async () => {
-        if (!post) return;
         try {
-            await togglePostWishlist(post.postId);
-            const updatedPost = await getPost(post.postId);
-            setPost(updatedPost);
+            await wishlist();
             toast({
-                description: updatedPost.wishListed ? "찜 목록에 추가되었습니다." : "찜 목록에서 제거되었습니다."
+                description: post?.wishListed ? "찜 목록에서 제거되었습니다." : "찜 목록에 추가되었습니다."
             });
-        } catch (error) {
+        } catch {
             toast({
                 description: "찜하기 처리에 실패했습니다."
             });
@@ -121,22 +110,21 @@ export default function PostPage({ params }: PostPageProps) {
     };
 
     const handleDelete = async () => {
-        if (!post) return;
         try {
-            await deletePost(post.postId);
+            await remove();
             toast({
                 description: "게시글이 삭제되었습니다."
             });
             router.push('/main/board');
-        } catch (error) {
+        } catch {
             toast({
                 description: "게시글 삭제에 실패했습니다."
             });
         }
     };
 
-    if (loading) return <div>로딩 중...</div>
-    if (error) return <div>{error}</div>
+    if (isLoading) return <div>로딩 중...</div>
+    if (isError) return <div>게시글을 불러오는데 실패했습니다.</div>
     if (!post) return <div>게시글을 찾을 수 없습니다.</div>
 
     const formatDate = (dateString: string) => {

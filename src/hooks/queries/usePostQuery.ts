@@ -1,5 +1,18 @@
-import { useInfiniteQuery } from "@tanstack/react-query";
-import { getPosts, getPostNear, getPostsByKeyword } from "@/api/post";
+import {
+  useInfiniteQuery,
+  InfiniteData,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
+import {
+  getPosts,
+  getPostNear,
+  getPostsByKeyword,
+  getPost,
+  togglePostLike,
+  togglePostWishlist,
+  deletePost,
+} from "@/api/post";
 import { Post } from "@/types/types";
 
 interface PostResponse {
@@ -22,7 +35,7 @@ export function useBoardListQuery(
   return useInfiniteQuery<
     PostResponse,
     Error,
-    PostResponse,
+    InfiniteData<PostResponse>,
     PostQueryKey,
     number
   >({
@@ -43,4 +56,40 @@ export function useBoardListQuery(
     enabled: selectedLocation !== "내 현재위치" || userLocation !== null,
     initialPageParam: 0,
   });
+}
+
+export function usePostDetailQuery(postId: number) {
+  return useQuery({
+    queryKey: ["post", postId],
+    queryFn: () => getPost(postId),
+    enabled: !!postId,
+    staleTime: 1000 * 60 * 5, // 5분간 캐시 유지
+  });
+}
+
+export function usePostMutations(postId: number) {
+  const queryClient = useQueryClient();
+
+  const onSuccess = async () => {
+    // 상세 데이터와 목록 데이터 모두 갱신
+    await queryClient.invalidateQueries({ queryKey: ["post", postId] });
+    await queryClient.invalidateQueries({ queryKey: ["posts"] });
+  };
+
+  const like = async () => {
+    await togglePostLike(postId);
+    await onSuccess();
+  };
+
+  const wishlist = async () => {
+    await togglePostWishlist(postId);
+    await onSuccess();
+  };
+
+  const remove = async () => {
+    await deletePost(postId);
+    await queryClient.invalidateQueries({ queryKey: ["posts"] });
+  };
+
+  return { like, wishlist, remove };
 }
