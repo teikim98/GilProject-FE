@@ -98,10 +98,6 @@ export default function Page() {
         </div>
       </Card>
 
-      <Link href="/test" className="text-lg font-semibold">
-        경로 따라가기 테스트하기
-      </Link>
-
       <Separator className="my-4 dark:bg-gray-700" />
 
       <PWAInstallButton />

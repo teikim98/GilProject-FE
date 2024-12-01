@@ -133,6 +133,12 @@ export default function BoardList() {
                 </div>
             ))}
 
+            {posts.length === 0 && (
+                <div className='flex justify-center items-center h-40'>
+                    <p className="text-gray-500">게시물이 없습니다...</p>
+                </div>
+            )}
+
             {loading && (
                 <div className="flex justify-center items-center h-20">
                     <Loader className="w-6 h-6 animate-spin text-primary" />
