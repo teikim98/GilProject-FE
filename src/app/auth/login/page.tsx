@@ -90,21 +90,21 @@ const HomePage = () => {
                   {/* Google Button */}
                   <a href="http://localhost:8080/oauth2/authorization/google" className="block w-[40px] h-[40px]  rounded-md hover:border-gray-600">
                     <div className="relative w-full h-full">
-                      <Image src="/Resources/Google/web_neutral_sq_na@4x.png" alt="Sign in with Google" layout="fill" objectFit="contain" />
+                      <Image src="/Resources/Google/web_neutral_sq_na@4x.png" alt="Sign in with Google" layout="fill"  />
                     </div>
                   </a>
 
                   {/* Naver Button */}
                   <a href="http://localhost:8080/oauth2/authorization/naver" className="block w-[40px] h-[40px]  rounded-md hover:border-gray-600">
                     <div className="relative w-full h-full">
-                      <Image src="/Resources/Naver/btnG_아이콘사각.png" alt="Sign in with Naver" layout="fill" objectFit="contain" />
+                      <Image src="/Resources/Naver/btnG_아이콘사각.png" alt="Sign in with Naver" layout="fill" />
                     </div>
                   </a>
 
                   {/* Kakao Button */}
                   <a href="http://localhost:8080/oauth2/authorization/kakao" className="block w-[40px] h-[40px]  rounded-md hover:border-gray-600">
                     <div className="relative w-full h-full">
-                      <Image src="/Resources/Kakao/카카오톡.png" alt="Sign in with Kakao" layout="fill" objectFit="contain" />
+                      <Image src="/Resources/Kakao/카카오톡.png" alt="Sign in with Kakao" layout="fill"  />
                     </div>
                   </a>
                 </div>

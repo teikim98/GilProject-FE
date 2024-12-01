@@ -22,14 +22,12 @@ export default function Page() {
      * 소셜로그인할때 access, refresh 토큰 저장
      */
     const fetchData = async () => {
-      console.log("refresh 토큰을 백엔드에서 인증");
+      console.log("소셜로그인 access 토큰 생성 로직");
       try {
         const response = await verifiRefreshToken();
-
         const accessToken = response.headers["oauth2access"].split("Bearer ")[1];
 
         localStorage.setItem("access", accessToken);
-        console.log("Access Token 저장 완료:", accessToken);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -56,10 +54,9 @@ export default function Page() {
       }
     };
 
-    if (localStorage.getItem("access") === null) {
-      fetchData();
-    }
-
+    /**
+     * 주소 팝업 확인
+     */
     const localStorageAddress = localStorage.getItem("address-popup");
     if (localStorageAddress === null) { //로컬스토리지가 아예 없음
       createAddressCondition();
@@ -72,6 +69,10 @@ export default function Page() {
         //팝업을 열겠다
         setAddressPopUpOpen(true);
       }
+    }
+
+    if (localStorage.getItem("access") === null) {
+      fetchData();
     }
 
   }, []);
