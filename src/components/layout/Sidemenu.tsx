@@ -1,3 +1,4 @@
+'use client'
 import {
     Sheet,
     SheetContent,
@@ -20,7 +21,7 @@ import { Button } from "../ui/button";
 const navigationItems = [
     { name: '마이 페이지', href: '/main/mypage' },
     { name: '내 경로', href: '/main/mypage/myRoute' },
-    { name: '알림', href: '/notifications' },
+    { name: '알림', href: '/main/notification' },
     { name: '산책길 목록', href: '/main/board' },
 ];
 
@@ -77,7 +78,7 @@ export default function Sidemenu() {
                                     >
                                         {item.name}
                                         {item.href === '/main/notification' && unreadCount > 0 && (
-                                            <div className="ml-2 px-2 py-0.5 text-xs rounded-full bg-red-500 text-white">
+                                            <div className="w-6 ml-2 px-2 py-0.5 text-xs rounded-full bg-red-500 text-white">
                                                 {unreadCount}
                                             </div>
                                         )}

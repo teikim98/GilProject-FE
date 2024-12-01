@@ -24,7 +24,7 @@ export default function NotificationsPage() {
     console.log("NotificationsPage - 현재 notifications:", notifications);
 
     return (
-        <div className='w-full animate-slide-up flex flex-col bg-background pb-20'>
+        <div className='w-full animate-fade-in flex flex-col bg-background pb-20'>
             <BackHeader content='알림' />
 
             <div className='flex flex-row items-center justify-between mb-8'>

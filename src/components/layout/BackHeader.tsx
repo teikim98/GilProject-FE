@@ -1,6 +1,7 @@
 import { NavigationState } from '@/types/types';
 import React from 'react'
 import BackButton from './BackIcon'
+import Sidemenu from './Sidemenu';
 
 interface BackHeaderProps {
     content: string;
@@ -24,7 +25,7 @@ export default function BackHeader({
             <h2 className='absolute left-1/2 transform -translate-x-1/2 top-1/2 translate-y-[-50%] text-lg font-semibold dark:text-white'>
                 {content}
             </h2>
-            <div className="w-10"></div>
+            <Sidemenu />
         </div>
     )
 }

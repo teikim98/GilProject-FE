@@ -1,13 +1,26 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useDarkMode } from '@/store/useDarkMode';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 export default function Provider({
     children,
 }: {
     children: React.ReactNode;
 }) {
+    const [queryClient] = useState(() => new QueryClient({
+        defaultOptions: {
+            queries: {
+                staleTime: 60 * 1000,
+                refetchOnWindowFocus: false,
+                retry: 3,
+                retryOnMount: true,
+            },
+        },
+    }));
+
     const { isDarkMode } = useDarkMode();
 
     useEffect(() => {
@@ -18,18 +31,14 @@ export default function Provider({
         }
     }, [isDarkMode]);
 
-    useEffect(() => {
-        if (typeof window !== 'undefined') {
-            if (process.env.NEXT_PUBLIC_API_MOCKING === "enabled") {
-                require("@/mocks/browser");
-            }
-        }
-    }, []);
-
-
     return (
-        <div className="min-h-screen h-screen animate-fade-in bg-gradient-to-b from-purple-400 to-purple-500 flex justify-center">
-            {children}
-        </div>
+        <QueryClientProvider client={queryClient}>
+            <div className="min-h-screen h-screen animate-fade-in bg-gradient-to-b from-purple-400 to-purple-500 flex justify-center">
+                {children}
+            </div>
+            {process.env.NODE_ENV === 'development' && (
+                <ReactQueryDevtools initialIsOpen={false} />
+            )}
+        </QueryClientProvider>
     );
 }
