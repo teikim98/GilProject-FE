@@ -56,16 +56,7 @@ export const getPostNear = async (
 
 
 
-//현재 로그인한 사용자가 찜한 산책길 가져오기
-export const getUserPostWishlist = async (
-  page = 0,
-  size = 10
-): Promise<{ content: Post[]; totalElements: number }> => {
-  const response = await api.get(`/user/mypage/postWishlist`, {
-    params: { page, size },
-  });
-  return response.data;
-};
+
 
 //검색하고 필터링된 산책길 리스트 가져오기
 export const getPostsByKeyword = async (

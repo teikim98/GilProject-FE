@@ -18,7 +18,7 @@ import {
     AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { deletePost } from '@/api/post';
-import { getUserPosts } from '@/api/user';
+import { getUserPostWishlist } from '@/api/user';
 import { toast } from '@/hooks/use-toast';
 
 const MyPostList: React.FC = () => {
@@ -34,7 +34,7 @@ const MyPostList: React.FC = () => {
             try {
                 setLoading(true);
                 setError(null);
-                const response: GetUserPostsResponse = await getUserPosts(page, size);
+                const response: GetUserPostsResponse = await getUserPostWishlist(page, size);
                 console.log("API 응답 데이터 구조:", response);
 
                 const { content, totalElements } = response;

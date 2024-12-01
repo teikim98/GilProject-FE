@@ -242,18 +242,25 @@ export const getUserPosts = async (
     const response = await api.get<GetUserPostsResponse>("/mypage/myPost", {
       params: { page, size },
     });
-    //console.log("getUserPosts 응답 데이터:", response.data); // 응답 데이터 확인
     return response.data;
   } catch (error: any) {
-    if (error.response) {
-      console.error("getUserPosts 실패 (서버 응답):", error.response);
-    } else if (error.request) {
-      
-      console.error("getUserPosts 실패 (응답 없음):", error.request);
-    } else {
-      
-      console.error("getUserPosts 실패 (요청 설정 에러):", error.message);
-    }
+    console.error("getUserPosts 실패:", error);
+    throw error;
+  }
+};
+
+// 현재 로그인한 사용자가 찜한 산책길 가져오기
+export const getUserPostWishlist = async (
+  page = 0,
+  size = 10
+): Promise<GetUserPostsResponse> => {
+  try {
+    const response = await api.get<GetUserPostsResponse>("/mypage/postWishlist", {
+      params: { page, size },
+    });
+    return response.data;
+  } catch (error: any) {
+    console.error("getUserPostWishlist 실패:", error);
     throw error;
   }
 };
