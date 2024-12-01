@@ -243,16 +243,15 @@ export const getUserPosts = async (
       params: { page, size },
     });
     //console.log("getUserPosts 응답 데이터:", response.data); // 응답 데이터 확인
-    return response.data; // 전체 데이터를 반환
+    return response.data;
   } catch (error: any) {
     if (error.response) {
-      // 서버 응답 에러
       console.error("getUserPosts 실패 (서버 응답):", error.response);
     } else if (error.request) {
-      // 요청이 전송되었으나 응답이 없는 경우
+      
       console.error("getUserPosts 실패 (응답 없음):", error.request);
     } else {
-      // 요청 설정 중 에러
+      
       console.error("getUserPosts 실패 (요청 설정 에러):", error.message);
     }
     throw error;
