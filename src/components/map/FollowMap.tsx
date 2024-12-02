@@ -104,14 +104,15 @@ export function FollowMap({ route, width, height }: FollowMapProps) {
         // 전체 거리에 따른 유동적인 완료 기준 설정
         let requiredCompletionRatio;
         if (totalDistance <= 100) {
-            requiredCompletionRatio = 0.8;
+            requiredCompletionRatio = 0.7;      // 70%
         } else if (totalDistance <= 500) {
-            requiredCompletionRatio = 0.85;
+            requiredCompletionRatio = 0.75;     // 75%
         } else if (totalDistance <= 1000) {
-            requiredCompletionRatio = 0.9;
+            requiredCompletionRatio = 0.8;      // 80%
         } else {
-            requiredCompletionRatio = 0.95;
+            requiredCompletionRatio = 0.85;     // 85%
         }
+
 
         const hasMinimumDistance = completedDistance > (totalDistance * requiredCompletionRatio);
 

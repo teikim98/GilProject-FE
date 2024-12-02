@@ -73,7 +73,7 @@ export const useNotificationStore = create<NotificationStore>((set) => ({
       });
 
       // CommentNotify 이벤트 리스너
-      eventSource.addEventListener("CommentNotify", (event) => {
+      eventSource.addEventListener("댓글 알림", (event) => {
         try {
           const notification = JSON.parse(event.data);
           set((state) => ({
@@ -85,7 +85,7 @@ export const useNotificationStore = create<NotificationStore>((set) => ({
       });
 
       // PostNotify 이벤트 리스너
-      eventSource.addEventListener("PostNotify", (event) => {
+      eventSource.addEventListener("게시글 알림", (event) => {
         try {
           const notification = JSON.parse(event.data);
           set((state) => ({
