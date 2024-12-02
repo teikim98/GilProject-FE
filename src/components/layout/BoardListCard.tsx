@@ -64,8 +64,8 @@ export default function BoardCard({ post }: BoardCardProps) {
         <Card className="p-4 hover:shadow-lg transition-shadow" onMouseEnter={prefetchPost} // 호버 시 prefetch
         >
             <Link href={`/main/board/${post.postId}`} onClick={handleClick}>
-                <div className="flex items-center gap-3 mb-3">
-                    <ProfileDialog
+                <div className="flex items-start justify-between gap-3 mb-3">
+                    <div className='flex gap-3'><ProfileDialog
                         userId={post.postUserId}
                         onOpenChange={(open) => {
                             setIsDialogOpen(open);
@@ -75,13 +75,16 @@ export default function BoardCard({ post }: BoardCardProps) {
                         }}
                     />
 
-                    <div>
-                        <h3 className="font-semibold">{post.nickName}</h3>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
-                            {formatDate(post.writeDate)}
-                        </p>
-                        <p>{post.readNum}</p>
-                    </div>
+                        <div>
+                            <h3 className="font-semibold">{post.nickName}</h3>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">
+                                {formatDate(post.writeDate)}
+                            </p>
+                        </div></div>
+
+
+                    <p className='text-sm text-gray-500 dark:text-gray-400'>조회수 {post.readNum}</p>
+
                 </div>
 
                 <h2 className="text-xl font-bold mb-2">{post.title}</h2>
