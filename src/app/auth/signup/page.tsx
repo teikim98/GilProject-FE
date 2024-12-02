@@ -41,7 +41,7 @@ const HomePage = () => {
 
   const [isEmailPopupOpen, setIsEmailPopupOpen] = useState(false);
   const [isCompletePopupOpen, setIsCompletePopupOpen] = useState(false);
-  const [popupData, setPopupData] = useState<PopupData>({ });
+  const [popupData, setPopupData] = useState<PopupData>({});
 
   const handleEmailVerified = (email: string) => {
     if (email !== "") {
@@ -141,32 +141,31 @@ const HomePage = () => {
         setPopupData({
           title: "회원가입 성공!",
           content: "[길따라]에 오신 걸 환영합니다",
-          onConfirm : () => {
+          onConfirm: () => {
             setIsCompletePopupOpen(false);
             router.push("http://localhost:3000/auth/login");
           },
         });
         setIsCompletePopupOpen(true);
-        
       } else if (response === 0) {
         setPopupData({
-          title : "오류",
-          content : "회원 가입에 실패하셨습니다.",
-          onConfirm : ()=>{
+          title: "오류",
+          content: "회원 가입에 실패하셨습니다.",
+          onConfirm: () => {
             setIsCompletePopupOpen(false);
-          }
+          },
         });
         setIsCompletePopupOpen(true);
       }
     } catch (error) {
       // console.error("회원가입 API 자체가 실패", error);
       setPopupData({
-        title : "오류",
-        description : "회원가입 API 실패",
-        content : "회원 가입에 실패하셨습니다.",
-        onConfirm : ()=>{
-        setIsCompletePopupOpen(false); 
-        }
+        title: "오류",
+        description: "회원가입 API 실패",
+        content: "회원 가입에 실패하셨습니다.",
+        onConfirm: () => {
+          setIsCompletePopupOpen(false);
+        },
       });
       setIsCompletePopupOpen(true);
     }
@@ -192,7 +191,9 @@ const HomePage = () => {
   return (
     <div className="w-full max-w-screen-md p-4 space-y-4 animate-fade-in">
       {/* Card Component */}
-      <Card className="max-w-screen-md">
+      <Card
+        className="max-w-screen-md"
+      >
         <CardHeader>
           <CardTitle>회원 가입</CardTitle>
           <CardDescription>필요한 정보를 입력하세요.</CardDescription>
