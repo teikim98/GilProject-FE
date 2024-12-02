@@ -1,8 +1,9 @@
 import axios from "axios";
 import { Post } from "@/types/types";
+import { GetUserPostsResponse} from "@/types/types";
 
 const api = axios.create({
-  baseURL: "http://localhost:8080/posts",
+  baseURL: `${process.env.NEXT_PUBLIC_API_URL}/posts`,
 });
 
 const getAuthToken = (): string | null => {
@@ -50,30 +51,13 @@ export const getPostNear = async (
   const response = await api.get(`/${lat}/${lng}`, {
     params: { page, size },
   });
+  console.log(response.data);
   return response.data;
 };
 
-//현재 로그인한 사용자가 작성한 산책길 가져오기
-export const getUserPosts = async (
-  page = 0,
-  size = 10
-): Promise<{ content: Post[]; totalElements: number }> => {
-  const response = await api.get(`/user/mypage/myPost`, {
-    params: { page, size },
-  });
-  return response.data;
-};
 
-//현재 로그인한 사용자가 찜한 산책길 가져오기
-export const getUserPostWishlist = async (
-  page = 0,
-  size = 10
-): Promise<{ content: Post[]; totalElements: number }> => {
-  const response = await api.get(`/user/mypage/postWishlist`, {
-    params: { page, size },
-  });
-  return response.data;
-};
+
+
 
 //검색하고 필터링된 산책길 리스트 가져오기
 export const getPostsByKeyword = async (
@@ -99,7 +83,7 @@ export const createPost = async (formData: FormData) => {
         "Content-Type": "multipart/form-data",
         Authorization: `Bearer ${token}`,
       },
-      withCredentials: true, // 이 옵션 추가
+      withCredentials: true,
     });
     return response.data;
   } catch (error) {
@@ -114,6 +98,15 @@ export const togglePostLike = async (postId: number) => {
     await api.post(`/${postId}/likes`);
   } catch (error) {
     console.error("Error toggling post like:", error);
+    throw error;
+  }
+};
+
+export const togglePostWishlist = async (postId: number) => {
+  try {
+    await api.post(`/wishlist/${postId}`);
+  } catch (error) {
+    console.error("Error toggling post wishlist:", error);
     throw error;
   }
 };

@@ -4,3 +4,9 @@ export interface emailFormProperty{
   email : string;
   password : string;
 }
+
+export interface Notice{
+  title : string;
+  content : string;
+  writeDate : string;
+}

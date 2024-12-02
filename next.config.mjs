@@ -2,6 +2,14 @@ import withPWA from "next-pwa";
 
 const nextConfig = {
   reactStrictMode: false,
+  async rewrites() {
+    return [
+      {
+        source: "/api/:path*",
+        destination: "http://169.211.207.96:8080/:path*",
+      },
+    ];
+  },
 };
 
 const pwaConfig = {

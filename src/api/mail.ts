@@ -3,7 +3,7 @@ import axios from "axios";
 //이메일 관련 API///////////////
 
 const api = axios.create({
-  baseURL: "http://localhost:8080/mail",
+  baseURL: `${process.env.NEXT_PUBLIC_API_URL}/mail`,
 });
 
 /**
@@ -22,7 +22,6 @@ export const emailSend = async (email: string) => {
       }
     );
     return response.data;
-
   } catch (error) {
     console.error("이메일 전송 실패:", error);
     throw error;
@@ -33,13 +32,13 @@ export const emailSend = async (email: string) => {
  * 비밀번호 찾기 이메일 전송
  * @param email
  */
-export const passWordEmail = async (name :string ,email: string) => {
+export const passWordEmail = async (name: string, email: string) => {
   try {
     const response = await api.post(
       "/pwsend",
-      { 
-        name : name,
-        receiver: email 
+      {
+        name: name,
+        receiver: email,
       }, // JSON 데이터
       {
         headers: {
@@ -48,7 +47,6 @@ export const passWordEmail = async (name :string ,email: string) => {
       }
     );
     return response.data;
-
   } catch (error) {
     console.error("이메일 전송 실패:", error);
     throw error;

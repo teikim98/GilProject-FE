@@ -1,12 +1,13 @@
 'use client'
 import { useEffect, useState } from 'react'
+import { usePostDetailQuery, usePostMutations } from '@/hooks/queries/usePostQuery';
 import { Card } from '@/components/ui/card';
 import { ViewingMap } from '@/components/map/ViewingMapProps';
 import { Button } from '@/components/ui/button';
 import { Bookmark, ChevronLeft, ChevronRight, Heart, MessageCircle, Navigation } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import BackHeader from '@/components/layout/BackHeader';
-import { getPost, togglePostLike, deletePost } from '@/api/post';
+import { getPost, togglePostLike, deletePost, togglePostWishlist } from '@/api/post';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
@@ -43,14 +44,22 @@ interface JWTPayload {
 }
 
 export default function PostPage({ params }: PostPageProps) {
+    const postId = parseInt(params.id);
     const router = useRouter();
-    const [post, setPost] = useState<Post | null>(null)
-    const [loading, setLoading] = useState(true)
-    const [error, setError] = useState<string | null>(null)
     const [api, setApi] = useState<CarouselApi>()
     const [current, setCurrent] = useState(0)
     const [count, setCount] = useState(0)
     const [userId, setUserId] = useState<number | null>(null);
+
+    const {
+        data: post,
+        isLoading,
+        isError
+    } = usePostDetailQuery(postId);
+
+    const { like, wishlist, remove } = usePostMutations(postId);
+
+
 
     useEffect(() => {
         const token = localStorage.getItem("access");
@@ -62,65 +71,60 @@ export default function PostPage({ params }: PostPageProps) {
 
 
     useEffect(() => {
-        const fetchPost = async () => {
-            try {
-                const data = await getPost(parseInt(params.id))
-                setPost(data)
-                setCount(1 + (data.imageUrls?.length || 0))
-            } catch (err) {
-                setError('게시글을 불러오는데 실패했습니다.')
-                console.error('Error fetching post:', err)
-            } finally {
-                setLoading(false)
-            }
-        }
-
-        fetchPost()
-    }, [params.id])
-
-    useEffect(() => {
-        if (!api) {
-            return
-        }
-
+        if (!api) return;
         api.on("select", () => {
             setCurrent(api.selectedScrollSnap())
-        })
-    }, [api])
+        });
+    }, [api]);
+
+    useEffect(() => {
+        if (post) {
+            setCount(1 + (post.imageUrls?.length || 0));
+        }
+    }, [post]);
 
     const handleLikeToggle = async () => {
-        if (!post) return;
         try {
-            await togglePostLike(post.postId);
-            const updatedPost = await getPost(post.postId);
-            setPost(updatedPost);
+            await like();
             toast({
-                description: updatedPost.liked ? "좋아요를 눌렀습니다." : "좋아요를 취소했습니다."
+                description: post?.liked ? "좋아요를 취소했습니다." : "좋아요를 눌렀습니다."
             });
-        } catch (error) {
+        } catch {
             toast({
                 description: "좋아요 처리에 실패했습니다."
             });
         }
     };
 
-    const handleDelete = async () => {
-        if (!post) return;
+    const handleWishlistToggle = async () => {
         try {
-            await deletePost(post.postId);
+            await wishlist();
+            toast({
+                description: post?.wishListed ? "찜 목록에서 제거되었습니다." : "찜 목록에 추가되었습니다."
+            });
+        } catch {
+            toast({
+                description: "찜하기 처리에 실패했습니다."
+            });
+        }
+    };
+
+    const handleDelete = async () => {
+        try {
+            await remove();
             toast({
                 description: "게시글이 삭제되었습니다."
             });
             router.push('/main/board');
-        } catch (error) {
+        } catch {
             toast({
                 description: "게시글 삭제에 실패했습니다."
             });
         }
     };
 
-    if (loading) return <div>로딩 중...</div>
-    if (error) return <div>{error}</div>
+    if (isLoading) return <div>로딩 중...</div>
+    if (isError) return <div>게시글을 불러오는데 실패했습니다.</div>
     if (!post) return <div>게시글을 찾을 수 없습니다.</div>
 
     const formatDate = (dateString: string) => {
@@ -262,10 +266,16 @@ export default function PostPage({ params }: PostPageProps) {
                             <MessageCircle className="w-5 h-5" />
                             <span>{post.repliesCount}</span>
                         </Button>
-                        <Button variant="ghost" size="sm" className="flex items-center gap-1">
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            className="flex items-center gap-1"
+                            onClick={handleWishlistToggle}
+                        >
                             <Bookmark className={`w-5 h-5 ${post.wishListed ? 'fill-current' : ''}`} />
                             <span>{post.postWishListsNum}</span>
                         </Button>
+
                     </div>
                     {/* 삭제버튼은 나중에 토큰에서 유저id를 빼와서 적용해야할듯 */}
                     {post.postUserId === userId && (
@@ -314,7 +324,7 @@ export default function PostPage({ params }: PostPageProps) {
                 </div>
             </Card>
 
-            <Link href={`/follow/${params.id}`}>
+            <Link href={`/follow/${post.pathId}`}>
                 <Button
                     className="w-full my-4 bg-primary hover:bg-primary/90 text-white"
                     size="lg"

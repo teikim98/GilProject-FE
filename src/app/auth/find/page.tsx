@@ -5,12 +5,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { nameValidation } from "../signup/page";
 import ValidateMessage from "@/components/auth/ValidateMessage";
 import { emailValidate } from "@/components/auth/EmailVerification";
 import EmailPopup from "@/components/auth/EmailPopup";
 import { passWordEmail } from "@/api/mail";
 import { useRouter } from "next/navigation";
+import { nameValidation } from "@/util/validation";
 
 const HomePage = () => {
   let router = useRouter();
@@ -40,7 +40,7 @@ const HomePage = () => {
    * 이메일 인증 Button
    * @param e
    */
-  const handleCertifyEmail = (e : React.MouseEvent)=>{
+  const handleCertifyEmail = (e: React.MouseEvent) => {
     e.preventDefault();
     setIsEmailPopupOpen(true);
   }
@@ -54,14 +54,14 @@ const HomePage = () => {
     setFindButtonLock(true);
 
     //랜덤한 비밀번호 이메일로 보내기
-    const result = await passWordEmail(name,email);
+    const result = await passWordEmail(name, email);
     setFindButtonLock(false);
 
     // console.log(result);
-    if(result === 1){
+    if (result === 1) {
       alert("새 비밀번호가 발급되었습니다. 이메일을 확인해주세요");
     }
-    else{
+    else {
       alert("입력하신 이름과 이메일에 일치하는 회원이 없습니다");
     }
     router.push("/auth/login");

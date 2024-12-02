@@ -2,19 +2,14 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 import { emailLogin } from "@/api/auth";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
+import { NoticeContainer } from "@/components/notice/NoticeContainer";
 
 const HomePage = () => {
   const router = useRouter();
@@ -26,11 +21,10 @@ const HomePage = () => {
     try {
       await emailLogin(email, password);
       alert("로그인 성공!");
-      router.push('/main')
+      router.push("/main");
       // 저장된 JWT 확인
       //const token = localStorage.getItem("access");
       //console.log("저장된 JWT:", token);
-
     } catch (error) {
       //  console.error("로그인 실패", error);
       alert("로그인 실패");
@@ -38,7 +32,9 @@ const HomePage = () => {
   };
 
   return (
+    <>
     <div className="w-full max-w-screen-md p-4 space-y-4 animate-fade-in">
+      <NoticeContainer/>
       {/* Card Component */}
       <Card className="max-w-screen-md">
         <CardHeader>
@@ -48,8 +44,9 @@ const HomePage = () => {
         <CardContent>
           <form>
             <div className="grid w-full items-center gap-4">
+              {/* Email Input */}
               <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="name">Email</Label>
+                <Label htmlFor="email">Email</Label>
                 <Input
                   type="email"
                   name="email"
@@ -65,8 +62,10 @@ const HomePage = () => {
                   placeholder="이메일을 입력해주세요"
                 />
               </div>
+
+              {/* Password Input */}
               <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="name">Password</Label>
+                <Label htmlFor="password">Password</Label>
                 <Input
                   name="password"
                   type="password"
@@ -82,51 +81,49 @@ const HomePage = () => {
                   placeholder="비밀번호를 입력해주세요"
                 />
               </div>
-              <div>
 
-                <Button
-                  className="w-full bg-slate-300 hover:bg-slate-500"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    location.href =
-                      "http://localhost:8080/oauth2/authorization/google";
-                  }}
-                >
-                  Continue with Google
-                </Button>
-              </div>
-              <div>
-                <Button
-                  className="w-full bg-yellow-400 hover:bg-yellow-600"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    location.href =
-                      "http://localhost:8080/oauth2/authorization/kakao";
-                  }}
-                >
-                  Continue with Kakao
-                </Button>
-              </div>
-              <div>
-                <Button
-                  className="w-full bg-blue-700 hover:bg-blue-900"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    location.href =
-                      "http://localhost:8080/oauth2/authorization/naver";
-                  }}
-                >
-                  Continue with Naver
-                </Button>
+              {/* Social Login Buttons */}
+              <div className="flex flex-col space-y-1.5">
+                {/* <Label htmlFor="OAuth">간편 로그인</Label> */}
+                <p/>
+                <div className="flex justify-center gap-14">
+                  {/* Google Button */}
+                  <a href="http://localhost:8080/oauth2/authorization/google" className="block w-[40px] h-[40px]  rounded-md hover:border-gray-600">
+                    <div className="relative w-full h-full">
+                      <Image src="/Resources/Google/web_neutral_sq_na@4x.png" alt="Sign in with Google" layout="fill"  />
+                    </div>
+                  </a>
+
+                  {/* Naver Button */}
+                  <a href="http://localhost:8080/oauth2/authorization/naver" className="block w-[40px] h-[40px]  rounded-md hover:border-gray-600">
+                    <div className="relative w-full h-full">
+                      <Image src="/Resources/Naver/btnG_아이콘사각.png" alt="Sign in with Naver" layout="fill" />
+                    </div>
+                  </a>
+
+                  {/* Kakao Button */}
+                  <a href="http://localhost:8080/oauth2/authorization/kakao" className="block w-[40px] h-[40px]  rounded-md hover:border-gray-600">
+                    <div className="relative w-full h-full">
+                      <Image src="/Resources/Kakao/카카오톡.png" alt="Sign in with Kakao" layout="fill"  />
+                    </div>
+                  </a>
+                </div>
               </div>
             </div>
           </form>
+
         </CardContent>
         <CardFooter className="flex justify-center flex-col">
           <Button variant="outline" className="w-full" onClick={handleLogin}>
             Sign in
           </Button>
-          <Button variant="outline" className="w-full" onClick={() => { router.push("/main") }}>
+          <Button
+            variant="outline"
+            className="w-full"
+            onClick={() => {
+              router.push("/main");
+            }}
+          >
             메인화면 가기
           </Button>
           <h2>
@@ -147,6 +144,7 @@ const HomePage = () => {
         </CardFooter>
       </Card>
     </div>
+    </>
   );
 };
 

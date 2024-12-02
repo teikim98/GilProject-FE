@@ -18,7 +18,6 @@ import {
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Trash2 } from 'lucide-react';
-import { useUserStore } from '@/store/useUserStore'
 import { deletePath, getAllUserPaths } from '@/api/route'
 import { toast } from '@/hooks/use-toast'
 
@@ -83,7 +82,7 @@ function RouteCard({
                         </p>
                         <div className='flex justify-between mt-auto'>
                             <span className='text-xs text-gray-400 self-end'>
-                                {new Date(route.createdDate).toLocaleDateString()}
+                                {new Date(route.createDate).toLocaleDateString()}
                             </span>
                             <div className="flex self-end gap-2">
                                 {!isWriteMode && (

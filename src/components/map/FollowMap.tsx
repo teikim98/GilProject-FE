@@ -1,6 +1,6 @@
 'use client'
 
-import { KakaoPosition, MarkerForOverlay, Pin, Post, RouteCoordinate } from "@/types/types";
+import { KakaoPosition, MarkerForOverlay, Path, Pin, Post, RouteCoordinate } from "@/types/types";
 import { useEffect, useState } from "react";
 import { BaseKakaoMap } from "./BaseKakaoMap";
 import { RoutePolyline } from "./RoutePolyline";
@@ -12,7 +12,7 @@ import { MapMarker } from "react-kakao-maps-sdk";
 import { createEndMarker, createStartMarker } from "./CustomMarkerIcon";
 
 interface FollowMapProps {
-    route: Post;
+    route: Path;
     width?: string;
     height?: string;
 }
@@ -74,7 +74,7 @@ export function FollowMap({ route, width, height }: FollowMapProps) {
         progressPercent
     } = useFollowStore();
 
-    const pathAsKakaoPositions = route.pathResDTO.routeCoordinates.map(coord => ({
+    const pathAsKakaoPositions = route.routeCoordinates.map(coord => ({
         lat: parseFloat(coord.latitude),
         lng: parseFloat(coord.longitude)
     }));
@@ -82,7 +82,7 @@ export function FollowMap({ route, width, height }: FollowMapProps) {
 
     const startPoint = pathAsKakaoPositions[0];
     const endPoint = pathAsKakaoPositions[pathAsKakaoPositions.length - 1];
-    const totalDistance = route.pathResDTO.distance;
+    const totalDistance = route.distance;
 
     const [completedPath, setCompletedPath] = useState<KakaoPosition[]>([]);
     const [remainingPath, setRemainingPath] = useState<KakaoPosition[]>(pathAsKakaoPositions);
@@ -96,7 +96,7 @@ export function FollowMap({ route, width, height }: FollowMapProps) {
         visitedPoints: number
     ): boolean => {
         const distanceToEnd = calculateDistance(currentPoint, endPoint);
-        const totalDistance = route.pathResDTO.distance * 1000; // km to m
+        const totalDistance = route.distance * 1000; // km to m
         const completionThreshold = 3; // 3미터 이내
 
         const isNearEnd = distanceToEnd < completionThreshold;
@@ -104,14 +104,15 @@ export function FollowMap({ route, width, height }: FollowMapProps) {
         // 전체 거리에 따른 유동적인 완료 기준 설정
         let requiredCompletionRatio;
         if (totalDistance <= 100) {
-            requiredCompletionRatio = 0.8;
+            requiredCompletionRatio = 0.7;      // 70%
         } else if (totalDistance <= 500) {
-            requiredCompletionRatio = 0.85;
+            requiredCompletionRatio = 0.75;     // 75%
         } else if (totalDistance <= 1000) {
-            requiredCompletionRatio = 0.9;
+            requiredCompletionRatio = 0.8;      // 80%
         } else {
-            requiredCompletionRatio = 0.95;
+            requiredCompletionRatio = 0.85;     // 85%
         }
+
 
         const hasMinimumDistance = completedDistance > (totalDistance * requiredCompletionRatio);
 
@@ -200,7 +201,7 @@ export function FollowMap({ route, width, height }: FollowMapProps) {
                 updateStatus({ watchId: null });
             }
         };
-    }, [isFollowing, route.pathResDTO.routeCoordinates, hasStarted]);
+    }, [isFollowing, route.routeCoordinates, hasStarted]);
 
     const convertPinToMarker = (pin: Pin): MarkerForOverlay => ({
         id: pin.id.toString(),
@@ -261,7 +262,7 @@ export function FollowMap({ route, width, height }: FollowMapProps) {
             )}
 
             {/* 경로 마커들 */}
-            {route.pathResDTO.pins.map(pin => (
+            {route.pins.map(pin => (
                 <MarkerWithOverlay
                     key={pin.id}
                     marker={convertPinToMarker(pin)}

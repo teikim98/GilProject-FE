@@ -5,7 +5,7 @@ import axios from "axios";
 import { getDetailProfile } from "./user";
 
 const api = axios.create({
-  baseURL: "http://localhost:8080/auth",
+  baseURL: `${process.env.NEXT_PUBLIC_API_URL}/auth`,
   withCredentials: true,
 });
 
@@ -56,12 +56,7 @@ export const emailLogin = async (email: string, password: string) => {
  * 이메일 회원가입
  * @returns
  */
-export const emailJoin = async ({
-  name,
-  nickName,
-  email,
-  password,
-}: emailFormProperty) => {
+export const emailJoin = async ({ name, nickName, email, password }: emailFormProperty) => {
   try {
     const formData = new FormData();
     formData.append("name", name);
@@ -102,4 +97,25 @@ export const verifiRefreshToken = async () => {
   const response = await api.post("/verification");
 
   return response;
+};
+
+/**
+ * 비밀번호 변경
+ */
+export const changePassword = async (password: string, newPassword: string) => {
+  try {
+    const formData = new FormData();
+    formData.append("password", password);
+    formData.append("newPassword", newPassword);
+
+    const response = await axios.put("/mypage/updatePwd", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+      withCredentials: true,
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
 };
