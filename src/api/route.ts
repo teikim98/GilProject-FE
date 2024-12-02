@@ -34,7 +34,7 @@ export const getAllUserPaths = async (): Promise<Path[]> => {
       throw new Error("No authentication token found");
     }
 
-    const { data } = await api.get(`user/mypage/mypath`);
+    const { data } = await api.get(`user/mypage/myPath`);
     console.log("API Response:", data);
     return data;
   } catch (error: any) {
@@ -47,6 +47,7 @@ export const getAllUserPaths = async (): Promise<Path[]> => {
     throw new Error(error.message || "Failed to fetch user paths");
   }
 };
+
 
 // 경로 삭제하기
 export const deletePath = async (pathId: number): Promise<void> => {

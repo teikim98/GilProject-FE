@@ -1,5 +1,6 @@
 import axios from "axios";
 import { Post } from "@/types/types";
+import { GetUserPostsResponse} from "@/types/types";
 
 const api = axios.create({
   baseURL: `${process.env.NEXT_PUBLIC_API_URL}/posts`,
@@ -53,6 +54,10 @@ export const getPostNear = async (
   console.log(response.data);
   return response.data;
 };
+
+
+
+
 
 //검색하고 필터링된 산책길 리스트 가져오기
 export const getPostsByKeyword = async (

@@ -1,6 +1,7 @@
 import { User, UserSimple } from "@/types/types";
 import axios from "axios";
 import { cookies } from "next/headers";
+import { GetUserPostsResponse} from "@/types/types";
 
 //유저(마이페이지) 관련 API///////////////
 
@@ -222,4 +223,45 @@ export const logout = async () => {
 
   window.location.href = "/auth/login";
   console.log("로그아웃 성공");
+};
+
+//현재 로그인한 사용자가 작성한 산책길 가져오기
+// export const getUserPosts = async (
+//   page = 0,
+//   size = 10
+// ): Promise<{ content: Post[]; totalElements: number }> => {
+//   const response = await api.get(`/user/mypage/myPost`, {
+//     params: { page, size },
+//   });
+//   return response.data;
+// };
+export const getUserPosts = async (
+  page = 0,
+  size = 10
+): Promise<GetUserPostsResponse> => {
+  try {
+    const response = await api.get<GetUserPostsResponse>("/mypage/myPost", {
+      params: { page, size },
+    });
+    return response.data;
+  } catch (error: any) {
+    console.error("getUserPosts 실패:", error);
+    throw error;
+  }
+};
+
+// 현재 로그인한 사용자가 찜한 산책길 가져오기
+export const getUserPostWishlist = async (
+  page = 0,
+  size = 10
+): Promise<GetUserPostsResponse> => {
+  try {
+    const response = await api.get<GetUserPostsResponse>("/mypage/postWishlist", {
+      params: { page, size },
+    });
+    return response.data;
+  } catch (error: any) {
+    console.error("getUserPostWishlist 실패:", error);
+    throw error;
+  }
 };

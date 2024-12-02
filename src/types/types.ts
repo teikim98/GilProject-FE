@@ -212,6 +212,7 @@ export interface UpdatePostFormData {
   postUpdateRequest: string; // JSON.stringify(UpdatePostRequest)
   images: File[]; // 새로 추가할 이미지 파일들
 }
+
 export interface NotificationData {
   id: number;
   type: "POST_NOTIFY" | "COMMENT_NOTIFY";
@@ -228,3 +229,35 @@ export interface Notification {
   comment: string;
   data: NotificationData;
 }
+
+export interface PaginatedResponse<T> {
+  content: T[];
+  pageable: {
+    pageNumber: number;
+    pageSize: number;
+    sort: {
+      empty: boolean;
+      sorted: boolean;
+      unsorted: boolean;
+    };
+    offset: number;
+    paged: boolean;
+    unpaged: boolean;
+  };
+  last: boolean;
+  totalElements: number;
+  totalPages: number;
+  first: boolean;
+  size: number;
+  number: number;
+  sort: {
+    empty: boolean;
+    sorted: boolean;
+    unsorted: boolean;
+  };
+  numberOfElements: number;
+  empty: boolean;
+}
+
+// 게시글 리스트 응답 타입
+export type GetUserPostsResponse = PaginatedResponse<Post>;
