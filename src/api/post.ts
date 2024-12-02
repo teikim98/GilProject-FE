@@ -1,6 +1,6 @@
 import axios from "axios";
 import { Post } from "@/types/types";
-import { GetUserPostsResponse} from "@/types/types";
+import { GetUserPostsResponse } from "@/types/types";
 
 const api = axios.create({
   baseURL: `${process.env.NEXT_PUBLIC_API_URL}/posts`,
@@ -55,10 +55,6 @@ export const getPostNear = async (
   return response.data;
 };
 
-
-
-
-
 //검색하고 필터링된 산책길 리스트 가져오기
 export const getPostsByKeyword = async (
   keyword: string,
@@ -78,13 +74,17 @@ export const createPost = async (formData: FormData) => {
       throw new Error("로그인이 필요합니다.");
     }
 
-    const response = await axios.post("http://localhost:8080/posts", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-        Authorization: `Bearer ${token}`,
-      },
-      withCredentials: true,
-    });
+    const response = await axios.post(
+      `${process.env.NEXT_PUBLIC_API_URL}/posts`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`,
+        },
+        withCredentials: true,
+      }
+    );
     return response.data;
   } catch (error) {
     console.error("Create post error:", error);
