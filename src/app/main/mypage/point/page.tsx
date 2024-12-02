@@ -1,15 +1,17 @@
 "use client";
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import { getPoint } from '@/api/point';
 import PointProgress from '@/components/point/PointProgress';
-import BackHeader from '@/components/layout/BackHeader';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
-export default function PointPage() {
-    const router = useRouter();
+interface PointPageProps {
+    isOpen?: boolean;
+    onClose?: () => void;
+}
+
+export default function PointPage({ isOpen = true, onClose }: PointPageProps) {
     const [points, setPoints] = useState(0);
-    const [isRouteListOpen, setIsRouteListOpen] = useState(true);
+    const [isDialogOpen, setIsDialogOpen] = useState(isOpen);
 
     useEffect(() => {
         const getPoints = async () => {
@@ -24,28 +26,29 @@ export default function PointPage() {
         getPoints();
     }, []);
 
-    // 다이얼로그가 닫힐 때 이전 페이지로 이동
+    useEffect(() => {
+        setIsDialogOpen(isOpen);
+    }, [isOpen]);
+
     const handleOpenChange = (open: boolean) => {
-        if (!open) {
-            router.back(); // 이전 페이지로 이동
+        setIsDialogOpen(open);
+        if (!open && onClose) {
+            onClose();
         }
-        setIsRouteListOpen(open);
     };
 
     return (
-        <>
-            <Dialog open={isRouteListOpen} onOpenChange={handleOpenChange}>
-                <DialogContent className="max-h-[80vh] overflow-y-auto">
-                    <DialogHeader>
-                        <DialogTitle>내 포인트</DialogTitle>
-                    </DialogHeader>
-                    <div className="grid w-full items-center gap-4">
-                        <div className="flex flex-col space-y-1.5">
-                            <PointProgress currentPoints={points} />
-                        </div>
+        <Dialog open={isDialogOpen} onOpenChange={handleOpenChange}>
+            <DialogContent className="max-h-[80vh] overflow-y-auto">
+                <DialogHeader>
+                    <DialogTitle>내 포인트</DialogTitle>
+                </DialogHeader>
+                <div className="grid w-full items-center gap-4">
+                    <div className="flex flex-col space-y-1.5">
+                        <PointProgress currentPoints={points} />
                     </div>
-                </DialogContent>
-            </Dialog>
-        </>
+                </div>
+            </DialogContent>
+        </Dialog>
     );
 }
