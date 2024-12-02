@@ -22,14 +22,12 @@ export default function Page() {
      * 소셜로그인할때 access, refresh 토큰 저장
      */
     const fetchData = async () => {
-      console.log("refresh 토큰을 백엔드에서 인증");
+      console.log("소셜로그인 access 토큰 생성 로직");
       try {
         const response = await verifiRefreshToken();
-
         const accessToken = response.headers["oauth2access"].split("Bearer ")[1];
 
         localStorage.setItem("access", accessToken);
-        console.log("Access Token 저장 완료:", accessToken);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -38,29 +36,30 @@ export default function Page() {
     /**
      * 주소 등록했는지 확인
      */
-    const getUser = async () => {
-      console.log("refresh 토큰을 백엔드에서 인증");
+    const createAddressCondition = async () => {
       try {
         const response = await getDetailProfile();
         console.log("lat : " + response.latitude + "lon" + response.longitude);
+
         if (response.latitude && response.longitude) {
           localStorage.setItem("address-popup", "0");
+          setAddressPopUpOpen(false);
         }
         else {
           localStorage.setItem("address-popup", "1");
+          setAddressPopUpOpen(true);
         }
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
 
-    if (localStorage.getItem("access") === null) {
-      fetchData();
-    }
-
+    /**
+     * 주소 팝업 확인
+     */
     const localStorageAddress = localStorage.getItem("address-popup");
     if (localStorageAddress === null) { //로컬스토리지가 아예 없음
-      getUser();
+      createAddressCondition();
     } else {
       if (localStorageAddress === "0") {
         //팝업을 열지않겠다
@@ -70,6 +69,10 @@ export default function Page() {
         //팝업을 열겠다
         setAddressPopUpOpen(true);
       }
+    }
+
+    if (localStorage.getItem("access") === null) {
+      fetchData();
     }
 
   }, []);
@@ -98,15 +101,11 @@ export default function Page() {
         </div>
       </Card>
 
-      <Link href="/test" className="text-lg font-semibold">
-        경로 따라가기 테스트하기
-      </Link>
-
       <Separator className="my-4 dark:bg-gray-700" />
 
       <PWAInstallButton />
 
-      <AddressChangePopup />
+      {addressPopupOpen && <AddressChangePopup />}
       <AnimatedCards />
     </div>
   );

@@ -1,4 +1,3 @@
-import { NotificationInitializer } from "@/components/notification/NotificationInitializer";
 import { Toaster } from "@/components/ui/toaster";
 import type { Metadata } from "next";
 import Script from "next/script";
@@ -43,7 +42,6 @@ export default function RootLayout({
             <div className="animate-fade-in min-h-screen " />
           }
         >
-          <NotificationInitializer />
 
           <Provider>
             {children}

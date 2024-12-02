@@ -3,7 +3,7 @@ import { Post, Path, CreatePostPath } from "@/types/types";
 
 // 단일 axios 인스턴스 생성
 const api = axios.create({
-  baseURL: "http://localhost:8080",
+  baseURL: `${process.env.NEXT_PUBLIC_API_URL}`,
 });
 
 // 토큰 가져오는 함수
@@ -60,9 +60,10 @@ export const deletePath = async (pathId: number): Promise<void> => {
 };
 
 // 모든 API 요청에서 api 인스턴스 사용
-export const getRouteById = async (id: number): Promise<Post> => {
+export const getRouteById = async (id: number): Promise<Path> => {
   try {
-    const response = await api.get(`${id}`); // baseURL이 이미 포함되어 있으므로 path/ 제거
+    const response = await api.get(`/path/follow/${id}`);
+    console.log(response.data);
     return response.data;
   } catch (error) {
     console.error("Error fetching route:", error);

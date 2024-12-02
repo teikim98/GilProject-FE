@@ -128,7 +128,7 @@ export default function TestFollowPage() {
                     title: selectedRoute.title,
                     time: selectedRoute.pathData.time || 0,
                     distance: distance,
-                    createdDate: selectedRoute.createdAt,
+                    createDate: selectedRoute.createdAt,
                     startLat: parseFloat(normalizedPath[0].latitude),
                     startLong: parseFloat(normalizedPath[0].longitude),
                     startAddr: null,

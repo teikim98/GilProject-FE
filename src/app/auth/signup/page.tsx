@@ -27,26 +27,8 @@ import ValidateMessage from "@/components/auth/ValidateMessage";
 import EmailVerificationPopup, {
   EmailCertification,
 } from "@/components/auth/EmailVerification";
+import { nameValidation } from "@/util/validation";
 
-//유효성 검사 - 이름 필드
-export const nameValidation = (
-  value: string,
-  setIsNameValid: (isValid: boolean) => void,
-  setNameValidMessage: (message: string) => void
-) => {
-  value = value.replace(/[<>]/g, "").trim();
-
-  if (checkLength(value, 2, 12) === false) {
-    setIsNameValid(false);
-    setNameValidMessage("2글자 이상 12글자 이하만 가능합니다");
-  } else if (checkKor(value) === false) {
-    setIsNameValid(false);
-    setNameValidMessage("한글만 입력 가능합니다");
-  } else {
-    setIsNameValid(true);
-    setNameValidMessage("사용 가능");
-  }
-};
 
 const HomePage = () => {
   let router = useRouter();
@@ -68,12 +50,12 @@ const HomePage = () => {
   const [nameValidMessage, setNameValidMessage] = useState("");
   const [nickNameValidMessage, setnickNameValidMessage] = useState("");
   const [passwordValidMessage, setPasswordValidMessage] = useState("");
-  const [emailValidMessage,setEmailValidMessage] = useState("");
+  const [emailValidMessage, setEmailValidMessage] = useState("");
 
   const [isEmailPopupOpen, setIsEmailPopupOpen] = useState(false);
 
   const handleEmailVerified = (email: string) => {
-    if(email !==""){
+    if (email !== "") {
       console.log(`인증된 이메일: ${email}`);
       setEmail(email);
       setIsEmailValid(true);
@@ -263,7 +245,7 @@ const HomePage = () => {
                     handleEmailPopup(e);
                   }}
                 >
-                 {!isEmailValid ? "이메일 인증" : "이메일 변경"}
+                  {!isEmailValid ? "이메일 인증" : "이메일 변경"}
                 </Button>
                 <EmailPopup
                   isPopupOpen={isEmailPopupOpen}
@@ -271,7 +253,7 @@ const HomePage = () => {
                   callback={handleEmailVerified}
                   duplicateCheck={true}
                 />
-                <ValidateMessage validCondition={isEmailValid} message={emailValidMessage}/>
+                <ValidateMessage validCondition={isEmailValid} message={emailValidMessage} />
               </div>
 
               <div className="flex flex-col space-y-1.5">

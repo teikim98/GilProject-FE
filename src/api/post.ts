@@ -3,7 +3,7 @@ import { Post } from "@/types/types";
 import { GetUserPostsResponse} from "@/types/types";
 
 const api = axios.create({
-  baseURL: "http://localhost:8080/posts",
+  baseURL: `${process.env.NEXT_PUBLIC_API_URL}/posts`,
 });
 
 const getAuthToken = (): string | null => {
@@ -51,6 +51,7 @@ export const getPostNear = async (
   const response = await api.get(`/${lat}/${lng}`, {
     params: { page, size },
   });
+  console.log(response.data);
   return response.data;
 };
 
@@ -82,7 +83,7 @@ export const createPost = async (formData: FormData) => {
         "Content-Type": "multipart/form-data",
         Authorization: `Bearer ${token}`,
       },
-      withCredentials: true, // 이 옵션 추가
+      withCredentials: true,
     });
     return response.data;
   } catch (error) {
@@ -97,6 +98,15 @@ export const togglePostLike = async (postId: number) => {
     await api.post(`/${postId}/likes`);
   } catch (error) {
     console.error("Error toggling post like:", error);
+    throw error;
+  }
+};
+
+export const togglePostWishlist = async (postId: number) => {
+  try {
+    await api.post(`/wishlist/${postId}`);
+  } catch (error) {
+    console.error("Error toggling post wishlist:", error);
     throw error;
   }
 };

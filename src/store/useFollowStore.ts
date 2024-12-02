@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { KakaoPosition, Pin, Post, RouteCoordinate } from "@/types/types";
+import { KakaoPosition, Path, Pin, Post, RouteCoordinate } from "@/types/types";
 
 interface FollowState {
   isFollowing: boolean;
@@ -13,9 +13,9 @@ interface FollowState {
   isCompleted: boolean;
   watchId: number | null;
   startTime: number | null;
-  originalRoute: Post | null;
+  originalRoute: Path | null;
 
-  setOriginalRoute: (route: Post) => void;
+  setOriginalRoute: (route: Path) => void;
   startFollowing: () => void;
   stopFollowing: () => void;
   updatePosition: (position: KakaoPosition) => void;
@@ -38,10 +38,10 @@ export const useFollowStore = create<FollowState>((set, get) => ({
   startTime: null,
   originalRoute: null,
 
-  setOriginalRoute: (route: Post) =>
+  setOriginalRoute: (route: Path) =>
     set({
       originalRoute: route,
-      remainingDistance: route.pathResDTO.distance * 1000, // km to m conversion
+      remainingDistance: route.distance * 1000, // km to m conversion
     }),
 
   startFollowing: () => {
@@ -53,7 +53,7 @@ export const useFollowStore = create<FollowState>((set, get) => ({
       elapsedTime: 0,
       currentDistance: 0,
       remainingDistance: state.originalRoute
-        ? state.originalRoute.pathResDTO.distance * 1000
+        ? state.originalRoute.distance * 1000
         : 0,
       isCompleted: false,
       progressPercent: 0,
@@ -83,7 +83,7 @@ export const useFollowStore = create<FollowState>((set, get) => ({
     });
 
     if (originalRoute) {
-      const totalDistance = originalRoute.pathResDTO.distance;
+      const totalDistance = originalRoute.distance;
       get().updateProgress(totalDistance);
     }
   },
@@ -107,15 +107,14 @@ export const useFollowStore = create<FollowState>((set, get) => ({
     if (status.isCompleted) {
       newState.progressPercent = 100;
       newState.currentDistance = currentState.originalRoute
-        ? currentState.originalRoute.pathResDTO.distance * 1000
+        ? currentState.originalRoute.distance * 1000
         : 0;
       newState.remainingDistance = 0;
     } else if (
       status.currentDistance !== undefined &&
       currentState.originalRoute
     ) {
-      const totalDistanceMeters =
-        currentState.originalRoute.pathResDTO.distance * 1000;
+      const totalDistanceMeters = currentState.originalRoute.distance * 1000;
       const currentDistanceMeters = status.currentDistance;
 
       const percent = (currentDistanceMeters / totalDistanceMeters) * 100;

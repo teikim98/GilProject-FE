@@ -66,7 +66,7 @@ export const handlers = [
         startLat: 0, // 기본값
         startLong: 0, // 기본값
         startAddr: null,
-        createdDate: now, // 새로 추가
+        createDate: now, // 새로 추가
         routeCoordinates: [], // API 요청에서 받아와야 함
         pins: [], // API 요청에서 받아와야 함
       },

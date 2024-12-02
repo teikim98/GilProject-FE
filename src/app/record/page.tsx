@@ -6,21 +6,28 @@ import { useRecordStore } from '@/store/useRecordStore';
 import { RecordingMap } from '@/components/map/RecordingMap';
 import { CurrentLocationMap } from '@/components/map/CurrentLocationMap';
 import BackHeader from '@/components/layout/BackHeader';
+import { useState } from 'react';
+import { PreventRefreshAndBack } from '@/util/preventRefreshAndBack';
 
 export default function RecordPage() {
     const router = useRouter();
     const { isRecording, startRecording, stopRecording } = useRecordStore();
+    const [isTransitioning, setIsTransitioning] = useState(false);
+    PreventRefreshAndBack(); //새로고침, 뒤로가기 방지
 
-    const handleRecording = () => {
+    const handleRecording = async () => {
         if (isRecording) {
-            stopRecording();  // 녹화 중지 및 데이터 저장
+            setIsTransitioning(true);
+            stopRecording();
+            await new Promise(resolve => setTimeout(resolve, 300));
             router.push('/record/save');
         } else {
-            startRecording();  // 녹화 시작
+            startRecording();
         }
     };
+
     return (
-        <div className='animate-fade-in flex flex-col relative h-full'>
+        <div className={`flex flex-col relative h-full transition-opacity duration-300 ${isTransitioning ? 'opacity-50' : 'opacity-100'}`}>
             <BackHeader
                 content={isRecording ? '경로 기록중...' : '경로 기록하기'}
                 navigationState={isRecording ? 'isRecording' : 'none'}
@@ -33,19 +40,18 @@ export default function RecordPage() {
                         height="h-[90%]"
                     />
                 ) : (
-                    < CurrentLocationMap
+                    <CurrentLocationMap
                         width="w-full"
                         height="h-[90%]"
                     />
                 )}
             </div>
 
-
-
             <div className="mt-auto px-4">
                 <Button
-                    className={`w-full ${isRecording ? 'bg-red-500 hover:bg-red-600' : ''}`}
+                    className={`w-full transition-colors ${isRecording ? 'bg-red-500 hover:bg-red-600' : ''} ${isTransitioning ? 'opacity-50 cursor-not-allowed' : ''}`}
                     onClick={handleRecording}
+                    disabled={isTransitioning}
                 >
                     <h2>{isRecording ? '경로 기록 중지하기' : '경로 기록 시작하기'}</h2>
                 </Button>

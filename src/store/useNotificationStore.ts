@@ -1,6 +1,5 @@
 import { create } from "zustand";
-import { useToast } from "@/hooks/use-toast";
-import { Notification, NotificationData } from "@/types/types";
+import { NotificationData } from "@/types/types";
 import { jwtDecode } from "jwt-decode";
 
 interface NotificationStore {
@@ -9,6 +8,7 @@ interface NotificationStore {
   clearNotifications: () => void;
   deleteNotification: (id: number) => void;
   initializeSSE: () => void;
+  updateNotificationState: (id: number, state: number) => void;
 }
 
 interface JWTPayload {
@@ -32,6 +32,13 @@ export const useNotificationStore = create<NotificationStore>((set) => ({
       ),
     })),
 
+  updateNotificationState: (id, state) =>
+    set((store) => ({
+      notifications: store.notifications.map((notification) =>
+        notification.id === id ? { ...notification, state } : notification
+      ),
+    })),
+
   initializeSSE: () => {
     let eventSource: EventSource | null = null;
 
@@ -51,6 +58,18 @@ export const useNotificationStore = create<NotificationStore>((set) => ({
         { withCredentials: true }
       );
 
+      eventSource.onopen = () => {
+        console.log("SSE 연결 성공 !!!");
+      };
+
+      // 에러 발생시 재연결 시도
+      eventSource.onerror = (error) => {
+        console.error("SSE 에러 : ", error);
+        eventSource?.close();
+        // 3초 후 재연결 시도
+        setTimeout(connectSSE, 3000);
+      };
+
       eventSource.addEventListener("myNotifications", (event) => {
         try {
           console.log("받은 원본 데이터:", event.data);
@@ -66,7 +85,7 @@ export const useNotificationStore = create<NotificationStore>((set) => ({
       });
 
       // CommentNotify 이벤트 리스너
-      eventSource.addEventListener("CommentNotify", (event) => {
+      eventSource.addEventListener("댓글 알림", (event) => {
         try {
           const notification = JSON.parse(event.data);
           set((state) => ({
@@ -78,7 +97,7 @@ export const useNotificationStore = create<NotificationStore>((set) => ({
       });
 
       // PostNotify 이벤트 리스너
-      eventSource.addEventListener("PostNotify", (event) => {
+      eventSource.addEventListener("게시글 알림", (event) => {
         try {
           const notification = JSON.parse(event.data);
           set((state) => ({
