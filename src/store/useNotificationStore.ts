@@ -58,6 +58,18 @@ export const useNotificationStore = create<NotificationStore>((set) => ({
         { withCredentials: true }
       );
 
+      eventSource.onopen = () => {
+        console.log("SSE 연결 성공 !!!");
+      };
+
+      // 에러 발생시 재연결 시도
+      eventSource.onerror = (error) => {
+        console.error("SSE 에러 : ", error);
+        eventSource?.close();
+        // 3초 후 재연결 시도
+        setTimeout(connectSSE, 3000);
+      };
+
       eventSource.addEventListener("myNotifications", (event) => {
         try {
           console.log("받은 원본 데이터:", event.data);
