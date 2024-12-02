@@ -92,94 +92,117 @@ const MyPostList: React.FC = () => {
     return (
         <div className="space-y-4">
             {posts.map((post) => (
-                <Card key={post.postId} className="p-4 hover:shadow-lg transition-shadow">
-                    <div className="flex justify-between items-center mb-3">
-                        <div>
-                            <Link href={`/main/board/${post.postId}`}>
+                <Link
+                    href={`/main/board/${post.postId}`}
+                    key={post.postId}
+                    passHref
+                    className="block" // Link를 block 요소로 만들어 space-y-4가 제대로 적용되도록 함
+                >
+                    <Card className="p-4 hover:shadow-lg transition-shadow cursor-pointer">
+                        <div className="flex justify-between items-center mb-3">
+                            <div>
                                 <h2 className="text-xl font-bold hover:text-blue-600 transition-colors">
                                     {post.title}
                                 </h2>
-                            </Link>
-                            <p className="text-sm text-gray-500">
-                                {post.nickName} • {new Date(post.writeDate).toLocaleDateString()}
-                            </p>
-                        </div>
-                        <div>
-                            <AlertDialog>
-                                <AlertDialogTrigger asChild>
-                                    <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        className="text-destructive hover:text-destructive/90"
-                                        onClick={(e) => e.stopPropagation()}
-                                    >
-                                        <Trash2 className="h-5 w-5" />
-                                    </Button>
-                                </AlertDialogTrigger>
-                                <AlertDialogContent>
-                                    <AlertDialogHeader>
-                                        <AlertDialogTitle>게시글 삭제</AlertDialogTitle>
-                                        <AlertDialogDescription>
-                                            정말로 이 게시글을 삭제하시겠습니까? 삭제된 게시글은 복구할 수 없습니다.
-                                        </AlertDialogDescription>
-                                    </AlertDialogHeader>
-                                    <AlertDialogFooter>
-                                        <AlertDialogCancel>취소</AlertDialogCancel>
-                                        <AlertDialogAction
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                handleDelete(post.postId);
-                                            }}
-                                            className="bg-destructive hover:bg-destructive/90"
-                                        >
-                                            삭제
-                                        </AlertDialogAction>
-                                    </AlertDialogFooter>
-                                </AlertDialogContent>
-                            </AlertDialog>
-                        </div>
-                    </div>
-
-                    <div className="flex">
-                        {/* 지도 영역 */}
-                        {post.pathResDTO && (
-                            <div className="w-32 h-32 mr-4">
-                                <ViewingMap
-                                    width="w-full"
-                                    height="h-full"
-                                    route={{
-                                        routeCoordinates: post.pathResDTO.routeCoordinates.map((coord) => ({
-                                            latitude: parseFloat(coord.latitude),
-                                            longitude: parseFloat(coord.longitude),
-                                        })),
-                                        pins: post.pathResDTO.pins,
-                                    }}
-                                />
+                                <p className="text-sm text-gray-500">
+                                    {post.nickName} • {new Date(post.writeDate).toLocaleDateString()}
+                                </p>
                             </div>
-                        )}
-                        {/* 게시글 내용 영역 */}
-                        <div className="flex-1">
-                            <Link href={`/main/board/${post.postId}`}>
-                                <p className="text-gray-700 dark:text-gray-300 line-clamp-3 hover:text-blue-600 transition-colors">
+                            <div>
+                                <AlertDialog>
+                                    <AlertDialogTrigger asChild>
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            className="text-destructive hover:text-destructive/90"
+                                            onClick={(e) => e.stopPropagation()} // 이벤트 전파 방지
+                                        >
+                                            <Trash2 className="h-5 w-5" />
+                                        </Button>
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent>
+                                        <AlertDialogHeader>
+                                            <AlertDialogTitle>게시글 삭제</AlertDialogTitle>
+                                            <AlertDialogDescription>
+                                                정말로 이 게시글을 삭제하시겠습니까? 삭제된 게시글은 복구할 수 없습니다.
+                                            </AlertDialogDescription>
+                                        </AlertDialogHeader>
+                                        <AlertDialogFooter>
+                                            <AlertDialogCancel onClick={(e) => e.stopPropagation()}>
+                                                취소
+                                            </AlertDialogCancel>
+                                            <AlertDialogAction
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleDelete(post.postId);
+                                                }}
+                                                className="bg-destructive hover:bg-destructive/90"
+                                            >
+                                                삭제
+                                            </AlertDialogAction>
+                                        </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                </AlertDialog>
+                            </div>
+                        </div>
+
+                        <div className="flex">
+                            {/* 지도 영역 */}
+                            {post.pathResDTO && (
+                                <div
+                                    className="w-32 h-32 mr-4"
+                                    onClick={(e) => e.stopPropagation()} // 이벤트 전파 방지
+                                >
+                                    <ViewingMap
+                                        width="w-full"
+                                        height="h-full"
+                                        route={{
+                                            routeCoordinates: post.pathResDTO.routeCoordinates.map((coord) => ({
+                                                latitude: parseFloat(coord.latitude),
+                                                longitude: parseFloat(coord.longitude),
+                                            })),
+                                            pins: post.pathResDTO.pins,
+                                        }}
+                                    />
+                                </div>
+                            )}
+                            {/* 게시글 내용 영역 */}
+                            <div className="flex-1">
+                                <p className="text-gray-700 dark:text-gray-300 line-clamp-3">
                                     {post.content}
                                 </p>
-                            </Link>
 
-                            <div className="flex justify-between items-center mt-4">
-                                <div className="flex items-center gap-4">
-                                    <div className="flex items-center gap-1 text-gray-600 dark:text-gray-400">
-                                        <Heart size={18} className={post.liked ? 'fill-red-500 text-red-500' : ''} />
-                                        <span>{post.likesCount}</span>
+                                <div className="flex justify-between items-center mt-4">
+                                    <div className="flex items-center gap-4">
+                                        <div className="flex items-center gap-1 text-gray-600 dark:text-gray-400">
+                                            <Heart
+                                                size={18}
+                                                className={post.liked ? 'fill-red-500 text-red-500' : ''}
+                                            />
+                                            <span>{post.likesCount}</span>
+                                        </div>
+                                        <div className="flex items-center gap-1 text-gray-600 dark:text-gray-400">
+                                            <MessageCircle size={18} />
+                                            <span>{post.repliesCount}</span>
+                                        </div>
                                     </div>
-                                    <div className="flex items-center gap-1 text-gray-600 dark:text-gray-400">
-                                        <MessageCircle size={18} />
-                                        <span>{post.repliesCount}</span>
-                                    </div>
+                                    {hasMore && (
+                                        <Button
+                                            onClick={(e) => {
+                                                e.stopPropagation(); // 이벤트 전파 방지
+                                                setPage((prev) => prev + 1);
+                                            }}
+                                            disabled={loading}
+                                            className="text-blue-600 hover:text-blue-800"
+                                        >
+                                            더 보기
+                                        </Button>
+                                    )}
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </Card>
+                    </Card>
+                </Link>
             ))}
 
             {posts.length > 0 && !loading && hasMore && (
