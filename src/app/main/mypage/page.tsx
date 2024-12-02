@@ -141,9 +141,9 @@ export default function Page() {
             
             <MypageBtn link='myWishListPost' content='내가 찜한 산책길 글 목록' /> <br/>
 
-            <MypageBtn link='myRoute' content='내가 구독한 유저' /> <br/>
+            <MypageBtn link='mySubscribers' content='내가 구독한 유저목록' /> <br/>
 
-            <MypageBtn link='myRoute' content='나의 포인트'/>
+            <MypageBtn link='point' content='나의 포인트'/>
 
         </div>
     );

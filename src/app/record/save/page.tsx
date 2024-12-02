@@ -6,7 +6,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation';
 import { useRecordStore } from '@/store/useRecordStore';
-import { CreatePostPath, Path, Pin, RouteCoordinate } from '@/types/types';
+import { CreatePostPath } from '@/types/types';
 import { EditingMap } from '@/components/map/EditingMapProps';
 import BackHeader from '@/components/layout/BackHeader';
 import { calculatePathDistance } from '@/util/calculatePathDistance';

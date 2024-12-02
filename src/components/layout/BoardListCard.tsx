@@ -3,11 +3,12 @@
 import { Post } from '@/types/types';
 import { Heart, MessageCircle } from 'lucide-react';
 import { Card } from '../ui/card';
-import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { ViewingMap } from '../map/ViewingMapProps';
 import Link from 'next/link';
 import ProfileDialog from '../user/ProfileDialog';
 import { useState } from 'react';
+import { getPost } from '@/api/post';
+import { useQueryClient } from '@tanstack/react-query';
 
 interface BoardCardProps {
     post: Post;
@@ -31,12 +32,20 @@ function formatDate(dateString: string): string {
 }
 
 export default function BoardCard({ post }: BoardCardProps) {
-
+    const queryClient = useQueryClient();
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [preventNavigation, setPreventNavigation] = useState(false);
 
+    // 마우스 호버 시 데이터 미리 불러오기
+    const prefetchPost = () => {
+        queryClient.prefetchQuery({
+            queryKey: ['post', post.postId],
+            queryFn: () => getPost(post.postId),
+            staleTime: 1000 * 60 * 5 // 5분간 캐시 유지
+        });
+    };
+
     const handleClick = (e: React.MouseEvent) => {
-        // Dialog가 열려있거나 방금 닫혔을 때는 이동을 막습니다
         if (isDialogOpen || preventNavigation) {
             e.preventDefault();
             e.stopPropagation();
@@ -50,11 +59,13 @@ export default function BoardCard({ post }: BoardCardProps) {
     };
 
 
+
     return (
-        <Card className="p-4 hover:shadow-lg transition-shadow">
+        <Card className="p-4 hover:shadow-lg transition-shadow" onMouseEnter={prefetchPost} // 호버 시 prefetch
+        >
             <Link href={`/main/board/${post.postId}`} onClick={handleClick}>
-                <div className="flex items-center gap-3 mb-3">
-                    <ProfileDialog
+                <div className="flex items-start justify-between gap-3 mb-3">
+                    <div className='flex gap-3'><ProfileDialog
                         userId={post.postUserId}
                         onOpenChange={(open) => {
                             setIsDialogOpen(open);
@@ -64,13 +75,16 @@ export default function BoardCard({ post }: BoardCardProps) {
                         }}
                     />
 
-                    <div>
-                        <h3 className="font-semibold">{post.nickName}</h3>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
-                            {formatDate(post.writeDate)}
-                        </p>
-                        <p>{post.readNum}</p>
-                    </div>
+                        <div>
+                            <h3 className="font-semibold">{post.nickName}</h3>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">
+                                {formatDate(post.writeDate)}
+                            </p>
+                        </div></div>
+
+
+                    <p className='text-sm text-gray-500 dark:text-gray-400'>조회수 {post.readNum}</p>
+
                 </div>
 
                 <h2 className="text-xl font-bold mb-2">{post.title}</h2>
