@@ -3,7 +3,7 @@ import axios from "axios";
 //포인트 가져오기관련
 
 const api = axios.create({
-  baseURL: `${process.env.NEXT_PUBLIC_API_URL}/point`,
+  baseURL: `${process.env.NEXT_PUBLIC_API_URL}`,
 });
 
 const getAuthToken = (): string | null => {
