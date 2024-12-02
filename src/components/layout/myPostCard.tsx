@@ -96,7 +96,7 @@ const MyPostList: React.FC = () => {
                     href={`/main/board/${post.postId}`}
                     key={post.postId}
                     passHref
-                    className="block" // Link를 block 요소로 만들어 space-y-4가 제대로 적용되도록 함
+                    className="block" 
                 >
                     <Card className="p-4 hover:shadow-lg transition-shadow cursor-pointer">
                         <div className="flex justify-between items-center mb-3">
@@ -186,7 +186,7 @@ const MyPostList: React.FC = () => {
                                     {hasMore && (
                                         <Button
                                             onClick={(e) => {
-                                                e.stopPropagation(); // 이벤트 전파 방지
+                                                e.stopPropagation(); 
                                                 setPage((prev) => prev + 1);
                                             }}
                                             disabled={loading}
