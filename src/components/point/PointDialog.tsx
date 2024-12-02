@@ -4,14 +4,13 @@ import { getPoint } from '@/api/point';
 import PointProgress from '@/components/point/PointProgress';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
-interface PointPageProps {
-    isOpen?: boolean;
-    onClose?: () => void;
+interface PointDialogProps {
+    isOpen: boolean;
+    onOpenChange: (open: boolean) => void;
 }
 
-export default function PointPage({ isOpen = true, onClose }: PointPageProps) {
+export default function PointDialog({ isOpen, onOpenChange }: PointDialogProps) {
     const [points, setPoints] = useState(0);
-    const [isDialogOpen, setIsDialogOpen] = useState(isOpen);
 
     useEffect(() => {
         const getPoints = async () => {
@@ -23,22 +22,13 @@ export default function PointPage({ isOpen = true, onClose }: PointPageProps) {
             }
         };
         
-        getPoints();
-    }, []);
-
-    useEffect(() => {
-        setIsDialogOpen(isOpen);
+        if (isOpen) {
+            getPoints();
+        }
     }, [isOpen]);
 
-    const handleOpenChange = (open: boolean) => {
-        setIsDialogOpen(open);
-        if (!open && onClose) {
-            onClose();
-        }
-    };
-
     return (
-        <Dialog open={isDialogOpen} onOpenChange={handleOpenChange}>
+        <Dialog open={isOpen} onOpenChange={onOpenChange}>
             <DialogContent className="max-h-[80vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle>내 포인트</DialogTitle>

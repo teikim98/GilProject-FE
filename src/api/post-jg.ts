@@ -21,11 +21,61 @@ api.interceptors.request.use(
     }
 );
 
+export interface UserResDTO {
+    id: number;
+    // 필요한 사용자 정보 필드들
+}
+
+export interface CoordinateResDTO {
+    lat: number;
+    lng: number;
+}
+
+export interface PinResDTO {
+    id: number;
+    lat: number;
+    lng: number;
+    // 핀 관련 추가 필드들
+}
+
+export interface PathResDTO {
+    id: number;
+    user: UserResDTO;
+    content: string;
+    state: number;
+    title: string;
+    time: number;
+    createDate: string;  // LocalDateTime은 문자열로 받습니다
+    distance: number;
+    startLat: number;
+    startLong: number;
+    startAddr: string;
+    routeCoordinates: CoordinateResDTO[];
+    pins: PinResDTO[];
+}
+
 export interface PostResDTO {
     postId: number;
+    postUserId: number;
+    nickName: string;
+    pathId: number;
+    startLat: number;
+    startLong: number;
+    state: number;
     title: string;
     content: string;
-    // 필요한 다른 필드들 추가
+    tag: string;
+    writeDate: string;
+    updateDate: string;
+    readNum: number;
+    likesCount: number;
+    repliesCount: number;
+    postWishListsNum: number;
+    userImgUrl: string;
+    pathResDTO: PathResDTO;
+    imageUrls: string[];
+    isLiked: boolean;
+    isWishListed: boolean;
 }
 
 
@@ -50,3 +100,20 @@ export const getPostDetail = async (id: number): Promise<PostResDTO> => {
     const response = await api.get(`/posts/${id}`);
     return response.data;
 };
+
+// nickname으로 게시글 목록 가져오는 함수 추가
+export const getPostsByNickName2 = async (nickName: string, page: number = 0, size: number = 10) => {
+    try {
+      const response = await api.get('/posts/nickName', {
+        params: {
+          nickName,
+          page,
+          size
+        }
+      });
+      return response.data;  // Page<PostResDTO> 형태로 반환됨
+    } catch (error) {
+      console.error("Error fetching posts by nickname:", error);
+      throw error;
+    }
+  };
