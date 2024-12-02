@@ -34,6 +34,8 @@ api.interceptors.response.use(
   async (error) => {
     //원래 요청
     const originalRequest = error.config;
+    console.log("원래 요청" + originalRequest);
+    console.log(originalRequest);
 
     // 900에러 처리
     if (error.response && error.response.status === 900) {
@@ -57,17 +59,18 @@ api.interceptors.response.use(
         //새로운 토큰을 로컬스토리지에 저장
         if (newAccessToken) {
           localStorage.setItem("access", newAccessToken);
-          console.log("새로운 access 토큰 스토리지에 저장 = " + newAccessToken);
+          console.log("새로운 access 토큰 스토리지에 저장됨!");
 
-          ///////// !!!!맞는지 잘모르겠는 부분
           // 원래 요청 재시도
           originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
+
           return api(originalRequest);
         }
       } catch (reissueError) {
         console.error("Token reissue failed:", reissueError);
 
         localStorage.removeItem("access");
+        localStorage.removeItem("address-popup");
         //쿠키에 있는 refresh 토큰 삭제? -> 안해도됨 어차피 로그인하면 다시 저장됨
         alert("로그인이 만료되었습니다 다시 로그인해주세요");
         window.location.href = "/auth/login";
@@ -171,7 +174,6 @@ export const updateAddress = async (
         },
       }
     );
-
     // 주소 업데이트 후 전체 정보를 다시 가져와서  업데이트
     const updatedUser = await getDetailProfile();
 
@@ -213,6 +215,7 @@ export const logout = async () => {
       }
     );
     localStorage.removeItem("access");
+    localStorage.removeItem("address-popup");
   } catch (error) {
     console.error("로그아웃 실패:", error);
   }
