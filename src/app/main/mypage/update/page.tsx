@@ -1,0 +1,160 @@
+'use client'
+
+import { useEffect, useState } from 'react';
+import { Camera, Loader2, Pencil, Users } from 'lucide-react'
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
+import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
+import BackHeader from '@/components/layout/BackHeader';
+import { getDetailProfile, updateProfileImage } from '@/api/user';
+import { User } from '@/types/types';
+
+export default function Page() {
+    const [profileInfo, setProfileInfo] = useState<User | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        const fetchProfile = async () => {
+            try {
+                const detailData = await getDetailProfile();
+                setProfileInfo(detailData);
+                setError(null);
+            } catch (err) {
+                setError('프로필을 불러오는데 실패했습니다');
+                console.error('프로필 조회 에러:', err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchProfile();
+    }, []);
+
+    if (error) {
+        return (
+            <div className='animate-fade-in flex flex-col pb-20'>
+                <BackHeader content='마이 페이지' />
+                <Card className="w-full border-0 shadow-none min-h-[200px] flex items-center justify-center">
+                    <div className="text-destructive">{error}</div>
+                </Card>
+            </div>
+        );
+    }
+
+    if (loading) {
+        return (
+            <div className='animate-fade-in flex flex-col pb-20'>
+                <BackHeader content='마이 페이지' />
+                <Card className="w-full border-0 shadow-none min-h-[200px] flex items-center justify-center">
+                    <div className="flex flex-col items-center gap-2">
+                        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                        <p className="text-sm text-muted-foreground">프로필 불러오는 중...</p>
+                    </div>
+                </Card>
+            </div>
+        );
+    }
+
+    return (
+        <div className='animate-fade-in flex flex-col pb-20'>
+            <BackHeader content='마이 페이지' />
+            <h2 className='mt-4 mb-4'>프로필</h2>
+            <Card className="w-full border-0 shadow-none">
+                <CardHeader className="px-6 pb-3">
+                    
+                </CardHeader>
+                <CardContent>
+                    <div className=''>
+                            <div className="flex flex-col">
+                                <div className="flex flex-row items-center gap-20">
+                                    <span className="font-bold text-lg">프로필 사진</span>
+                                  <div className="relative">
+                                    {profileInfo?.imageUrl ? (
+                                    <img
+                                        src={profileInfo.imageUrl}
+                                        alt="Profile"
+                                        className="w-12 h-12 rounded-full object-cover"
+                                    />
+                                    ) : (
+                                    <Camera className="w-12 h-12 p-2 bg-muted rounded-full" />
+                                    )}
+                                    <input
+                                        type="file"
+                                        className="absolute inset-0 opacity-0 cursor-pointer"
+                                        onChange={(e) => {
+                                            const file = e.target.files?.[0];
+                                         if (file && profileInfo) {
+                                                updateProfileImage(profileInfo.id, file);
+                                            }
+                                            }}
+                                        accept="image/*"
+                                    />
+                                  </div>
+                                </div>
+                                <Separator className='my-5 border-t-2 border-muted-foreground' />
+                                <div className="flex flex-row items-center justify-between">
+                                    <span className="font-bold text-lg">이름</span>
+                                    <p className="text-lg text-right text-foreground">
+                                        {profileInfo?.name}
+                                    </p>
+                                </div>
+                                <Separator className='my-5 border-t-2 border-muted-foreground' />
+                                <div className="flex flex-row items-center gap-20">
+                                    <span className="font-bold text-lg">닉네임</span>
+                                    <p className="text-lg text-foreground">
+                                        {profileInfo?.nickName}
+                                    </p>
+                                </div>
+                                <Separator className='my-5 border-t-2 border-muted-foreground' />
+                                <div className="flex flex-row items-center gap-20">
+                                    <span className="font-bold text-lg">이메일</span>
+                                    <p className="text-lg text-muted-foreground">
+                                       {profileInfo?.email}
+                                     </p>
+                                </div>
+                                <Separator className='my-5 border-t-2 border-muted-foreground' />
+                                <div className="flex flex-row items-center gap-20">
+                                    <span className="font-bold text-lg">주소</span>
+                                    <p className="text-lg text-muted-foreground">
+                                        {profileInfo?.address || '주소 미설정'}
+                                     </p>
+                                </div>
+                                <Separator className='my-5 border-t-2 border-muted-foreground' />
+                                <div className="flex flex-row items-center gap-20">
+                                    <span className="font-bold text-lg">자기소개</span>
+                                    <p className="text-lg text-muted-foreground">
+                                       {profileInfo?.comment || '자기소개가 없습니다'}
+                                     </p>
+                                </div>
+                                <Separator className='my-5 border-t-2 border-muted-foreground' />
+                                <div className="flex flex-row items-center gap-20">
+                                    <span className="font-bold text-lg">가입일자</span>
+                                    <p className="text-lg text-muted-foreground">
+                                       {profileInfo?.joinDate}
+                                     </p>
+                                </div>
+                                <Separator className='my-5 border-t-2 border-muted-foreground' />
+                                <Button
+                                onClick={() => {/* 비밀번호 변경 컴포넌트 */ }}
+                                className="w-[50%]"
+                                >
+                                    비밀번호 변경
+                                </Button> <br/>
+                                <Button
+                                onClick={() => {/* 수정된 내용 저장하고 마이페이지로 이동 */ }}
+                                className="w-[50%]"
+                                >
+                                    수정하기
+                                </Button>
+                                </div>
+                        </div>
+                </CardContent>
+                <CardFooter className="px-6 pt-0 flex justify-center">
+                    
+                </CardFooter>
+            </Card>
+        
+        </div>
+    );
+}
