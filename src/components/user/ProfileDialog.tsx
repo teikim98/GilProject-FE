@@ -6,6 +6,8 @@ import Profile from "./profile"
 import { useState, useEffect } from "react"
 import { getSimpleProfile, getDetailProfile } from '@/api/user'
 import { jwtDecode } from 'jwt-decode'
+import { subscribeUser, unsubscribeUser } from '@/api/subscribe'
+import { toast } from "@/hooks/use-toast"
 
 interface ProfileDialogProps {
     userId: number;
@@ -35,8 +37,7 @@ export default function ProfileDialog({ userId, className, onOpenChange }: Profi
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [isDetailView, setIsDetailView] = useState(false);
-
-
+    const [isSubscribing, setIsSubscribing] = useState(false);
 
     useEffect(() => {
         const fetchInitialProfile = async () => {
@@ -95,6 +96,46 @@ export default function ProfileDialog({ userId, className, onOpenChange }: Profi
         }
     }, [userId, open]);
 
+    const handleSubscribeToggle = async () => {
+        if (!profileInfo || isSubscribing) return;
+
+        setIsSubscribing(true);
+        try {
+            if (profileInfo.isSubscribed) {
+                await unsubscribeUser(profileInfo.id);
+                toast({
+                    title: "구독 취소",
+                    description: "구독을 취소했습니다",
+                });
+                setProfileInfo(prev => prev ? {
+                    ...prev,
+                    isSubscribed: false,
+                    subscribeByCount: prev.subscribeByCount - 1
+                } : null);
+            } else {
+                await subscribeUser(profileInfo.id);
+                toast({
+                    title: "구독 완료",
+                    description: "구독했습니다",
+                });
+                setProfileInfo(prev => prev ? {
+                    ...prev,
+                    isSubscribed: true,
+                    subscribeByCount: prev.subscribeByCount + 1
+                } : null);
+            }
+        } catch (error) {
+            console.error('구독 상태 변경 실패:', error);
+            toast({
+                variant: "destructive",
+                title: "오류 발생",
+                description: "구독 상태 변경에 실패했습니다",
+            });
+        } finally {
+            setIsSubscribing(false);
+        }
+    };
+
     const handleInteraction = (e: React.MouseEvent | React.TouchEvent) => {
         e.stopPropagation();
         e.preventDefault();
@@ -146,16 +187,10 @@ export default function ProfileDialog({ userId, className, onOpenChange }: Profi
             >
                 <Profile
                     profileInfo={profileInfo}
-                    loading={loading}
+                    loading={loading || isSubscribing}
                     error={error}
                     isDetailView={isDetailView}
-                    onSubscribeToggle={async () => {
-                        if (!profileInfo) return;
-                        setProfileInfo(prev => prev ? {
-                            ...prev,
-                            isSubscribed: !prev.isSubscribed
-                        } : null);
-                    }}
+                    onSubscribeToggle={handleSubscribeToggle}
                     width="w-full"
                 />
             </DialogContent>

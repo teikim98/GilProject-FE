@@ -1,7 +1,7 @@
 import { User, UserSimple } from "@/types/types";
 import axios from "axios";
 import { cookies } from "next/headers";
-import { GetUserPostsResponse} from "@/types/types";
+import { GetUserPostsResponse } from "@/types/types";
 
 //유저(마이페이지) 관련 API///////////////
 
@@ -96,41 +96,6 @@ export const getSimpleProfile = async (userId: number): Promise<UserSimple> => {
 export const getDetailProfile = async (): Promise<User> => {
   try {
     const response = await api.get(`/mypage`);
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-};
-
-// 구독하기
-export const subscribeUser = async (userId: number): Promise<number> => {
-  try {
-    const response = await axios.post(
-      `${process.env.NEXT_PUBLIC_API_URL}/${userId}`,
-      null,
-      {
-        headers: {
-          Authorization: `Bearer ${getAuthToken()}`,
-        },
-      }
-    );
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-};
-
-// 구독 취소하기
-export const unsubscribeUser = async (userId: number): Promise<number> => {
-  try {
-    const response = await axios.delete(
-      `${process.env.NEXT_PUBLIC_API_URL}/subscribe/${userId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${getAuthToken()}`,
-        },
-      }
-    );
     return response.data;
   } catch (error) {
     throw error;
@@ -256,9 +221,12 @@ export const getUserPostWishlist = async (
   size = 10
 ): Promise<GetUserPostsResponse> => {
   try {
-    const response = await api.get<GetUserPostsResponse>("/mypage/postWishlist", {
-      params: { page, size },
-    });
+    const response = await api.get<GetUserPostsResponse>(
+      "/mypage/postWishlist",
+      {
+        params: { page, size },
+      }
+    );
     return response.data;
   } catch (error: any) {
     console.error("getUserPostWishlist 실패:", error);
