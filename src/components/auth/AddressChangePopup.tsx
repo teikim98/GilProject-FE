@@ -27,12 +27,7 @@ const AddressChangePopup = () => {
   const [lon, setLon] = useState(0); // 경도
   const [isChecked, setIsChecked] = useState(false); // 다시보지않기 체크
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [popupData, setPopupData] = useState<PopupData>({
-    title: "",
-    description: "",
-    content: "",
-    onConfirm: () => {},
-  }); 
+  const [popupData, setPopupData] = useState<PopupData>({}); 
 
   useEffect(() => {
     // Kakao 지도 API 초기화
@@ -90,11 +85,22 @@ const AddressChangePopup = () => {
         onConfirm : ()=>{
           localStorage.setItem("address-popup", "0");
           setIsRouteListOpen(false);
+          setIsPopupOpen(false);
         }
       });
       setIsPopupOpen(true);
     } catch (error) {
       console.error("DB 업데이트 실패:", error);
+
+      setPopupData({
+        title : "실패",
+        content : "주소가 저장에 실패하였습니다",
+        onConfirm : ()=>{
+          // setIsRouteListOpen(false);
+          setIsPopupOpen(false);
+        }
+      });
+      setIsPopupOpen(true);
     }
   };
 

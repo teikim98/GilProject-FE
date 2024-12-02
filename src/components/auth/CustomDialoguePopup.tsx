@@ -3,8 +3,15 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { PopupData } from "@/types/types_JHW";
 
 const CustomDialoguePopup = ({ popupData }: { popupData: PopupData }) => {
+  const [isOpen,setIsOpen] = useState(true);
+
+  const handleAction = ()=>{
+    if(popupData.onConfirm) popupData.onConfirm();
+    setIsOpen(false);
+  }
+
   return (
-    <AlertDialog open={popupData.isOpen} onOpenChange={popupData.setIsOpen}>
+    <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>{popupData.title}</AlertDialogTitle>
@@ -13,7 +20,7 @@ const CustomDialoguePopup = ({ popupData }: { popupData: PopupData }) => {
         {popupData.content}
         <AlertDialogFooter>
           {/* <AlertDialogCancel onClick={onCancle}>취소</AlertDialogCancel> */}
-          <AlertDialogAction onClick={popupData.onConfirm}>확인</AlertDialogAction>
+          <AlertDialogAction onClick={handleAction}>확인</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

@@ -31,12 +31,7 @@ const EmailPopup = ({ isPopupOpen, setIsPopupOpen, callback, duplicateCheck }: {
   const [useButtonLock, setUseButtonLock] = useState(true);
   const [certifyConfirmButtonLock, setCertifyConfirmButtonLock] = useState(false);
   const [isCustomPopupOpen, setIsCustomPopupOpen] = useState(false);
-  const [popupData, setPopupData] = useState<PopupData>({
-    title: "",
-    description: "",
-    content: "",
-    onConfirm: () => {},
-  }); 
+  const [popupData, setPopupData] = useState<PopupData>({ }); 
 
   //타이머 제한 시간
   const initialTime = 600;
@@ -153,7 +148,10 @@ const EmailPopup = ({ isPopupOpen, setIsPopupOpen, callback, duplicateCheck }: {
     setPopupData({
       title : "실패",
       description : "인증코드 입력 시간만료",
-      content : "인증을 다시 시도해주세요"
+      content : "인증을 다시 시도해주세요",
+      onConfirm : ()=>{
+        setIsCustomPopupOpen(false);
+      }
     });
     setIsCustomPopupOpen(true);
     reset();

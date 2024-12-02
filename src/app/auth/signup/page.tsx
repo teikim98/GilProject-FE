@@ -41,12 +41,7 @@ const HomePage = () => {
 
   const [isEmailPopupOpen, setIsEmailPopupOpen] = useState(false);
   const [isCompletePopupOpen, setIsCompletePopupOpen] = useState(false);
-  const [popupData, setPopupData] = useState<PopupData>({
-    title: "",
-    description: "",
-    content: "",
-    onConfirm: () => {},
-  });
+  const [popupData, setPopupData] = useState<PopupData>({ });
 
   const handleEmailVerified = (email: string) => {
     if (email !== "") {
@@ -146,15 +141,20 @@ const HomePage = () => {
         setPopupData({
           title: "회원가입 성공!",
           content: "[길따라]에 오신 걸 환영합니다",
-          onConfirm() {
+          onConfirm : () => {
+            setIsCompletePopupOpen(false);
             router.push("http://localhost:3000/auth/login");
           },
         });
         setIsCompletePopupOpen(true);
+        
       } else if (response === 0) {
         setPopupData({
           title : "오류",
-          content : "회원 가입에 실패하셨습니다."
+          content : "회원 가입에 실패하셨습니다.",
+          onConfirm : ()=>{
+            setIsCompletePopupOpen(false);
+          }
         });
         setIsCompletePopupOpen(true);
       }
@@ -163,7 +163,10 @@ const HomePage = () => {
       setPopupData({
         title : "오류",
         description : "회원가입 API 실패",
-        content : "회원 가입에 실패하셨습니다."
+        content : "회원 가입에 실패하셨습니다.",
+        onConfirm : ()=>{
+        setIsCompletePopupOpen(false); 
+        }
       });
       setIsCompletePopupOpen(true);
     }

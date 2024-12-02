@@ -16,7 +16,4 @@ export interface PopupData{
   description?: string;
   content?: string;
   onConfirm?: ()=> void;
-
-  isOpen ?: boolean;
-  setIsOpen ?: React.Dispatch<React.SetStateAction<boolean>>;
 }

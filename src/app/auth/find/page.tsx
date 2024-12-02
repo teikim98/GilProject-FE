@@ -25,15 +25,7 @@ const HomePage = () => {
   const [isEmailPopupOpen, setIsEmailPopupOpen] = useState(false);
   const [findButtonLock, setFindButtonLock] = useState(false);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [popupData, setPopupData] = useState<PopupData>({
-    title: "",
-    description: "",
-    content: "",
-    onConfirm: () => {},
-
-    isOpen : isPopupOpen,
-    setIsOpen : setIsPopupOpen
-  });
+  const [popupData, setPopupData] = useState<PopupData>({});
 
   /**
    * 이름 입력 Input
@@ -75,6 +67,7 @@ const HomePage = () => {
         description : "새 비밀빈호가 이메일로 발급되었습니다.",
         content: "로그인 후 반드시 비밀번호를 변경해주세요",
         onConfirm: () => {
+          setIsPopupOpen(false);
           router.push("/auth/login");
         },
       });
@@ -84,6 +77,7 @@ const HomePage = () => {
         title: "오류",
         content: "입력하신 이름과 이메일에 일치하는 회원이 없습니다",
         onConfirm: () => {
+          setIsPopupOpen(false);
           router.push("/auth/login");
         },
       });
