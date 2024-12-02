@@ -10,3 +10,13 @@ export interface Notice{
   content : string;
   writeDate : string;
 }
+
+export interface PopupData{
+  title?: string;
+  description?: string;
+  content?: string;
+  onConfirm?: ()=> void;
+
+  isOpen ?: boolean;
+  setIsOpen ?: React.Dispatch<React.SetStateAction<boolean>>;
+}

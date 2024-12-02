@@ -2,14 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
@@ -17,18 +10,12 @@ import { emailJoin, emailLogin, existEmail, existNickname } from "@/api/auth";
 import { redirect, useRouter } from "next/navigation";
 import EmailPopup from "../../../components/auth/EmailPopup";
 import { emailSend } from "@/api/mail";
-import {
-  checkLength,
-  checkKor,
-  checkKorOrEngOrNum,
-  checkEmailForm,
-} from "@/util/Regex";
+import { checkLength, checkKor, checkKorOrEngOrNum, checkEmailForm } from "@/util/Regex";
 import ValidateMessage from "@/components/auth/ValidateMessage";
-import EmailVerificationPopup, {
-  EmailCertification,
-} from "@/components/auth/EmailVerification";
+import EmailVerificationPopup, { EmailCertification } from "@/components/auth/EmailVerification";
 import { nameValidation } from "@/util/validation";
-
+import CustomDialoguePopup from "@/components/auth/CustomDialoguePopup";
+import { PopupData } from "@/types/types_JHW";
 
 const HomePage = () => {
   let router = useRouter();
@@ -53,6 +40,13 @@ const HomePage = () => {
   const [emailValidMessage, setEmailValidMessage] = useState("");
 
   const [isEmailPopupOpen, setIsEmailPopupOpen] = useState(false);
+  const [isCompletePopupOpen, setIsCompletePopupOpen] = useState(false);
+  const [popupData, setPopupData] = useState<PopupData>({
+    title: "",
+    description: "",
+    content: "",
+    onConfirm: () => {},
+  });
 
   const handleEmailVerified = (email: string) => {
     if (email !== "") {
@@ -62,7 +56,6 @@ const HomePage = () => {
       setEmailValidMessage(`인증 완료 / ${email} `);
     }
   };
-
 
   const handleEmailPopup = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -150,13 +143,29 @@ const HomePage = () => {
     try {
       const response = await emailJoin({ name, nickName, email, password });
       if (response === 1) {
-        alert("회원가입 성공!");
-        router.push("http://localhost:3000/auth/login");
+        setPopupData({
+          title: "회원가입 성공!",
+          content: "[길따라]에 오신 걸 환영합니다",
+          onConfirm() {
+            router.push("http://localhost:3000/auth/login");
+          },
+        });
+        setIsCompletePopupOpen(true);
       } else if (response === 0) {
-        alert("회원가입 실패");
+        setPopupData({
+          title : "오류",
+          content : "회원 가입에 실패하셨습니다."
+        });
+        setIsCompletePopupOpen(true);
       }
     } catch (error) {
-      console.error("회원가입 API 자체가 실패", error);
+      // console.error("회원가입 API 자체가 실패", error);
+      setPopupData({
+        title : "오류",
+        description : "회원가입 API 실패",
+        content : "회원 가입에 실패하셨습니다."
+      });
+      setIsCompletePopupOpen(true);
     }
   };
 
@@ -203,19 +212,11 @@ const HomePage = () => {
                     e.target.value = e.target.value.replace(/\s/g, ""); // 공백 제거
                   }}
                 />
-                <ValidateMessage
-                  validCondition={isNameValid}
-                  message={nameValidMessage}
-                />
+                <ValidateMessage validCondition={isNameValid} message={nameValidMessage} />
               </div>
               <div className="flex flex-col space-y-1.5">
                 <Label htmlFor="name">닉네임</Label>
-                <Input
-                  name="nickName"
-                  value={nickName}
-                  onChange={(e) => nickNameValidation(e)}
-                  placeholder="닉네임을 입력해주세요"
-                />
+                <Input name="nickName" value={nickName} onChange={(e) => nickNameValidation(e)} placeholder="닉네임을 입력해주세요" />
                 <Button
                   name="nickNameCheckBtn"
                   variant="outline"
@@ -227,10 +228,7 @@ const HomePage = () => {
                 >
                   닉네임 중복 확인
                 </Button>
-                <ValidateMessage
-                  validCondition={isNickNameValid && isNickNameDuplicationValid}
-                  message={nickNameValidMessage}
-                />
+                <ValidateMessage validCondition={isNickNameValid && isNickNameDuplicationValid} message={nickNameValidMessage} />
               </div>
               <div className="flex flex-col space-y-1.5">
                 <Label htmlFor="name">이메일</Label>
@@ -247,60 +245,29 @@ const HomePage = () => {
                 >
                   {!isEmailValid ? "이메일 인증" : "이메일 변경"}
                 </Button>
-                <EmailPopup
-                  isPopupOpen={isEmailPopupOpen}
-                  setIsPopupOpen={setIsEmailPopupOpen}
-                  callback={handleEmailVerified}
-                  duplicateCheck={true}
-                />
+                <EmailPopup isPopupOpen={isEmailPopupOpen} setIsPopupOpen={setIsEmailPopupOpen} callback={handleEmailVerified} duplicateCheck={true} />
                 <ValidateMessage validCondition={isEmailValid} message={emailValidMessage} />
               </div>
 
               <div className="flex flex-col space-y-1.5">
                 <Label htmlFor="name">비밀번호</Label>
-                <Input
-                  name="password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => passwordValidation(e)}
-                  placeholder="비밀번호를 입력해주세요"
-                />
+                <Input name="password" type="password" value={password} onChange={(e) => passwordValidation(e)} placeholder="비밀번호를 입력해주세요" />
               </div>
               <div className="flex flex-col space-y-1.5">
                 <Label htmlFor="name">비밀번호 확인</Label>
-                <Input
-                  type="password"
-                  value={passwordConfirm}
-                  onChange={(e) => passwordConfirmValidation(e)}
-                  placeholder="비밀번호를 다시 입력해주세요"
-                />
-                <ValidateMessage
-                  validCondition={isPasswordValid}
-                  message={passwordValidMessage}
-                />
+                <Input type="password" value={passwordConfirm} onChange={(e) => passwordConfirmValidation(e)} placeholder="비밀번호를 다시 입력해주세요" />
+                <ValidateMessage validCondition={isPasswordValid} message={passwordValidMessage} />
               </div>
             </div>
           </form>
         </CardContent>
         <CardFooter className="flex justify-center flex-col">
-          <Button
-            variant="outline"
-            className="w-full"
-            onClick={handleJoin}
-            disabled={
-              !(
-                isNameValid &&
-                isNickNameValid &&
-                isNickNameDuplicationValid &&
-                isEmailValid &&
-                isPasswordValid
-              )
-            }
-          >
+          <Button variant="outline" className="w-full" onClick={handleJoin} disabled={!(isNameValid && isNickNameValid && isNickNameDuplicationValid && isEmailValid && isPasswordValid)}>
             Sign up
           </Button>
         </CardFooter>
       </Card>
+      {isCompletePopupOpen && <CustomDialoguePopup popupData={popupData} />}
     </div>
   );
 };

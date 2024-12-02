@@ -9,25 +9,36 @@ import { Label } from "@/components/ui/label";
 import { emailLogin } from "@/api/auth";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { PopupData } from '../../../types/types_JHW';
 import { NoticeContainer } from "@/components/notice/NoticeContainer";
+import CustomDialoguePopup from "@/components/auth/CustomDialoguePopup";
 
 const HomePage = () => {
   const router = useRouter();
-  const [open, setOpen] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  
+  const [loginPopupOpen, setLoginPopupOpen] = useState(false);
+  const [popupData, setPopupData] =  useState<PopupData>({
+    title: "",
+    description: "",
+    content: "",
+    onConfirm: () => {},
+  });
+
 
   const handleLogin = async () => {
     try {
       await emailLogin(email, password);
-      alert("로그인 성공!");
       router.push("/main");
-      // 저장된 JWT 확인
-      //const token = localStorage.getItem("access");
-      //console.log("저장된 JWT:", token);
     } catch (error) {
-      //  console.error("로그인 실패", error);
-      alert("로그인 실패");
+      console.error("로그인 실패", error);
+      setPopupData({
+        title : "오류",
+        description :"로그인에 실패하였습니다.",
+        content : "이메일 또는 비밀번호를 다시 한번 확인해주세요."
+      })
+      setLoginPopupOpen(true);
     }
   };
 
@@ -144,6 +155,7 @@ const HomePage = () => {
         </CardFooter>
       </Card>
     </div>
+    {loginPopupOpen &&<CustomDialoguePopup popupData={popupData}/>} 
     </>
   );
 };

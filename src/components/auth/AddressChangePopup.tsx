@@ -12,6 +12,8 @@ import {
 import DaumPostcode from "react-daum-postcode";
 import { Checkbox } from "@/components/ui/checkbox";
 import { updateAddress } from "@/api/user";
+import { PopupData } from "@/types/types_JHW";
+import CustomDialoguePopup from "./CustomDialoguePopup";
 
 /**
  * 주소변경 컴포넌트
@@ -24,6 +26,13 @@ const AddressChangePopup = () => {
   const [lat, setLat] = useState(0); // 위도
   const [lon, setLon] = useState(0); // 경도
   const [isChecked, setIsChecked] = useState(false); // 다시보지않기 체크
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [popupData, setPopupData] = useState<PopupData>({
+    title: "",
+    description: "",
+    content: "",
+    onConfirm: () => {},
+  }); 
 
   useEffect(() => {
     // Kakao 지도 API 초기화
@@ -75,9 +84,15 @@ const AddressChangePopup = () => {
   const handleSave = async () => {
     try {
       await updateAddress(address, lat, lon); // DB 업데이트
-      localStorage.setItem("address-popup", "0");
-      alert("저장되었습니다!");
-      setIsRouteListOpen(false);
+      setPopupData({
+        title : "성공",
+        content : "주소가 저장되었습니다!",
+        onConfirm : ()=>{
+          localStorage.setItem("address-popup", "0");
+          setIsRouteListOpen(false);
+        }
+      });
+      setIsPopupOpen(true);
     } catch (error) {
       console.error("DB 업데이트 실패:", error);
     }
@@ -162,6 +177,7 @@ const AddressChangePopup = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      {isPopupOpen && <CustomDialoguePopup popupData={popupData}/>}
     </>
   );
 };

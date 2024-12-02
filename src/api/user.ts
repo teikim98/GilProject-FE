@@ -73,7 +73,6 @@ api.interceptors.response.use(
         localStorage.removeItem("access");
         localStorage.removeItem("address-popup");
         //쿠키에 있는 refresh 토큰 삭제? -> 안해도됨 어차피 로그인하면 다시 저장됨
-        alert("로그인이 만료되었습니다 다시 로그인해주세요");
         window.location.href = "/auth/login";
       }
     }

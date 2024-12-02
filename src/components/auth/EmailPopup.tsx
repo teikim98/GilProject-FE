@@ -8,6 +8,8 @@ import { checkEmailForm } from "@/util/Regex";
 import { existEmail } from "@/api/auth";
 import { emailSend } from "@/api/mail";
 import Timer from "./Timer";
+import CustomDialoguePopup from "./CustomDialoguePopup";
+import { PopupData } from "@/types/types_JHW";
 
 /**
  * 이메일 인증 컴포넌트
@@ -28,6 +30,13 @@ const EmailPopup = ({ isPopupOpen, setIsPopupOpen, callback, duplicateCheck }: {
   const [codeValidateMessage, setCodeValidateMessage] = useState("");
   const [useButtonLock, setUseButtonLock] = useState(true);
   const [certifyConfirmButtonLock, setCertifyConfirmButtonLock] = useState(false);
+  const [isCustomPopupOpen, setIsCustomPopupOpen] = useState(false);
+  const [popupData, setPopupData] = useState<PopupData>({
+    title: "",
+    description: "",
+    content: "",
+    onConfirm: () => {},
+  }); 
 
   //타이머 제한 시간
   const initialTime = 600;
@@ -141,7 +150,12 @@ const EmailPopup = ({ isPopupOpen, setIsPopupOpen, callback, duplicateCheck }: {
    * 인증 제한시간 타이머
    */
   const handleTimer = () => {
-    alert("코드입력 시간만료");
+    setPopupData({
+      title : "실패",
+      description : "인증코드 입력 시간만료",
+      content : "인증을 다시 시도해주세요"
+    });
+    setIsCustomPopupOpen(true);
     reset();
   };
 
@@ -247,6 +261,7 @@ const EmailPopup = ({ isPopupOpen, setIsPopupOpen, callback, duplicateCheck }: {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+      {isCustomPopupOpen && <CustomDialoguePopup popupData={popupData}/>}
     </>
   );
 };

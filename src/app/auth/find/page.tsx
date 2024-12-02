@@ -11,6 +11,8 @@ import EmailPopup from "@/components/auth/EmailPopup";
 import { passWordEmail } from "@/api/mail";
 import { useRouter } from "next/navigation";
 import { nameValidation } from "@/util/validation";
+import { PopupData } from "@/types/types_JHW";
+import CustomDialoguePopup from "@/components/auth/CustomDialoguePopup";
 
 const HomePage = () => {
   let router = useRouter();
@@ -22,7 +24,16 @@ const HomePage = () => {
   const [emailValidMessage, setEmailValidMessage] = useState("");
   const [isEmailPopupOpen, setIsEmailPopupOpen] = useState(false);
   const [findButtonLock, setFindButtonLock] = useState(false);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [popupData, setPopupData] = useState<PopupData>({
+    title: "",
+    description: "",
+    content: "",
+    onConfirm: () => {},
 
+    isOpen : isPopupOpen,
+    setIsOpen : setIsPopupOpen
+  });
 
   /**
    * 이름 입력 Input
@@ -43,7 +54,7 @@ const HomePage = () => {
   const handleCertifyEmail = (e: React.MouseEvent) => {
     e.preventDefault();
     setIsEmailPopupOpen(true);
-  }
+  };
 
   /**
    * 찾기 Button
@@ -59,12 +70,25 @@ const HomePage = () => {
 
     // console.log(result);
     if (result === 1) {
-      alert("새 비밀번호가 발급되었습니다. 이메일을 확인해주세요");
+      setPopupData({
+        title: "성공",
+        description : "새 비밀빈호가 이메일로 발급되었습니다.",
+        content: "로그인 후 반드시 비밀번호를 변경해주세요",
+        onConfirm: () => {
+          router.push("/auth/login");
+        },
+      });
+      setIsPopupOpen(true);
+    } else {
+      setPopupData({
+        title: "오류",
+        content: "입력하신 이름과 이메일에 일치하는 회원이 없습니다",
+        onConfirm: () => {
+          router.push("/auth/login");
+        },
+      });
+      setIsPopupOpen(true);
     }
-    else {
-      alert("입력하신 이름과 이메일에 일치하는 회원이 없습니다");
-    }
-    router.push("/auth/login");
   };
 
   /**
@@ -135,6 +159,7 @@ const HomePage = () => {
           </Button>
         </CardFooter>
       </Card>
+      {isPopupOpen && <CustomDialoguePopup popupData={popupData} />}
     </div>
   );
 };
