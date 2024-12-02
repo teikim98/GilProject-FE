@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-export const preventRefreshAndBack = () => {
+export const PreventRefreshAndBack = () => {
   // let router = useRouter();
   const [allowNavigation, setAllowNavigation] = useState(false);
 
