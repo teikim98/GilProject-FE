@@ -139,10 +139,11 @@ export default function Profile({
                 ) : (
                     <>
                         <Button
-                            variant={profileInfo.isSubscribed ? "outline" : "default"}
+                            variant={profileInfo.isSubscribed ? "secondary" : "default"}
                             onClick={onSubscribeToggle}
                             disabled={loading}
-                            className="flex-1 flex items-center justify-center gap-2"
+                            className={`flex-1 flex items-center justify-center gap-2 ${profileInfo.isSubscribed ? 'bg-blue-500 text-white hover:bg-blue-600' : ''
+                                }`}
                         >
                             <Users className="w-4 h-4" />
                             {profileInfo.isSubscribed ? '구독중' : '구독하기'}

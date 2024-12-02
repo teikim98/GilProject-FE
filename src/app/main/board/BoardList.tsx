@@ -57,10 +57,11 @@ export default function BoardList() {
 
     // 검색어 변경 시 처리
     useEffect(() => {
-        if (query) {
+        if (query && selectedLocation !== '검색결과') {
             useLocationStore.getState().setSelectedLocation('검색결과');
         }
-    }, [query]);
+    }, [query, selectedLocation]);
+
 
     // 컴포넌트 언마운트 시 검색어 초기화
     useEffect(() => {

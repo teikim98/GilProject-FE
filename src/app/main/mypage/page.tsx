@@ -135,15 +135,15 @@ export default function Page() {
                 </CardFooter>
             </Card>
             <Separator className='my-4' />
-            <MypageBtn link='myRoute' content='나의 경로 기록' /> <br/>
+            <MypageBtn link='myRoute' content='나의 경로 기록' /> <br />
 
-            <MypageBtn link='myPost' content='내가 작성한 산책길 글 목록' /> <br/>
-            
-            <MypageBtn link='myWishListPost' content='내가 찜한 산책길 글 목록' /> <br/>
+            <MypageBtn link='myPost' content='내가 작성한 산책길 글 목록' /> <br />
 
-            <MypageBtn link='mySubscribers' content='내가 구독한 유저목록' /> <br/>
+            <MypageBtn link='myWishListPost' content='내가 찜한 산책길 글 목록' /> <br />
 
-            <MypageBtn link='point' content='나의 포인트'/>
+            <MypageBtn link='mySubscribers' content='내가 구독한 유저목록' /> <br />
+
+            <MypageBtn link='point' content='나의 포인트' />
 
         </div>
     );

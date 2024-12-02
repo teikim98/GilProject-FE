@@ -32,15 +32,9 @@ export function useBoardListQuery(
   query: string,
   userLocation: { lat: number; lng: number } | null
 ) {
-  return useInfiniteQuery<
-    PostResponse,
-    Error,
-    InfiniteData<PostResponse>,
-    PostQueryKey,
-    number
-  >({
-    queryKey: ["posts", selectedLocation, query, userLocation],
-    queryFn: async ({ pageParam }) => {
+  return useInfiniteQuery({
+    queryKey: ["posts", selectedLocation, query, userLocation] as const,
+    queryFn: async ({ pageParam = 0 }) => {
       if (selectedLocation === "검색결과") {
         return getPostsByKeyword(query, pageParam, 10);
       } else if (selectedLocation === "내 현재위치" && userLocation) {
@@ -49,9 +43,7 @@ export function useBoardListQuery(
       return getPosts(pageParam, 10);
     },
     getNextPageParam: (lastPage, allPages) => {
-      return lastPage.totalElements > allPages.length * 10
-        ? allPages.length
-        : undefined;
+      return lastPage.content.length === 10 ? allPages.length : undefined;
     },
     enabled: selectedLocation !== "내 현재위치" || userLocation !== null,
     initialPageParam: 0,
