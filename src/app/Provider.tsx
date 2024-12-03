@@ -14,6 +14,7 @@ export default function Provider({
         defaultOptions: {
             queries: {
                 staleTime: 60 * 1000,
+                gcTime: 1000 * 60 * 60,//데이터가 캐시되는 시간
                 refetchOnWindowFocus: false,
                 retry: 3,
                 retryOnMount: true,

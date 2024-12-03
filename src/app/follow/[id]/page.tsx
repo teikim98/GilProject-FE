@@ -141,7 +141,6 @@ export default function FollowPage({ params }: PostPageProps) {
                     width="w-full"
                     height="h-[60vh]"
                 />
-
                 <div className='grid grid-cols-2 gap-4'>
                     <div className='p-4 rounded-lg'>
                         <h3 className='text-sm'>현재 속도</h3>

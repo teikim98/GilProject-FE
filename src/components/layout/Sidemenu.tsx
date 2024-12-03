@@ -16,6 +16,8 @@ import { logout } from "@/api/user";
 import { useRouter } from 'next/navigation';
 import { useNotificationStore } from "@/store/useNotificationStore";
 import { Button } from "../ui/button";
+import SideProfile from "../user/SidemenuProfile";
+import { useDetailProfile } from "@/hooks/queries/useUserQuery";
 
 
 const navigationItems = [
@@ -30,6 +32,7 @@ export default function Sidemenu() {
     const router = useRouter();
     const notifications = useNotificationStore((state) => state.notifications);
     const unreadCount = notifications.length;
+    const { data: profileInfo, isLoading, error } = useDetailProfile();
 
 
     const handleLogout = () => {
@@ -64,6 +67,18 @@ export default function Sidemenu() {
                     <SheetHeader>
                         <SheetTitle className="text-left">메뉴</SheetTitle>
                     </SheetHeader>
+                    <SideProfile
+                        profileInfo={profileInfo ? {
+                            nickName: profileInfo.nickName,
+                            imageUrl: profileInfo.imageUrl,
+                            postCount: profileInfo.postCount,
+                            pathCount: profileInfo.pathCount,
+                            subscribeByCount: profileInfo.subscribeByCount,
+                        } : null}
+                        loading={isLoading}
+                        error={error?.message ?? null}
+                    />
+
                     <nav className="mt-8">
                         <ul className="space-y-4">
                             {navigationItems.map((item) => (
