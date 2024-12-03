@@ -42,14 +42,15 @@ export function useBoardListQuery(
         return getPostsByTag(tag, pageParam, 10);
       }
       if (selectedLocation === "검색결과") {
-        return getPostsByKeyword(query, pageParam, 10);
+        return getPostsByKeyword(query, pageParam, 3);
       } else if (selectedLocation === "내 현재위치" && userLocation) {
         return getPostNear(userLocation.lat, userLocation.lng, pageParam, 10);
       }
       return getPosts(pageParam, 10);
     },
-    getNextPageParam: (lastPage, allPages) => {
-      return lastPage.content.length === 10 ? allPages.length : undefined;
+    getNextPageParam: (lastPage, allPages, lastPageParam) => {
+      const pageSize = selectedLocation === "검색결과" ? 3 : 10;
+      return lastPage.content.length === pageSize ? allPages.length : undefined;
     },
     enabled: selectedLocation !== "내 현재위치" || userLocation !== null,
     initialPageParam: 0,
