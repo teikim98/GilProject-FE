@@ -83,7 +83,7 @@ const BackButton = ({
                 variant="ghost"
                 size="icon"
                 onClick={handleBack}
-                className={`w-fit p-2 group flex items-center gap-1 hover:gap-2 transition-all hover:bg-purple-100 dark:hover:bg-purple-900/40 ${className}`}
+                className={`w-fit p-2 group flex items-center gap-1 hover:gap-2 transition-all hover:bg-purple-100 dark:hover:bg-purple-600/40 ${className}`}
                 {...props}
             >
                 <ArrowLeft
