@@ -79,7 +79,7 @@ const responseInterceptor = (api : axios.AxiosInstance) =>{
           // console.log("refersh 토큰도 만료됨, 로그아웃...");
           localStorage.removeItem("access");
           localStorage.removeItem("address-popup");
-          alert("refersh 토큰도 만료됨, 로그아웃...");
+          alert("로그인 정보가 만료되었습니다. 다시 로그인 해주세요");
           //쿠키에 있는 refresh 토큰 삭제? -> 안해도됨 어차피 로그인하면 다시 저장됨
           window.location.href = "/auth/login";
         }

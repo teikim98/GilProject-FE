@@ -19,10 +19,10 @@ export default function Page() {
 
   useEffect(() => {
     /**
-     * 소셜로그인할때 access, refresh 토큰 저장
+     * access, refresh 토큰 저장
      */
     const fetchData = async () => {
-      console.log("소셜로그인 access 토큰 생성 로직");
+      console.log("access토큰이 localStorage에 없습니다 access 토큰을 생성을 시도합니다");
       try {
         const response = await verifiRefreshToken();
         const accessToken = response.headers["oauth2access"].split("Bearer ")[1];
@@ -30,6 +30,7 @@ export default function Page() {
         localStorage.setItem("access", accessToken);
       } catch (error) {
         console.error("Error fetching data:", error);
+        console.log("access 토큰의 재발급을 실패했습니다");
       }
     };
 

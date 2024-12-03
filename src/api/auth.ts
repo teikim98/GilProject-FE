@@ -96,6 +96,10 @@ export const existEmail = async (email: string) => {
   return response.data;
 };
 
+/**
+ * refresh 토큰 검증
+ * @returns 
+ */
 export const verifiRefreshToken = async () => {
   const response = await api.post("/verification");
 
