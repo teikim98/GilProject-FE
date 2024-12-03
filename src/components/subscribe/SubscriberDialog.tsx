@@ -14,19 +14,6 @@ import {
     DialogFooter 
 } from '@/components/ui/dialog';
 import { UserSimpleResDTO, getMySubscribes, unsubscribeUser } from '@/api/subscribe';
-import { Camera } from 'lucide-react';
-
-interface ProfileInfo {
-    id: number;
-    nickName: string;
-    imageUrl: string;
-    comment: string | null;
-    address: string | null;
-    postCount: number;
-    pathCount: number;
-    subscribeByCount: number,
-    isSubscribed?: boolean;
-}
 
 interface SubscriberDialogProps {
     isOpen: boolean;
