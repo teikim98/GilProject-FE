@@ -10,6 +10,7 @@ import { getDetailProfile, updateProfileImage } from '@/api/user';
 import { User } from '@/types/types';
 import { Input } from '@/components/ui/input';
 import { useRouter } from 'next/navigation';
+import ValidateMessage from '@/components/auth/ValidateMessage';
 
 export default function Page() {
     const [profileInfo, setProfileInfo] = useState<User | null>(null);
@@ -77,6 +78,7 @@ export default function Page() {
                 <CardContent>
                     <div className=''>
                             <div className="flex flex-col">
+                                <Separator className='my-5 border-t-2 border-muted-foreground' />
                                 <div className="flex flex-row items-center gap-10">
                                     <span className="font-bold text-lg">프로필 이미지</span>
                                   <div className="relative">
@@ -124,6 +126,7 @@ export default function Page() {
                                         className="w-[20%]"
                                     >중복 체크</Button>
                                 </div>
+                                <ValidateMessage validCondition={true} message={"asdas"} />
                                 <Separator className='my-5 border-t-2 border-muted-foreground' />
                                 <div className="flex flex-row items-center gap-10">
                                     <span className="font-bold text-lg">이메일</span>
@@ -151,8 +154,9 @@ export default function Page() {
                                     <span className="font-bold text-lg">자기소개</span>
                                     <Input className='w-[50%] text-lg'
                                         name="comment"
-                                        value={profileInfo?.comment || '자기소개가 없습니다.'}
+                                        value={profileInfo?.comment || ""}
                                         onChange={(e) => setProfileInfo(prev => ({ ...prev, comment: e.target.value }))}
+                                        placeholder='자기소개가 없습니다'
                                     />
                                 </div>
                                 <Separator className='my-5 border-t-2 border-muted-foreground' />
