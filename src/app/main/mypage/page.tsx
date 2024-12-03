@@ -9,11 +9,13 @@ import MypageBtn from '@/components/layout/MypageBtn';
 import BackHeader from '@/components/layout/BackHeader';
 import { getDetailProfile, updateProfileImage } from '@/api/user';
 import { User } from '@/types/types';
+import { useRouter } from 'next/navigation';
 
 export default function Page() {
     const [profileInfo, setProfileInfo] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const router = useRouter();
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -56,6 +58,11 @@ export default function Page() {
             </div>
         );
     }
+
+    const updateUserInfo = ()=>{
+        router.push("/main/mypage/update");
+    }
+
 
     return (
         <div className='animate-fade-in flex flex-col pb-20'>
@@ -127,7 +134,7 @@ export default function Page() {
                 </CardContent>
                 <CardFooter className="px-6 pt-0 flex justify-center">
                     <Button
-                        onClick={() => {/* 정보 수정 페이지로 이동 */ }}
+                        onClick={updateUserInfo}
                         className="w-[50%]"
                     >
                         정보 수정하기

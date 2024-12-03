@@ -8,11 +8,14 @@ import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import BackHeader from '@/components/layout/BackHeader';
 import { getDetailProfile, updateProfileImage } from '@/api/user';
 import { User } from '@/types/types';
+import { Input } from '@/components/ui/input';
+import { useRouter } from 'next/navigation';
 
 export default function Page() {
     const [profileInfo, setProfileInfo] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const router = useRouter();
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -56,19 +59,26 @@ export default function Page() {
         );
     }
 
+    const updateUserSave = ()=>{
+        router.push('/main/mypage');
+    }
+
+    const updateUserAddress = ()=>{
+        router.push('/main/mypage/update/password')
+    }
+
     return (
         <div className='animate-fade-in flex flex-col pb-20'>
             <BackHeader content='마이 페이지' />
-            <h2 className='mt-4 mb-4'>프로필</h2>
+            <h2 className='mt-4 mb-4'>내 정보 수정</h2>
             <Card className="w-full border-0 shadow-none">
                 <CardHeader className="px-6 pb-3">
-                    
                 </CardHeader>
                 <CardContent>
                     <div className=''>
                             <div className="flex flex-col">
-                                <div className="flex flex-row items-center gap-20">
-                                    <span className="font-bold text-lg">프로필 사진</span>
+                                <div className="flex flex-row items-center gap-10">
+                                    <span className="font-bold text-lg">프로필 이미지</span>
                                   <div className="relative">
                                     {profileInfo?.imageUrl ? (
                                     <img
@@ -93,61 +103,88 @@ export default function Page() {
                                   </div>
                                 </div>
                                 <Separator className='my-5 border-t-2 border-muted-foreground' />
-                                <div className="flex flex-row items-center justify-between">
+                                <div className="flex flex-row items-center gap-10">
                                     <span className="font-bold text-lg">이름</span>
-                                    <p className="text-lg text-right text-foreground">
-                                        {profileInfo?.name}
-                                    </p>
+                                    <Input className='w-[50%] text-lg bg-gray-100 border-muted'
+                                        name="name"
+                                        value={profileInfo?.name}
+                                        readOnly
+                                    />
                                 </div>
                                 <Separator className='my-5 border-t-2 border-muted-foreground' />
-                                <div className="flex flex-row items-center gap-20">
+                                <div className="flex flex-row items-center gap-10">
                                     <span className="font-bold text-lg">닉네임</span>
-                                    <p className="text-lg text-foreground">
-                                        {profileInfo?.nickName}
-                                    </p>
+                                    <Input className='w-[50%] text-lg'
+                                        name="nickName"
+                                        value={profileInfo?.nickName}
+                                        onChange={(e) => setProfileInfo(prev => ({ ...prev, nickName: e.target.value }))}
+                                    />
+                                    <Button
+                                        onClick={() => {/* 닉네임 중복 체크*/ }}
+                                        className="w-[20%]"
+                                    >중복 체크</Button>
                                 </div>
                                 <Separator className='my-5 border-t-2 border-muted-foreground' />
-                                <div className="flex flex-row items-center gap-20">
+                                <div className="flex flex-row items-center gap-10">
                                     <span className="font-bold text-lg">이메일</span>
-                                    <p className="text-lg text-muted-foreground">
-                                       {profileInfo?.email}
-                                     </p>
+                                    <Input className='w-[50%] text-lg bg-gray-100 border-muted'
+                                        name="email"
+                                        value={profileInfo?.email}
+                                        readOnly
+                                    />
                                 </div>
                                 <Separator className='my-5 border-t-2 border-muted-foreground' />
-                                <div className="flex flex-row items-center gap-20">
+                                <div className="flex flex-row items-center gap-10">
                                     <span className="font-bold text-lg">주소</span>
-                                    <p className="text-lg text-muted-foreground">
-                                        {profileInfo?.address || '주소 미설정'}
-                                     </p>
+                                    <Input className='w-[50%] text-lg'
+                                        name="address"
+                                        value={profileInfo?.address || '주소 미설정'}
+                                        readOnly
+                                    />
+                                    <Button
+                                        onClick={()=>{/*주소 변경 컴포넌트*/}}
+                                        className="w-[20%]"
+                                    >주소 변경</Button>
                                 </div>
                                 <Separator className='my-5 border-t-2 border-muted-foreground' />
-                                <div className="flex flex-row items-center gap-20">
+                                <div className="flex flex-row items-center gap-10">
                                     <span className="font-bold text-lg">자기소개</span>
-                                    <p className="text-lg text-muted-foreground">
-                                       {profileInfo?.comment || '자기소개가 없습니다'}
-                                     </p>
+                                    <Input className='w-[50%] text-lg'
+                                        name="comment"
+                                        value={profileInfo?.comment || '자기소개가 없습니다.'}
+                                        onChange={(e) => setProfileInfo(prev => ({ ...prev, comment: e.target.value }))}
+                                    />
                                 </div>
                                 <Separator className='my-5 border-t-2 border-muted-foreground' />
-                                <div className="flex flex-row items-center gap-20">
+                                <div className="flex flex-row items-center gap-10">
                                     <span className="font-bold text-lg">가입일자</span>
-                                    <p className="text-lg text-muted-foreground">
-                                       {profileInfo?.joinDate}
-                                     </p>
+                                    <Input className='w-[50%] text-lg bg-gray-100 border-muted'
+                                        name="comment"
+                                        value={profileInfo?.joinDate.split("T")[0]}
+                                        readOnly
+                                    />
                                 </div>
                                 <Separator className='my-5 border-t-2 border-muted-foreground' />
-                                <Button
-                                onClick={() => {/* 비밀번호 변경 컴포넌트 */ }}
-                                className="w-[50%]"
-                                >
+                                <div className="flex flex-row items-center gap-10">
+                                    <span className="font-bold text-lg">비밀번호</span>
+                                    <Button
+                                        onClick={updateUserAddress}
+                                        className="w-[30%] bg-red-600 text-white hover:bg-red-700"
+                                    >
                                     비밀번호 변경
-                                </Button> <br/>
-                                <Button
-                                onClick={() => {/* 수정된 내용 저장하고 마이페이지로 이동 */ }}
-                                className="w-[50%]"
-                                >
-                                    수정하기
-                                </Button>
+                                    </Button>
                                 </div>
+                                <Separator className='my-5 border-t-2 border-muted-foreground' />
+                                <div className="flex flex-col items-center justify-center space-y-4">
+                                   
+                                    <Button
+                                        onClick={updateUserSave}
+                                        className="w-[40%]"
+                                    >
+                                    수정하기
+                                    </Button>
+                                </div>
+                            </div>
                         </div>
                 </CardContent>
                 <CardFooter className="px-6 pt-0 flex justify-center">
