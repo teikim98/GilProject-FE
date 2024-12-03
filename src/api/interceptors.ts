@@ -66,15 +66,12 @@ const responseInterceptor = (api : axios.AxiosInstance) =>{
   
           const newAccessToken =
             reissueResponse.headers["newaccess"].split("Bearer ")[1];
-  
-          //로컬스토리지에 저장
           if (newAccessToken) {
             localStorage.setItem("access", newAccessToken);
             console.log("새로운 access 토큰 스토리지에 저장됨!");
   
             // 원래 요청 재시도(헤더)
             originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
-  
             return api(originalRequest);
           }
         } catch (reissueError) {
