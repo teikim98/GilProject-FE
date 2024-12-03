@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -14,6 +14,7 @@ import { NoticeContainer } from "@/components/notice/NoticeContainer";
 import CustomDialoguePopup from "@/components/auth/CustomDialoguePopup";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
+import { tokenClean } from "@/util/tokenCleaner";
 
 const HomePage = () => {
   const router = useRouter();
@@ -40,6 +41,10 @@ const HomePage = () => {
       setLoginPopupOpen(true);
     }
   };
+
+  useEffect(()=>{
+    tokenClean();
+  },[]);
 
   return (
     <>
