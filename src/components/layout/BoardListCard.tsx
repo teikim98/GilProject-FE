@@ -9,6 +9,9 @@ import ProfileDialog from '../user/ProfileDialog';
 import { useState } from 'react';
 import { getPost } from '@/api/post';
 import { useQueryClient } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
+import { useLocationStore } from '@/store/useLocationStore';
+import { useSearchStore } from '@/store/useSearchStore';
 
 interface BoardCardProps {
     post: Post;
@@ -32,9 +35,12 @@ function formatDate(dateString: string): string {
 }
 
 export default function BoardCard({ post }: BoardCardProps) {
+    const router = useRouter();
     const queryClient = useQueryClient();
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [preventNavigation, setPreventNavigation] = useState(false);
+    const setSelectedLocation = useLocationStore(state => state.setSelectedLocation);
+    const setQuery = useSearchStore(state => state.setQuery);
 
     // 마우스 호버 시 데이터 미리 불러오기
     const prefetchPost = () => {
@@ -58,33 +64,38 @@ export default function BoardCard({ post }: BoardCardProps) {
         }
     };
 
-
+    const handleTagClick = (e: React.MouseEvent, tag: string) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setSelectedLocation('검색결과');
+        setQuery('');
+        router.push(`/main/board?tag=${encodeURIComponent(tag)}`);
+    };
 
     return (
-        <Card className="p-4 hover:shadow-lg transition-shadow" onMouseEnter={prefetchPost} // 호버 시 prefetch
-        >
+        <Card className="p-4 hover:shadow-lg transition-shadow" onMouseEnter={prefetchPost}>
             <Link href={`/main/board/${post.postId}`} onClick={handleClick}>
                 <div className="flex items-start justify-between gap-3 mb-3">
-                    <div className='flex gap-3'><ProfileDialog
-                        userId={post.postUserId}
-                        onOpenChange={(open) => {
-                            setIsDialogOpen(open);
-                            if (!open) {
-                                setPreventNavigation(true);
-                            }
-                        }}
-                    />
+                    <div className='flex gap-3'>
+                        <ProfileDialog
+                            userId={post.postUserId}
+                            onOpenChange={(open) => {
+                                setIsDialogOpen(open);
+                                if (!open) {
+                                    setPreventNavigation(true);
+                                }
+                            }}
+                        />
 
                         <div>
                             <h3 className="font-semibold">{post.nickName}</h3>
                             <p className="text-sm text-gray-500 dark:text-gray-400">
                                 {formatDate(post.writeDate)}
                             </p>
-                        </div></div>
-
+                        </div>
+                    </div>
 
                     <p className='text-sm text-gray-500 dark:text-gray-400'>조회수 {post.readNum}</p>
-
                 </div>
 
                 <h2 className="text-xl font-bold mb-2">{post.title}</h2>
@@ -93,8 +104,8 @@ export default function BoardCard({ post }: BoardCardProps) {
                     <div className="h-48 mb-3">
                         <ViewingMap
                             route={{
-                                routeCoordinates: post.pathResDTO.routeCoordinates,  // path -> routeCoordinates
-                                pins: post.pathResDTO.pins  // markers -> pins
+                                routeCoordinates: post.pathResDTO.routeCoordinates,
+                                pins: post.pathResDTO.pins
                             }}
                             width="w-full"
                             height="h-full"
@@ -118,9 +129,12 @@ export default function BoardCard({ post }: BoardCardProps) {
                         <div className="flex gap-3 text-sm text-gray-500 dark:text-gray-400">
                             <span>{post.pathResDTO.distance}km</span>
                             <span>{post.pathResDTO.time}분</span>
-                            <span className="text-xs bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">
+                            <button
+                                onClick={(e) => handleTagClick(e, post.tag)}
+                                className="text-xs bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                            >
                                 {post.tag}
-                            </span>
+                            </button>
                         </div>
                     )}
                 </div>

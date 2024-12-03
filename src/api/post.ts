@@ -67,6 +67,17 @@ export const getPostsByKeyword = async (
   return response.data;
 };
 
+export const getPostsByTag = async (
+  tag: string,
+  page = 0,
+  size = 10
+): Promise<{ content: Post[]; totalElements: number }> => {
+  const response = await api.get("/tag", {
+    params: { tag, page, size },
+  });
+  return response.data;
+};
+
 export const createPost = async (formData: FormData) => {
   try {
     const token = localStorage.getItem("access");

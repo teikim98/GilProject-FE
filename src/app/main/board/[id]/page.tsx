@@ -32,6 +32,8 @@ import {
 } from "@/components/ui/alert-dialog"
 import ProfileDialog from '@/components/user/ProfileDialog';
 import { jwtDecode } from "jwt-decode";
+import { useLocationStore } from '@/store/useLocationStore';
+
 
 interface PostPageProps {
     params: {
@@ -50,6 +52,7 @@ export default function PostPage({ params }: PostPageProps) {
     const [current, setCurrent] = useState(0)
     const [count, setCount] = useState(0)
     const [userId, setUserId] = useState<number | null>(null);
+    const setSelectedLocation = useLocationStore(state => state.setSelectedLocation);
 
     const {
         data: post,
@@ -58,8 +61,6 @@ export default function PostPage({ params }: PostPageProps) {
     } = usePostDetailQuery(postId);
 
     const { like, wishlist, remove } = usePostMutations(postId);
-
-
 
     useEffect(() => {
         const token = localStorage.getItem("access");
@@ -82,6 +83,12 @@ export default function PostPage({ params }: PostPageProps) {
             setCount(1 + (post.imageUrls?.length || 0));
         }
     }, [post]);
+
+    const handleTagClick = (tag: string) => {
+        setSelectedLocation('검색결과');
+
+        router.push(`/main/board?tag=${encodeURIComponent(tag)}`);
+    };
 
     const handleLikeToggle = async () => {
         try {
@@ -241,9 +248,12 @@ export default function PostPage({ params }: PostPageProps) {
 
             <Card className="p-4 mb-4">
                 <div className="space-y-2">
-                    <div className="inline-block px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm">
+                    <button
+                        onClick={() => handleTagClick(post.tag)}
+                        className="inline-block px-2 py-1 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 rounded text-sm transition-colors"
+                    >
                         {post.tag}
-                    </div>
+                    </button>
                     <p className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
                         {post.content}
                     </p>
