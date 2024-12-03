@@ -7,7 +7,6 @@ import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import MypageBtn from '@/components/layout/MypageBtn';
 import BackHeader from '@/components/layout/BackHeader';
 import { getDetailProfile, updateProfileImage } from '@/api/user';
-import { User } from '@/types/types';
 import { getPoint } from '@/api/point';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
