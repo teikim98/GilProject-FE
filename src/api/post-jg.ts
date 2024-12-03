@@ -27,15 +27,24 @@ export interface UserResDTO {
 }
 
 export interface CoordinateResDTO {
-    lat: number;
-    lng: number;
+    latitude: string;
+    longitude: string;
 }
 
 export interface PinResDTO {
     id: number;
-    lat: number;
-    lng: number;
-    // 핀 관련 추가 필드들
+    imageUrl: string; // 핀의 이미지 URL
+    content: string;  // 핀의 내용
+    latitude: number; // 위도
+    longitude: number; // 경도
+}
+
+export interface Pin {
+    id: number;
+    imageUrl: string;
+    content: string;
+    latitude: string;
+    longitude: string;
 }
 
 export interface PathResDTO {
