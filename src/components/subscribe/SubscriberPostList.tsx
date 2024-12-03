@@ -1,154 +1,150 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { PostResDTO, getPostsByNickName2 } from '@/api/post-jg';
-import { Heart, MessageCircle, ChevronDown, ChevronUp } from 'lucide-react';
-import { Card } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
+import { Heart, MessageCircle } from 'lucide-react';
 import Link from 'next/link';
 import { ViewingMap } from '../map/ViewingMapProps';
-import { Button } from '@/components/ui/button';
-
-
+import { Card } from '@/components/ui/card';
+import ProfileDialog from '@/components/user/ProfileDialog';
+import { UserSimpleResDTO, getMySubscribes, unsubscribeUser } from '@/api/subscribe';
 
 interface SubscriberPostListProps {
     nickName: string;
+    isOpen: boolean;
+    onOpenChange: Dispatch<SetStateAction<boolean>>;
 }
 
-
-
-function formatRecordedTime(minutes: number) {
-    if (minutes < 60) {
-        return `${minutes}분`;
-    }
-    const hours = Math.floor(minutes / 60);
-    const remainingMinutes = minutes % 60;
-    return `${hours}시간 ${remainingMinutes}분`;
-}
-
-function PostCard({ post }: { post: PostResDTO }) {
-    const [isExpanded, setIsExpanded] = useState(false);
-
-
+function PostCard({ post, user }: { post: PostResDTO, user: UserSimpleResDTO }) {
     return (
-        <div className="">
-            <Card
-                className={`p-4 transition-all duration-300 ${isExpanded ? 'mb-4' : ''}`}
-                onClick={() => setIsExpanded(!isExpanded)}
-            >
-                <div className="flex cursor-pointer">
-                    {/* 축소된 지도 표시 */}
-                    <div 
-                        onClick={(e) => { e.stopPropagation() }}
-                        className={`min-w-32 h-32 mr-4 ${isExpanded ? 'hidden' : ''}`}
-                    >
-                        <ViewingMap 
-                        width='w-full'
-                        height='h-full'
-                        route={{
-                         routeCoordinates: post.pathResDTO?.routeCoordinates?.map(coord => ({
-                         latitude: coord.latitude, // 숫자를 문자열로 변환
-                        longitude: coord.longitude, // 숫자를 문자열로 변환
-                        })) || [],
-                        pins: post.pathResDTO?.pins?.map(pin => ({
-                            id: pin.id, // id는 숫자 그대로 전달
-                            imageUrl: pin.imageUrl || '', // 기본값 제공
-                            content: pin.content || 'No content', // 기본값 제공
-                            latitude: pin.latitude, // 숫자를 문자열로 변환
-                            longitude: pin.longitude, // 숫자를 문자열로 변환
-                        })) || []
-                        }}
-                        />
-                    </div>
-                    <div className="flex flex-col flex-1">
-                        <div className="flex justify-between items-start">
-                            <h2 className="font-semibold">{post.title}</h2>
-                            {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
-                        </div>
-                        <p className="text-slate-500 text-sm overflow-hidden line-clamp-3">
-                            {post.content}
-                        </p>
-                        <div className="flex justify-between mt-auto">
-                            <span className="text-xs text-gray-400 self-end">
-                                {new Date(post.writeDate).toLocaleDateString()}
+        <Card className="overflow-hidden border shadow-sm hover:shadow-md transition-all">
+            {/* 헤더 섹션 */}
+            <div className="p-4 pb-2">
+                <div className="flex items-center gap-3">
+                    <ProfileDialog 
+                        userId={user.id} 
+                        className="w-8 h-8"
+                    />
+                    {/* 사용자 정보 및 제목 */}
+                    <div>
+                        <div className="flex items-center gap-2">
+                        <Link href={`/main/board/${post.postId}`}>
+                            <span className="font-medium">{post.nickName || 'pubobo'}</span>
+                            </Link>
+                            <span className="text-gray-500 text-sm">
+                                {new Date(post.writeDate).toLocaleDateString().replace(/202\d\. /, '')}
                             </span>
-                            <div className="flex items-center gap-4">
-                                <div className="flex items-center gap-1 text-gray-600">
-                                    <Heart size={18} className={post.isLiked ? 'fill-red-500 text-red-500' : ''} />
-                                    <span>{post.likesCount}</span>
-                                </div>
-                                <div className="flex items-center gap-1 text-gray-600">
-                                    <MessageCircle size={18} />
-                                    <span>{post.repliesCount}</span>
-                                </div>
-                            </div>
                         </div>
+                        <Link href={`/main/board/${post.postId}`}>
+                        <h2 className="font-bold mt-1">{post.title}</h2>
+                        </Link>
                     </div>
                 </div>
+            </div>
 
-              
-                 {isExpanded && (
-                    <div className="mt-4">
-                        <div
-                            onClick={(e) => e.stopPropagation()}
-                            className="mt-4"
-                        >
-                            <ViewingMap
-                                width='w-full'
-                                height='h-[400px]'
-                                route={{
-                                    routeCoordinates: post.pathResDTO?.routeCoordinates || [],
-                                    pins: post.pathResDTO?.pins || []
-                                }}
-                            />
-                        </div>
-                        {/* 경로 정보 표시 */}
-                        <div className="mt-4 grid grid-cols-2 gap-4">
-                            <div className="bg-gray-50 dark:bg-slate-500 p-3 rounded">
-                                <h3 className="text-sm text-gray-500 dark:text-white">총 거리</h3>
-                                <p className="font-semibold">
-                                    {post.pathResDTO?.distance}km
-                                </p>
-                            </div>
-                            <div className="bg-gray-50 dark:bg-slate-500 p-3 rounded">
-                                <h3 className="text-sm text-gray-500 dark:text-white">소요 시간</h3>
-                                <p className="font-semibold">
-                                    {formatRecordedTime(post.pathResDTO?.time || 0)}
-                                </p>
-                            </div>
-                        </div> 
-                        {/* 게시글 내용 및 상세보기 링크 */}
-                        <Button variant="outline" size="sm">
-                        <Link href={`/main/board/${post.postId}`}>
-                        상세보기
-                        </Link>
-                        </Button>
+            {/* 지도 섹션 */}
+            <div className="w-full h-[200px] relative">
+                <ViewingMap 
+                    width='w-full'
+                    height='h-full'
+                    route={{
+                        routeCoordinates: post.pathResDTO?.routeCoordinates?.map(coord => ({
+                            latitude: coord.latitude,
+                            longitude: coord.longitude,
+                        })) || [],
+                        pins: post.pathResDTO?.pins?.map(pin => ({
+                            id: pin.id,
+                            imageUrl: pin.imageUrl || '',
+                            content: pin.content || 'No content',
+                            latitude: pin.latitude,
+                            longitude: pin.longitude,
+                        })) || []
+                    }}
+                />
+            </div>
+
+            {/* 푸터 섹션 */}
+            <div className="p-4 pt-2 border-t">
+                <div className="flex justify-between items-center">
+                    {/* 좋아요, 댓글 카운트 */}
+                    <div className="flex items-center gap-4">
+                        <button className="flex items-center gap-1">
+                            <Heart size={16} className={post.isLiked ? 'fill-red-500 text-red-500' : 'text-gray-600'} />
+                            <span className="text-sm text-gray-600">{post.likesCount}</span>
+                        </button>
+                        <button className="flex items-center gap-1">
+                            <MessageCircle size={16} className="text-gray-600" />
+                            <span className="text-sm text-gray-600">{post.repliesCount}</span>
+                        </button>
                     </div>
-                )}
-            </Card>
-            <Separator className="my-4" />
-        </div>
+                    {/* 거리와 시간 정보 */}
+                    <div className="flex items-center gap-2">
+                        <span className="text-sm text-gray-600">
+                            {post.pathResDTO?.distance}km
+                        </span>
+                        <span className="text-sm text-gray-600">
+                            {post.pathResDTO?.time}분
+                        </span>
+                        <Link 
+                            href={`/main/board/${post.postId}`}
+                            className="ml-2 text-sm text-gray-500 hover:text-gray-700"
+                        >
+                            산책
+                        </Link>
+                    </div>
+                </div>
+            </div>
+        </Card>
     );
 }
 
 const SubscriberPostList: React.FC<SubscriberPostListProps> = ({ nickName }) => {
-    const [posts, setPosts] = useState<PostResDTO[]>([]);
+    const [postsWithUsers, setPostsWithUsers] = useState<{post: PostResDTO, user: UserSimpleResDTO}[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [page, setPage] = useState(0);
     const [hasMore, setHasMore] = useState(true);
+    const [subscribers, setSubscribers] = useState<UserSimpleResDTO[]>([]);
     const size = 10;
+
+    // 구독자 정보 먼저 가져오기
+    useEffect(() => {
+        const fetchSubscribers = async () => {
+            try {
+                const subscribersList = await getMySubscribes();
+                setSubscribers(subscribersList);
+            } catch (err) {
+                console.error('구독자 목록 불러오기 실패:', err);
+                setError('구독자 정보를 불러오는데 실패했습니다.');
+            }
+        };
+
+        fetchSubscribers();
+    }, []);
 
     useEffect(() => {
         const fetchPosts = async () => {
+            if (subscribers.length === 0) return;
+            
             try {
                 setLoading(true);
                 const response = await getPostsByNickName2(nickName, page, size);
                 const { content, totalElements } = response;
 
-                setPosts((prev) => [...prev, ...content]);
+                const newPostsWithUsers = content.map((post: PostResDTO) => {
+                    const userInfo = subscribers.find((sub: UserSimpleResDTO) => sub.nickName === post.nickName);
+                    return {
+                        post,
+                        user: userInfo || {
+                            id: 0,
+                            nickName: post.nickName,
+                        }
+                    };
+                });
 
-                if (posts.length + content.length >= totalElements) {
+                setPostsWithUsers(prev => [...prev, ...newPostsWithUsers]);
+
+                if (postsWithUsers.length + newPostsWithUsers.length >= totalElements) {
                     setHasMore(false);
                 }
             } catch (err) {
@@ -160,9 +156,9 @@ const SubscriberPostList: React.FC<SubscriberPostListProps> = ({ nickName }) => 
         };
 
         fetchPosts();
-    }, [nickName, page]);
+    }, [nickName, page, subscribers]);
 
-    if (loading && posts.length === 0) {
+    if (loading && postsWithUsers.length === 0) {
         return <div className="text-center py-8">로딩 중...</div>;
     }
 
@@ -170,15 +166,26 @@ const SubscriberPostList: React.FC<SubscriberPostListProps> = ({ nickName }) => 
         return <div className="text-center py-8 text-red-500">{error}</div>;
     }
 
-    if (posts.length === 0) {
+    if (postsWithUsers.length === 0) {
         return <div className="text-center py-8 text-gray-500">게시글이 없습니다.</div>;
     }
 
     return (
-        <div className="space-y-4">
-            {posts.map((post) => (
-                <PostCard key={post.postId} post={post} />
+        <div className="space-y-4 max-w-2xl mx-auto">
+            {postsWithUsers.map(({ post, user }) => (
+                <PostCard key={post.postId} post={post} user={user} />
             ))}
+            {hasMore && (
+                <div className="text-center py-4">
+                    <button
+                        onClick={() => setPage((prev) => prev + 1)}
+                        disabled={loading}
+                        className="text-blue-600 hover:text-blue-800"
+                    >
+                        더 보기
+                    </button>
+                </div>
+            )}
         </div>
     );
 };

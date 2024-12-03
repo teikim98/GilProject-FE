@@ -19,6 +19,8 @@ export default function Page() {
    const [isPointDialogOpen, setIsPointDialogOpen] = useState(false);
    const [isSubscriberDialogOpen, setIsSubscriberDialogOpen] = useState(false);
 
+    
+
    useEffect(() => {
        const fetchProfile = async () => {
            try {
