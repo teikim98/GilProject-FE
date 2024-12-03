@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Post, GetUserPostsResponse } from '@/types/types';
+import { Post, GetUserPostsResponse, RouteCoordinate } from '@/types/types';
 import { Heart, MessageCircle, Trash2 } from 'lucide-react';
 import { Card } from '../ui/card';
 import { Button } from '../ui/button';
@@ -77,6 +77,13 @@ const MyPostList: React.FC = () => {
         }
     };
 
+    const convertToRouteCoordinates = (coords: any[]): RouteCoordinate[] => {
+        return coords.map(coord => ({
+            latitude: coord.latitude,
+            longitude: coord.longitude,
+        }));
+    };
+
     if (loading && posts.length === 0) {
         return <div className="text-center py-8">로딩 중...</div>;
     }
@@ -96,7 +103,7 @@ const MyPostList: React.FC = () => {
                     href={`/main/board/${post.postId}`}
                     key={post.postId}
                     passHref
-                    className="block" 
+                    className="block"
                 >
                     <Card className="p-4 hover:shadow-lg transition-shadow cursor-pointer">
                         <div className="flex justify-between items-center mb-3">
@@ -157,10 +164,7 @@ const MyPostList: React.FC = () => {
                                         width="w-full"
                                         height="h-full"
                                         route={{
-                                            routeCoordinates: post.pathResDTO.routeCoordinates.map((coord) => ({
-                                                latitude: parseFloat(coord.latitude),
-                                                longitude: parseFloat(coord.longitude),
-                                            })),
+                                            routeCoordinates: convertToRouteCoordinates(post.pathResDTO.routeCoordinates),
                                             pins: post.pathResDTO.pins,
                                         }}
                                     />
@@ -186,7 +190,7 @@ const MyPostList: React.FC = () => {
                                     {hasMore && (
                                         <Button
                                             onClick={(e) => {
-                                                e.stopPropagation(); 
+                                                e.stopPropagation();
                                                 setPage((prev) => prev + 1);
                                             }}
                                             disabled={loading}
