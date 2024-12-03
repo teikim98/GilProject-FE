@@ -6,11 +6,14 @@ import { Loader, Search } from 'lucide-react';
 import { useSearchStore } from '@/store/useSearchStore';
 import { useLocationStore } from '@/store/useLocationStore';
 import { useBoardListQuery } from '@/hooks/queries/usePostQuery';
+import { useSearchParams } from 'next/navigation';
 
 export default function BoardList() {
     const [initialUserLocation, setInitialUserLocation] = useState<{ lat: number; lng: number } | null>(null);
-    const { query } = useSearchStore();
-    const { selectedLocation } = useLocationStore();
+    const { query, setQuery } = useSearchStore();
+    const { selectedLocation, setSelectedLocation } = useLocationStore();
+    const searchParams = useSearchParams();
+    const tagParam = searchParams.get('tag');
 
     const {
         data,
@@ -19,7 +22,15 @@ export default function BoardList() {
         isFetchingNextPage,
         isLoading,
         isError,
-    } = useBoardListQuery(selectedLocation, query, initialUserLocation);
+    } = useBoardListQuery(selectedLocation, query, initialUserLocation, tagParam);
+
+    // URL의 태그 파라미터 처리
+    useEffect(() => {
+        if (tagParam) {
+            setSelectedLocation('검색결과');
+            setQuery('');
+        }
+    }, [tagParam, setSelectedLocation, setQuery]);
 
     // Intersection Observer 설정
     const observer = useRef<IntersectionObserver>();
@@ -57,15 +68,16 @@ export default function BoardList() {
 
     // 검색어 변경 시 처리
     useEffect(() => {
-        if (query) {
-            useLocationStore.getState().setSelectedLocation('검색결과');
+        if (query && selectedLocation !== '검색결과') {
+            setSelectedLocation('검색결과');
         }
-    }, [query]);
+    }, [query, selectedLocation, setSelectedLocation]);
 
     // 컴포넌트 언마운트 시 검색어 초기화
     useEffect(() => {
         return () => {
             useSearchStore.getState().setQuery('');
+            setSelectedLocation('내 현재위치');
         }
     }, []);
 
@@ -112,7 +124,7 @@ export default function BoardList() {
                 </div>
             )}
 
-            {!isLoading && !isError && postsWithDistance.length === 0 && query && (
+            {!isLoading && !isError && postsWithDistance.length === 0 && (query || tagParam) && (
                 <div className="flex flex-col items-center justify-center py-10 text-gray-500">
                     <Search className="w-12 h-12 mb-4" />
                     <p className="text-lg mb-2">검색 결과가 없습니다</p>
@@ -122,6 +134,7 @@ export default function BoardList() {
         </div>
     );
 }
+
 // 거리 계산 함수 (km)
 function calculateDistance(
     point1: { lat: number; lng: number },

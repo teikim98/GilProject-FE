@@ -1,11 +1,13 @@
 'use client'
-
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import Profile from "./profile"
 import { useState, useEffect } from "react"
-import { getSimpleProfile, getDetailProfile } from '@/api/user'
 import { jwtDecode } from 'jwt-decode'
+import { subscribeUser, unsubscribeUser } from '@/api/subscribe'
+import { toast } from "@/hooks/use-toast"
+import { useDetailProfile, useSimpleProfile } from '@/hooks/queries/useUserQuery'
+import { useSubscribe, useUnsubscribe } from "@/hooks/queries/useSubscribe"
 
 interface ProfileDialogProps {
     userId: number;
@@ -23,6 +25,7 @@ interface ProfileInfo {
     subscribeByCount: number;
     pathCount: number;
     isSubscribed?: boolean;
+    point: number;
 }
 
 interface JWTPayload {
@@ -31,69 +34,61 @@ interface JWTPayload {
 
 export default function ProfileDialog({ userId, className, onOpenChange }: ProfileDialogProps) {
     const [open, setOpen] = useState(false);
-    const [profileInfo, setProfileInfo] = useState<ProfileInfo | null>(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
     const [isDetailView, setIsDetailView] = useState(false);
 
+    const {
+        data: simpleProfile,
+        isLoading: simpleLoading,
+        error: simpleError
+    } = useSimpleProfile(userId);
+
+    const {
+        data: detailProfile,
+        isLoading: detailLoading,
+        error: detailError
+    } = useDetailProfile();
+
+    const { mutate: subscribe, isPending: isSubscribing } = useSubscribe();
+    const { mutate: unsubscribe, isPending: isUnsubscribing } = useUnsubscribe();
 
 
     useEffect(() => {
-        const fetchInitialProfile = async () => {
-            try {
-                const data = await getSimpleProfile(userId);
-                setProfileInfo(data);
-                setError(null);
-            } catch (err) {
-                console.error('초기 프로필 조회 에러:', err);
-                setError('프로필을 불러오는데 실패했습니다');
-            } finally {
-                setLoading(false);
-            }
-        };
+        if (!open) return;
 
-        fetchInitialProfile();
-    }, [userId]);
-
-    useEffect(() => {
-        const fetchFullProfile = async () => {
-            if (!open) return;
-
-            try {
-                const token = localStorage.getItem("access");
-                if (!token) {
-                    setError('인증 정보가 없습니다');
-                    return;
-                }
-
-                const decoded = jwtDecode<JWTPayload>(token);
-                if (decoded.id === userId) {
-                    setIsDetailView(true);
-                    const detailData = await getDetailProfile();
-                    setProfileInfo(prev => prev ? {
-                        ...prev,
-                        ...detailData,
-                        imageUrl: prev.imageUrl || detailData.imageUrl,
-                    } : null);
-                } else {
-                    const data = await getSimpleProfile(userId);
-                    setProfileInfo(prev => prev ? {
-                        ...prev,
-                        ...data,
-                        imageUrl: prev.imageUrl || data.imageUrl
-                    } : null);
-                }
-                setError(null);
-            } catch (err) {
-                setError('프로필을 불러오는데 실패했습니다');
-                console.error('프로필 조회 에러:', err);
-            }
-        };
-
-        if (open) {
-            fetchFullProfile();
+        const token = localStorage.getItem("access");
+        if (!token) {
+            return;
         }
+
+        const decoded = jwtDecode<JWTPayload>(token);
+        setIsDetailView(decoded.id === userId);
     }, [userId, open]);
+
+    const handleSubscribeToggle = async () => {
+        if (!simpleProfile) return;
+
+        try {
+            if (simpleProfile.isSubscribed === 0) {
+                await subscribe(simpleProfile.id);
+                toast({
+                    title: "구독 완료",
+                    description: "구독했습니다",
+                });
+            } else {
+                await unsubscribe(simpleProfile.id);
+                toast({
+                    title: "구독 취소",
+                    description: "구독을 취소했습니다",
+                });
+            }
+        } catch (error) {
+            toast({
+                variant: "destructive",
+                title: "오류 발생",
+                description: "구독 상태 변경에 실패했습니다",
+            });
+        }
+    };
 
     const handleInteraction = (e: React.MouseEvent | React.TouchEvent) => {
         e.stopPropagation();
@@ -123,8 +118,8 @@ export default function ProfileDialog({ userId, className, onOpenChange }: Profi
                     }}
                 >
                     <Avatar className={`cursor-pointer hover:opacity-80 transition-opacity ${className}`}>
-                        <AvatarImage src={profileInfo?.imageUrl} />
-                        <AvatarFallback>{profileInfo?.nickName?.[0]}</AvatarFallback>
+                        <AvatarImage src={simpleProfile?.imageUrl} />
+                        <AvatarFallback>{simpleProfile?.nickName?.[0]}</AvatarFallback>
                     </Avatar>
                 </div>
             </DialogTrigger>
@@ -145,17 +140,9 @@ export default function ProfileDialog({ userId, className, onOpenChange }: Profi
                 }}
             >
                 <Profile
-                    profileInfo={profileInfo}
-                    loading={loading}
-                    error={error}
+                    userId={userId}
                     isDetailView={isDetailView}
-                    onSubscribeToggle={async () => {
-                        if (!profileInfo) return;
-                        setProfileInfo(prev => prev ? {
-                            ...prev,
-                            isSubscribed: !prev.isSubscribed
-                        } : null);
-                    }}
+                    onSubscribeToggle={handleSubscribeToggle}
                     width="w-full"
                 />
             </DialogContent>

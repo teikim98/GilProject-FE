@@ -3,6 +3,8 @@ import { Camera, Loader2, Pencil, Users } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { updateProfileImage } from '@/api/user'
+import { useDetailProfile, useSimpleProfile } from '@/hooks/queries/useUserQuery'
+import { User, UserSimple } from '@/types/types'
 
 interface ProfileInfo {
     id: number;
@@ -14,29 +16,51 @@ interface ProfileInfo {
     pathCount: number;
     subscribeByCount: number,
     isSubscribed?: boolean;
+    point: number;
 }
 
 interface ProfileProps {
-    profileInfo: ProfileInfo | null;
-    loading: boolean;
-    error: string | null;
+    userId: number;
     isDetailView: boolean;
     onSubscribeToggle: () => Promise<void>;
     width?: string;
 }
 
 export default function Profile({
-    profileInfo,
-    loading,
-    error,
+    userId,
     isDetailView,
     onSubscribeToggle,
     width = "w-full"
 }: ProfileProps) {
+    const {
+        data: simpleProfile,
+        isLoading: simpleLoading,
+        error: simpleError
+    } = useSimpleProfile(userId);
+
+    const {
+        data: detailProfile,
+        isLoading: detailLoading,
+        error: detailError
+    } = useDetailProfile();
+
+    const profileInfo = isDetailView ? detailProfile : simpleProfile;
+    const loading = isDetailView ? detailLoading : simpleLoading;
+    const error = isDetailView ? detailError : simpleError;
+
+    console.log("사용자 정보")
+    console.log(profileInfo);
+
+    // 타입 가드
+    const isUserSimple = (profile: User | UserSimple): profile is UserSimple => {
+        return 'isSubscribed' in profile;
+    };
+
+
     if (error) {
         return (
             <Card className={`${width} border-0 shadow-none min-h-[200px] flex items-center justify-center`}>
-                <div className="text-destructive">{error}</div>
+                <div className="text-destructive">{error.message}</div>
             </Card>
         );
     }
@@ -66,28 +90,34 @@ export default function Profile({
                 <div className="flex flex-row justify-between items-start">
                     <div className="flex flex-row gap-4 items-center">
                         <div className="relative">
-                            {profileInfo.imageUrl ? (
-                                <img
-                                    src={profileInfo.imageUrl}
-                                    alt="Profile"
-                                    className="w-12 h-12 rounded-full object-cover"
-                                />
-                            ) : (
-                                <Camera className="w-12 h-12 p-2 bg-muted rounded-full" />
-                            )}
-                            {isDetailView && (
-                                <input
-                                    type="file"
-                                    className="absolute inset-0 opacity-0 cursor-pointer"
-                                    onChange={(e) => {
-                                        const file = e.target.files?.[0];
-                                        if (file) {
-                                            updateProfileImage(profileInfo.id, file);
-                                        }
-                                    }}
-                                    accept="image/*"
-                                />
-                            )}
+                            <div className={`medal w-20 h-20 rounded-full ${profileInfo.point >= 5000 ? 'bg-[url(/medal/gold.png)]' : profileInfo.point >= 3000 ? 'bg-[url(/medal/silver.png)]' : profileInfo.point >= 1000 ? 'bg-[url(/medal/bronze.png)]' : null} bg-cover bg-center`}>
+                                <div className="absolute inset-0 flex items-center justify-center">
+                                    {profileInfo.imageUrl ? (
+                                        <img
+                                            src={profileInfo.imageUrl}
+                                            alt="Profile"
+                                            className="w-12 h-12 rounded-full object-cover"
+                                            style={{ position: "absolute", transform: "translate(-50%, -50%)", top: "60%", left: "50%" }}
+                                        />
+                                    ) : (
+                                        <Camera className="w-12 h-12 p-2 bg-muted rounded-full" style={{ position: "absolute", transform: "translate(-50%, -50%)", top: "60%", left: "50%" }} />
+                                    )}
+                                </div>
+                                {isDetailView && (
+                                    <input
+                                        type="file"
+                                        className="absolute inset-0 opacity-0 cursor-pointer"
+                                        onChange={(e) => {
+                                            const file = e.target.files?.[0];
+                                            if (file) {
+                                                updateProfileImage(profileInfo.id, file);
+                                            }
+                                        }}
+                                        accept="image/*"
+                                    />
+                                )}
+
+                            </div>
                         </div>
                         <div className="flex flex-col">
                             <div className="flex flex-row items-center gap-2">
@@ -136,16 +166,17 @@ export default function Profile({
                     >
                         정보 수정하기
                     </Button>
-                ) : (
+                ) : isUserSimple(profileInfo) && (
                     <>
                         <Button
-                            variant={profileInfo.isSubscribed ? "outline" : "default"}
+                            variant={profileInfo.isSubscribed === 1 ? "secondary" : "default"}
                             onClick={onSubscribeToggle}
                             disabled={loading}
-                            className="flex-1 flex items-center justify-center gap-2"
+                            className={`flex-1 flex items-center justify-center gap-2 ${profileInfo.isSubscribed === 1 ? 'bg-blue-500 text-white hover:bg-blue-600' : ''
+                                }`}
                         >
                             <Users className="w-4 h-4" />
-                            {profileInfo.isSubscribed ? '구독중' : '구독하기'}
+                            {profileInfo.isSubscribed === 1 ? '구독중' : '구독하기'}
                         </Button>
                         <Button
                             variant="secondary"
@@ -158,6 +189,7 @@ export default function Profile({
                     </>
                 )}
             </CardFooter>
+
         </Card>
     );
 }

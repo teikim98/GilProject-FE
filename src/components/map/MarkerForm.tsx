@@ -5,14 +5,12 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card } from '@/components/ui/card';
 import { X, ImagePlus } from 'lucide-react';
+import { processMarkerImage } from '@/util/imageUtils';
 
 interface MarkerFormProps {
     onSubmit: (content: string, image: string) => void;
     onCancel: () => void;
 }
-
-// 이미지 크기 제한 10Mb
-const MAX_FILE_SIZE = 1024 * 10000;
 
 const MarkerForm = ({ onSubmit, onCancel }: MarkerFormProps) => {
     const [content, setContent] = useState('');
@@ -21,67 +19,19 @@ const MarkerForm = ({ onSubmit, onCancel }: MarkerFormProps) => {
 
     const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
+        if (!file) return;
+
         setError('');
+        const { errorMessage, compressedImage } = await processMarkerImage(file);
 
-        if (file) {
-            // 파일 크기 체크
-            if (file.size > MAX_FILE_SIZE) {
-                setError('이미지 크기는 10MB 이하여야 합니다.');
-                return;
-            }
-
-            try {
-                // 이미지 리사이징 및 압축
-                const compressedImage = await compressImage(file);
-                setImage(compressedImage);
-            } catch (error) {
-                setError('이미지 처리 중 오류가 발생했습니다.');
-                console.error('Image compression error:', error);
-            }
+        if (errorMessage) {
+            setError(errorMessage);
+            return;
         }
-    };
 
-    // 이미지 압축 함수
-    const compressImage = (file: File): Promise<string> => {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = (event) => {
-                const img = new Image();
-                img.src = event.target?.result as string;
-                img.onload = () => {
-                    const canvas = document.createElement('canvas');
-                    const MAX_WIDTH = 800;
-                    const MAX_HEIGHT = 600;
-                    let width = img.width;
-                    let height = img.height;
-
-                    // 이미지 크기 조정
-                    if (width > height) {
-                        if (width > MAX_WIDTH) {
-                            height *= MAX_WIDTH / width;
-                            width = MAX_WIDTH;
-                        }
-                    } else {
-                        if (height > MAX_HEIGHT) {
-                            width *= MAX_HEIGHT / height;
-                            height = MAX_HEIGHT;
-                        }
-                    }
-
-                    canvas.width = width;
-                    canvas.height = height;
-                    const ctx = canvas.getContext('2d');
-                    ctx?.drawImage(img, 0, 0, width, height);
-
-                    // 압축된 이미지를 base64로 변환
-                    const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
-                    resolve(compressedBase64);
-                };
-                img.onerror = reject;
-            };
-            reader.onerror = reject;
-        });
+        if (compressedImage) {
+            setImage(compressedImage);
+        }
     };
 
     const handleSubmit = () => {

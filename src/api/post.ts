@@ -1,6 +1,6 @@
 import axios from "axios";
 import { Post } from "@/types/types";
-import { GetUserPostsResponse} from "@/types/types";
+import { GetUserPostsResponse } from "@/types/types";
 import { customInterceptors } from "./interceptors";
 
 const api = axios.create({
@@ -24,8 +24,6 @@ customInterceptors(api);
 //     return Promise.reject(error);
 //   }
 // );
-
-
 
 //집 주변 산책길 리트 가져오기
 export const getPosts = async (
@@ -59,10 +57,6 @@ export const getPostNear = async (
   return response.data;
 };
 
-
-
-
-
 //검색하고 필터링된 산책길 리스트 가져오기
 export const getPostsByKeyword = async (
   keyword: string,
@@ -75,6 +69,17 @@ export const getPostsByKeyword = async (
   return response.data;
 };
 
+export const getPostsByTag = async (
+  tag: string,
+  page = 0,
+  size = 10
+): Promise<{ content: Post[]; totalElements: number }> => {
+  const response = await api.get("/tag", {
+    params: { tag, page, size },
+  });
+  return response.data;
+};
+
 export const createPost = async (formData: FormData) => {
   try {
     const token = localStorage.getItem("access");
@@ -82,13 +87,17 @@ export const createPost = async (formData: FormData) => {
       throw new Error("로그인이 필요합니다.");
     }
 
-    const response = await axios.post("http://localhost:8080/posts", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-        Authorization: `Bearer ${token}`,
-      },
-      withCredentials: true,
-    });
+    const response = await axios.post(
+      `${process.env.NEXT_PUBLIC_API_URL}/posts`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`,
+        },
+        withCredentials: true,
+      }
+    );
     return response.data;
   } catch (error) {
     console.error("Create post error:", error);

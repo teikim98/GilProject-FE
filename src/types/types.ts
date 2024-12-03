@@ -151,7 +151,9 @@ export interface UserSimple {
   address: string | null;
   postCount: number;
   pathCount: number;
+  isSubscribed: number;
   subscribeByCount: number;
+  point: number;
 }
 
 export interface UserUpdateDTO {

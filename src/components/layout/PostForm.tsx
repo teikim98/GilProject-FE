@@ -14,6 +14,7 @@ import { createPost, getPost, updatePost } from "@/api/post";
 import { ViewingMap } from "@/components/map/ViewingMapProps";
 import { CreatePostRequest, Post, Path } from "@/types/types";
 import MyRouteList from "@/components/layout/myRouteCard";
+import { processPostImages } from "@/util/imageUtils";
 
 interface WritePostPageProps {
     isEdit?: boolean;
@@ -106,12 +107,22 @@ export default function PostForm({ isEdit, postId }: WritePostPageProps) {
         setIsRouteListOpen(false);
     };
 
-    const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = Array.from(e.target.files || []);
-        if (files.length > 0) {
-            setImages(prev => [...prev, ...files]);
+        if (files.length === 0) return;
 
-            files.forEach(file => {
+        const { validFiles, errorMessage } = await processPostImages(files);
+
+        if (errorMessage) {
+            alert(errorMessage);
+            return;
+        }
+
+        if (validFiles.length > 0) {
+            setImages(prev => [...prev, ...validFiles]);
+
+            // 미리보기용 URL 생성
+            validFiles.forEach(file => {
                 const reader = new FileReader();
                 reader.onloadend = () => {
                     setPreviews(prev => [...prev, reader.result as string]);

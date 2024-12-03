@@ -16,6 +16,8 @@ import { logout } from "@/api/user";
 import { useRouter } from 'next/navigation';
 import { useNotificationStore } from "@/store/useNotificationStore";
 import { Button } from "../ui/button";
+import SideProfile from "../user/SidemenuProfile";
+import { useDetailProfile } from "@/hooks/queries/useUserQuery";
 
 
 const navigationItems = [
@@ -30,6 +32,7 @@ export default function Sidemenu() {
     const router = useRouter();
     const notifications = useNotificationStore((state) => state.notifications);
     const unreadCount = notifications.length;
+    const { data: profileInfo, isLoading, error } = useDetailProfile();
 
 
     const handleLogout = () => {
@@ -42,28 +45,42 @@ export default function Sidemenu() {
             <Button
                 variant="ghost"
                 size="icon"
-                className="relative mr-2"
+                className="relative hover:bg-purple-100 dark:hover:bg-purple-600/40 transition-colors"
                 onClick={() => router.push('/main/notification')}
             >
-                <Bell className="h-7 w-7" />
+                <Bell className="h-7 w-7 text-purple-900 dark:text-purple-100" />
                 {unreadCount > 0 && (
                     <div
                         className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center rounded-full bg-red-500 text-white text-xs"
                     >
                         {unreadCount}
                     </div>
-
                 )}
             </Button>
 
             <Sheet>
-                <SheetTrigger className="hover:bg-muted p-1 rounded-full transition-colors">
-                    <HamburgerMenuIcon className="w-7 h-7" />
+                <SheetTrigger
+                    className="p-[0.4rem] rounded-md hover:bg-purple-100 dark:hover:bg-purple-600/40 transition-colors"
+                >
+                    <HamburgerMenuIcon className="w-5 h-5 text-purple-900 dark:text-purple-100" />
                 </SheetTrigger>
+
                 <SheetContent side="right" className="w-[350px]">
                     <SheetHeader>
                         <SheetTitle className="text-left">메뉴</SheetTitle>
                     </SheetHeader>
+                    <SideProfile
+                        profileInfo={profileInfo ? {
+                            nickName: profileInfo.nickName,
+                            imageUrl: profileInfo.imageUrl,
+                            postCount: profileInfo.postCount,
+                            pathCount: profileInfo.pathCount,
+                            subscribeByCount: profileInfo.subscribeByCount,
+                        } : null}
+                        loading={isLoading}
+                        error={error?.message ?? null}
+                    />
+
                     <nav className="mt-8">
                         <ul className="space-y-4">
                             {navigationItems.map((item) => (

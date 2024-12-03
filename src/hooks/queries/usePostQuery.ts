@@ -12,6 +12,7 @@ import {
   togglePostLike,
   togglePostWishlist,
   deletePost,
+  getPostsByTag,
 } from "@/api/post";
 import { Post } from "@/types/types";
 
@@ -24,46 +25,45 @@ type PostQueryKey = [
   "posts",
   string,
   string,
-  { lat: number; lng: number } | null
+  { lat: number; lng: number } | null,
+  string | null
 ];
 
 export function useBoardListQuery(
   selectedLocation: string,
   query: string,
-  userLocation: { lat: number; lng: number } | null
+  userLocation: { lat: number; lng: number } | null,
+  tag: string | null
 ) {
-  return useInfiniteQuery<
-    PostResponse,
-    Error,
-    InfiniteData<PostResponse>,
-    PostQueryKey,
-    number
-  >({
-    queryKey: ["posts", selectedLocation, query, userLocation],
-    queryFn: async ({ pageParam }) => {
+  return useInfiniteQuery({
+    queryKey: ["posts", selectedLocation, query, userLocation, tag] as const,
+    queryFn: async ({ pageParam = 0 }) => {
+      if (tag) {
+        return getPostsByTag(tag, pageParam, 10);
+      }
       if (selectedLocation === "검색결과") {
-        return getPostsByKeyword(query, pageParam, 10);
+        return getPostsByKeyword(query, pageParam, 3);
       } else if (selectedLocation === "내 현재위치" && userLocation) {
         return getPostNear(userLocation.lat, userLocation.lng, pageParam, 10);
       }
       return getPosts(pageParam, 10);
     },
-    getNextPageParam: (lastPage, allPages) => {
-      return lastPage.totalElements > allPages.length * 10
-        ? allPages.length
-        : undefined;
+    getNextPageParam: (lastPage, allPages, lastPageParam) => {
+      const pageSize = selectedLocation === "검색결과" ? 3 : 10;
+      return lastPage.content.length === pageSize ? allPages.length : undefined;
     },
     enabled: selectedLocation !== "내 현재위치" || userLocation !== null,
     initialPageParam: 0,
   });
 }
 
+// 나머지 코드는 동일하게 유지
 export function usePostDetailQuery(postId: number) {
   return useQuery({
     queryKey: ["post", postId],
     queryFn: () => getPost(postId),
     enabled: !!postId,
-    staleTime: 1000 * 60 * 5, // 5분간 캐시 유지
+    staleTime: 1000 * 60 * 5,
   });
 }
 
@@ -71,7 +71,6 @@ export function usePostMutations(postId: number) {
   const queryClient = useQueryClient();
 
   const onSuccess = async () => {
-    // 상세 데이터와 목록 데이터 모두 갱신
     await queryClient.invalidateQueries({ queryKey: ["post", postId] });
     await queryClient.invalidateQueries({ queryKey: ["posts"] });
   };
