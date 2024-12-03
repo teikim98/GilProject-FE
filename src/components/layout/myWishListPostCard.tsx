@@ -27,7 +27,7 @@ const MyPostList: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [page, setPage] = useState(0);
-    const size = 10;
+    const size = 100;
     const [hasMore, setHasMore] = useState(true);
 
     useEffect(() => {
