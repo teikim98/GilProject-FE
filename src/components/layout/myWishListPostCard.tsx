@@ -20,11 +20,7 @@ import {
 import { deletePost } from '@/api/post';
 import { getUserPostWishlist } from '@/api/user';
 import { toast } from '@/hooks/use-toast';
-<<<<<<< HEAD
-import { ViewingMap } from '../map/ViewingMapProps'; // ViewingMap 컴포넌트 임포트
-=======
 import { ViewingMap } from '../map/ViewingMapProps';
->>>>>>> 5745a32a3dfce9c6ddc677a6df7c9edcc1efc00c
 
 const MyPostList: React.FC = () => {
     const [posts, setPosts] = useState<Post[]>([]);
@@ -100,7 +96,7 @@ const MyPostList: React.FC = () => {
                     href={`/main/board/${post.postId}`}
                     key={post.postId}
                     passHref
-                    className="block" // Link를 block 요소로 만들어 space-y-4가 제대로 적용되도록 함
+                    className="block" 
                 >
                     <Card className="p-4 hover:shadow-lg transition-shadow cursor-pointer">
                         <div className="flex justify-between items-center mb-3">
@@ -121,7 +117,6 @@ const MyPostList: React.FC = () => {
                                             className="text-destructive hover:text-destructive/90"
                                             onClick={(e) => e.stopPropagation()} // 이벤트 전파 방지
                                         >
-<<<<<<< HEAD
                                             <Trash2 className="h-5 w-5" />
                                         </Button>
                                     </AlertDialogTrigger>
@@ -148,61 +143,6 @@ const MyPostList: React.FC = () => {
                                         </AlertDialogFooter>
                                     </AlertDialogContent>
                                 </AlertDialog>
-=======
-                                            삭제
-                                        </AlertDialogAction>
-                                    </AlertDialogFooter>
-                                </AlertDialogContent>
-                            </AlertDialog>
-                        </div>
-                    </div>
-
-                    <div className="flex">
-                        {/* 지도 영역 */}
-                        {post.pathResDTO && (
-                            <div className="w-32 h-32 mr-4">
-                                <ViewingMap
-                                    width='w-full'
-                                    height='h-full'
-                                    route={{
-                                        routeCoordinates: post.pathResDTO.routeCoordinates.map(coord => ({
-                                            latitude: parseFloat(coord.latitude),
-                                            longitude: parseFloat(coord.longitude),
-                                        })),
-                                        pins: post.pathResDTO.pins,
-                                    }}
-                                />
-                            </div>
-                        )}
-                        {/* 게시글 내용 영역 */}
-                        <div className="flex-1">
-                            <Link href={`/main/board/${post.postId}`}>
-                                <p className="text-gray-700 dark:text-gray-300 line-clamp-3 hover:text-blue-600 transition-colors">
-                                    {post.content}
-                                </p>
-                            </Link>
-
-                            <div className="flex justify-between items-center mt-4">
-                                <div className="flex items-center gap-4">
-                                    <div className="flex items-center gap-1 text-gray-600 dark:text-gray-400">
-                                        <Heart size={18} className={post.liked ? 'fill-red-500 text-red-500' : ''} />
-                                        <span>{post.likesCount}</span>
-                                    </div>
-                                    <div className="flex items-center gap-1 text-gray-600 dark:text-gray-400">
-                                        <MessageCircle size={18} />
-                                        <span>{post.repliesCount}</span>
-                                    </div>
-                                </div>
-                                {hasMore && (
-                                    <Button
-                                        onClick={() => setPage((prev) => prev + 1)}
-                                        disabled={loading}
-                                        className="text-blue-600 hover:text-blue-800"
-                                    >
-                                        더 보기
-                                    </Button>
-                                )}
->>>>>>> 5745a32a3dfce9c6ddc677a6df7c9edcc1efc00c
                             </div>
                         </div>
 
@@ -235,10 +175,7 @@ const MyPostList: React.FC = () => {
                                 <div className="flex justify-between items-center mt-4">
                                     <div className="flex items-center gap-4">
                                         <div className="flex items-center gap-1 text-gray-600 dark:text-gray-400">
-                                            <Heart
-                                                size={18}
-                                                className={post.liked ? 'fill-red-500 text-red-500' : ''}
-                                            />
+                                            <Heart size={18} className={post.liked ? 'fill-red-500 text-red-500' : ''} />
                                             <span>{post.likesCount}</span>
                                         </div>
                                         <div className="flex items-center gap-1 text-gray-600 dark:text-gray-400">
@@ -249,7 +186,7 @@ const MyPostList: React.FC = () => {
                                     {hasMore && (
                                         <Button
                                             onClick={(e) => {
-                                                e.stopPropagation(); // 이벤트 전파 방지
+                                                e.stopPropagation(); 
                                                 setPage((prev) => prev + 1);
                                             }}
                                             disabled={loading}
