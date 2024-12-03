@@ -46,13 +46,20 @@ export default function LocationSelector() {
     }, [tag, query, setSelectedLocation, selectedLocation])
 
     const handleSelect = (currentValue: string) => {
-        setSelectedLocation(currentValue as '내 현재위치' | '집 주변' | '검색결과')
-        if (currentValue !== '검색결과' && tag) {
-            // 태그 검색 상태에서 다른 위치 선택 시 태그 파라미터 제거
-            router.push(pathname)
+        const { setQuery } = useSearchStore.getState();
+
+        // 검색결과가 아닌 다른 위치로 변경할 때
+        if (currentValue !== '검색결과') {
+            setQuery(''); // 검색어 초기화
+            if (tag) {
+                router.push(pathname);
+            }
         }
-        setOpen(false)
+
+        setSelectedLocation(currentValue as '내 현재위치' | '집 주변' | '검색결과');
+        setOpen(false);
     }
+
 
     // 현재 선택된 위치의 표시 텍스트 결정
     const getDisplayText = () => {
