@@ -7,6 +7,7 @@ import { jwtDecode } from 'jwt-decode'
 import { subscribeUser, unsubscribeUser } from '@/api/subscribe'
 import { toast } from "@/hooks/use-toast"
 import { useDetailProfile, useSimpleProfile } from '@/hooks/queries/useUserQuery'
+import { useSubscribe, useUnsubscribe } from "@/hooks/queries/useSubscribe"
 
 interface ProfileDialogProps {
     userId: number;
@@ -21,7 +22,6 @@ interface JWTPayload {
 export default function ProfileDialog({ userId, className, onOpenChange }: ProfileDialogProps) {
     const [open, setOpen] = useState(false);
     const [isDetailView, setIsDetailView] = useState(false);
-    const [isSubscribing, setIsSubscribing] = useState(false);
 
     // React Query hooks
     const {
@@ -36,6 +36,10 @@ export default function ProfileDialog({ userId, className, onOpenChange }: Profi
         error: detailError
     } = useDetailProfile();
 
+    const { mutate: subscribe, isPending: isSubscribing } = useSubscribe();
+    const { mutate: unsubscribe, isPending: isUnsubscribing } = useUnsubscribe();
+
+
     useEffect(() => {
         if (!open) return;
 
@@ -49,32 +53,28 @@ export default function ProfileDialog({ userId, className, onOpenChange }: Profi
     }, [userId, open]);
 
     const handleSubscribeToggle = async () => {
-        if (!simpleProfile || isSubscribing) return;
+        if (!simpleProfile) return;
 
-        setIsSubscribing(true);
         try {
-            if (simpleProfile.isSubscribed) {
-                await unsubscribeUser(simpleProfile.id);
-                toast({
-                    title: "구독 취소",
-                    description: "구독을 취소했습니다",
-                });
-            } else {
-                await subscribeUser(simpleProfile.id);
+            if (simpleProfile.isSubscribed === 0) {
+                await subscribe(simpleProfile.id);
                 toast({
                     title: "구독 완료",
                     description: "구독했습니다",
                 });
+            } else {
+                await unsubscribe(simpleProfile.id);
+                toast({
+                    title: "구독 취소",
+                    description: "구독을 취소했습니다",
+                });
             }
         } catch (error) {
-            console.error('구독 상태 변경 실패:', error);
             toast({
                 variant: "destructive",
                 title: "오류 발생",
                 description: "구독 상태 변경에 실패했습니다",
             });
-        } finally {
-            setIsSubscribing(false);
         }
     };
 

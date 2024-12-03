@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { updateProfileImage } from '@/api/user'
 import { useDetailProfile, useSimpleProfile } from '@/hooks/queries/useUserQuery'
+import { User, UserSimple } from '@/types/types'
 
 interface ProfileProps {
     userId: number;
@@ -33,6 +34,15 @@ export default function Profile({
     const profileInfo = isDetailView ? detailProfile : simpleProfile;
     const loading = isDetailView ? detailLoading : simpleLoading;
     const error = isDetailView ? detailError : simpleError;
+
+    console.log("사용자 정보")
+    console.log(profileInfo);
+
+    // 타입 가드
+    const isUserSimple = (profile: User | UserSimple): profile is UserSimple => {
+        return 'isSubscribed' in profile;
+    };
+
 
     if (error) {
         return (
@@ -137,18 +147,18 @@ export default function Profile({
                     >
                         정보 수정하기
                     </Button>
-                ) : (
+                ) : isUserSimple(profileInfo) && (
                     <>
-                        {/* <Button
-                            variant={profileInfo.isSubscribed ? "secondary" : "default"}
+                        <Button
+                            variant={profileInfo.isSubscribed === 1 ? "secondary" : "default"}
                             onClick={onSubscribeToggle}
                             disabled={loading}
-                            className={`flex-1 flex items-center justify-center gap-2 ${profileInfo.isSubscribed ? 'bg-blue-500 text-white hover:bg-blue-600' : ''
+                            className={`flex-1 flex items-center justify-center gap-2 ${profileInfo.isSubscribed === 1 ? 'bg-blue-500 text-white hover:bg-blue-600' : ''
                                 }`}
                         >
                             <Users className="w-4 h-4" />
-                            {profileInfo.isSubscribed ? '구독중' : '구독하기'}
-                        </Button> */}
+                            {profileInfo.isSubscribed === 1 ? '구독중' : '구독하기'}
+                        </Button>
                         <Button
                             variant="secondary"
                             onClick={() => {/* 글 목록 보기 */ }}
@@ -160,6 +170,7 @@ export default function Profile({
                     </>
                 )}
             </CardFooter>
+
         </Card>
     );
 }

@@ -1,14 +1,12 @@
 'use client'
 
-import { useEffect, useState } from 'react';
-import { Camera, Loader2, Pencil, Users } from 'lucide-react'
+import { Camera, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import MypageBtn from '@/components/layout/MypageBtn';
 import BackHeader from '@/components/layout/BackHeader';
-import { getDetailProfile, updateProfileImage } from '@/api/user';
-import { User } from '@/types/types';
+import { updateProfileImage } from '@/api/user';
 import { useDetailProfile } from '@/hooks/queries/useUserQuery';
 
 export default function Page() {
@@ -56,7 +54,6 @@ export default function Page() {
     return (
         <div className='animate-fade-in flex flex-col pb-20'>
             <BackHeader content='마이 페이지' />
-            <h2 className='mt-4 mb-4'>프로필</h2>
             <Card className="w-full border-0 shadow-none">
                 <CardHeader className="px-6 pb-3">
                     <div className="flex flex-row justify-between items-start">

@@ -57,11 +57,7 @@ export const getMySubscribes = async (): Promise<UserSimpleResDTO[]> => {
 
 export const subscribeUser = async (userId: number): Promise<number> => {
   try {
-    const response = await api.post(`/${userId}`, null, {
-      headers: {
-        Authorization: `Bearer ${getAuthToken()}`,
-      },
-    });
+    const response = await api.post(`/${userId}`);
     return response.data;
   } catch (error) {
     throw error;
