@@ -10,12 +10,15 @@ import { getDetailProfile, updateProfileImage } from '@/api/user';
 import { User } from '@/types/types';
 import { Input } from '@/components/ui/input';
 import { useRouter } from 'next/navigation';
+import UpdateprofileImg from '../../../../components/user/UpdateprofileImg';
 
 export default function Page() {
     const [profileInfo, setProfileInfo] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const router = useRouter();
+
+    const [isUpdateImgPopupOpen, setIsUpdateImgPopupOpen]= useState(false);
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -63,8 +66,20 @@ export default function Page() {
         router.push('/main/mypage/update/password')
     }
 
-    const updateProfileImg =()=>{
+
+    const handleProfileImgPopup =(e: React.MouseEvent)=>{
+        console.log("프로필 바꾸러 가쟈!!");
+        e.preventDefault();
+        setIsUpdateImgPopupOpen(true);
+    }
+
+    const handleProfileImgVerified = (profileImgUrl : string)=>{
+        if(profileImgUrl !== ""){
+            console.log(`입력된 프로필 이미지 Url: ${profileImgUrl}`);
+            setProfileInfo(prev => prev ? { ...prev, imageUrl: profileImgUrl } : prev );
+        }
         
+
     }
 
     return (
@@ -102,9 +117,14 @@ export default function Page() {
                                     />
                                   </div>
                                   <Button
-                                        onClick={updateProfileImg}
+                                        name="profileImgUploadBtn"
                                         className="w-[10%]"
+                                        onClick={(e)=>{
+                                            handleProfileImgPopup(e);
+                                        }}
+                                        
                                     >변경</Button>
+                                  <UpdateprofileImg imageUrl={profileInfo.imageUrl} isPopupOpen={isUpdateImgPopupOpen} setIsPopupOpen={setIsUpdateImgPopupOpen} callback={handleProfileImgVerified} duplicateCheck={true}/>
                                 </div>
                                 <Separator className='my-5 border-t-2 border-muted-foreground' />
                                 <div className="flex flex-row items-center gap-10">
@@ -133,7 +153,7 @@ export default function Page() {
                                     <span className="font-bold text-lg">이메일</span>
                                     <Input className='w-[50%] text-lg bg-gray-100 border-muted'
                                         name="email"
-                                        value={profileInfo?.email}
+                                        value={profileInfo?.email || '이메일 미설정'}
                                         readOnly
                                     />
                                 </div>
