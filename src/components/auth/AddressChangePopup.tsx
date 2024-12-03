@@ -164,23 +164,23 @@ const AddressChangePopup = () => {
             </div>
           </div>
           <DialogFooter>
-            <div className="flex justify-between items-center">
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="terms"
-                  checked={isChecked}
-                  onCheckedChange={handleCheckboxChange}
-                />
-                <label htmlFor="terms">다시보지 않기</label>
-              </div>
-              <div
-                onClick={handleNextTimeButtonClick}
-                className="text-right text-blue-500 flex-shrink-0 cursor-pointer"
-              >
-                다음에 할래요
-              </div>
-            </div>
-          </DialogFooter>
+  <div className="flex justify-between items-center w-full">
+    <div className="flex items-center space-x-2">
+      <Checkbox
+        id="terms"
+        checked={isChecked}
+        onCheckedChange={handleCheckboxChange}
+      />
+      <label htmlFor="terms">다시보지 않기</label>
+    </div>
+    <div
+      onClick={handleNextTimeButtonClick}
+      className="text-blue-500 cursor-pointer flex-shrink-0"
+    >
+      다음에 할래요
+    </div>
+  </div>
+</DialogFooter>
         </DialogContent>
       </Dialog>
       {isPopupOpen && <CustomDialoguePopup popupData={popupData}/>}

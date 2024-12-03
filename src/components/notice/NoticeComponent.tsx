@@ -26,7 +26,7 @@ const NoticeComponent = ({ notice }: { notice: Notice }) => {
   }
 
   return (
-    <Button className="w-full h-full flex bg-transparent hover:bg-gray-100 text-black transition duration-200"
+    <Button className="w-full h-full flex bg-transparent hover:bg-gray-100 text-black transition duration-200 dark:text-white dark:hover:bg-gray-700"
     onClick={(e)=>{handleNotice(e)}} >
       {/* 날짜 */}
       <div className="text-sm font-semibold px-2 py-1 border rounded-full bg-purple-200 text-gray-700">
