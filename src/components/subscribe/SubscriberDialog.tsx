@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent } from '@/components/ui/card';
-import { Avatar } from '@/components/ui/avatar';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { 
     Dialog, 
@@ -14,6 +14,19 @@ import {
     DialogFooter 
 } from '@/components/ui/dialog';
 import { UserSimpleResDTO, getMySubscribes, unsubscribeUser } from '@/api/subscribe';
+import { Camera } from 'lucide-react';
+
+interface ProfileInfo {
+    id: number;
+    nickName: string;
+    imageUrl: string;
+    comment: string | null;
+    address: string | null;
+    postCount: number;
+    pathCount: number;
+    subscribeByCount: number,
+    isSubscribed?: boolean;
+}
 
 interface SubscriberDialogProps {
     isOpen: boolean;
@@ -88,13 +101,18 @@ export default function SubscriberDialog({ isOpen, onOpenChange }: SubscriberDia
                                 {subscribers.map((subscriber) => (
                                     <Card key={subscriber.id} className="hover:bg-gray-50">
                                         <CardContent className="flex items-center p-4">
-                                            <Avatar className="h-12 w-12">
-                                                <img
-                                                    src={subscriber.imageUrl || '/api/placeholder/40/40'}
-                                                    alt={subscriber.nickName}
-                                                    className="rounded-full object-cover"
-                                                />
-                                            </Avatar>
+                                        <Avatar className="h-12 w-12">
+                                        <AvatarImage
+                                        src={subscriber.imageUrl} // 사용자 이미지
+                                        alt={subscriber.nickName}
+                                        className="rounded-full object-cover"
+                                        />
+                                        <AvatarFallback>
+                                        
+                                        {subscriber?.nickName?.[0]}
+                                        
+                                        </AvatarFallback>
+                                        </Avatar>
                                             <div className="ml-4 flex-grow">
                                                 <h3 className="font-semibold">{subscriber.nickName}</h3>
                                                 <p className="text-sm text-gray-600">{subscriber.comment}</p>
