@@ -153,6 +153,7 @@ export interface UserSimple {
   pathCount: number;
   isSubscribed: number;
   subscribeByCount: number;
+  point: number;
 }
 
 export interface UserUpdateDTO {

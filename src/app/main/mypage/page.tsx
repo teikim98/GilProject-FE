@@ -8,14 +8,31 @@ import MypageBtn from '@/components/layout/MypageBtn';
 import BackHeader from '@/components/layout/BackHeader';
 import { getDetailProfile, updateProfileImage } from '@/api/user';
 import { User } from '@/types/types';
+import { getPoint } from '@/api/point';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useDetailProfile } from '@/hooks/queries/useUserQuery';
 
 export default function Page() {
 
+    const [points, setPoints] = useState(0);
+
     const router = useRouter();
     const { data: profileInfo, isLoading, error } = useDetailProfile();
 
+
+    useEffect(() => {
+        const getPoints = async () => {
+            try {
+                const pointData = await getPoint();
+                setPoints(pointData);
+            } catch (error) {
+                console.error('포인트 조회 실패:', error);
+            }
+        };
+
+        getPoints();
+    }, []);
 
     if (error) {
         return (
@@ -66,15 +83,21 @@ export default function Page() {
                     <div className="flex flex-row justify-between items-start">
                         <div className="flex flex-row gap-4 items-center">
                             <div className="relative">
-                                {profileInfo.imageUrl ? (
-                                    <img
-                                        src={profileInfo.imageUrl}
-                                        alt="Profile"
-                                        className="w-12 h-12 rounded-full object-cover"
-                                    />
-                                ) : (
-                                    <Camera className="w-12 h-12 p-2 bg-muted rounded-full" />
-                                )}
+                                <div className={`medal w-20 h-20 rounded-full p-1
+                                ${points >= 5000 ? 'bg-[url(/medal/gold.png)]' : points >= 3000 ? 'bg-[url(/medal/silver.png)]' : points >= 1000 ? 'bg-[url(/medal/bronze.png)]' : null} bg-cover bg-center`}>
+                                    <div className="absolute inset-0 flex items-center justify-center">
+                                        {profileInfo?.imageUrl ? (
+                                            <img
+                                                src={profileInfo.imageUrl}
+                                                alt="Profile"
+                                                className="w-12 h-12 rounded-full object-cover"
+                                                style={{ position: "absolute", transform: "translate(-50%, -50%)", top: "60%", left: "50%" }}
+                                            />
+                                        ) : (
+                                            <Camera className="w-12 h-12 p-2 bg-muted rounded-full" style={{ position: "absolute", transform: "translate(-50%, -50%)", top: "60%", left: "50%" }} />
+                                        )}
+                                    </div>
+                                </div>
                                 <input
                                     type="file"
                                     className="absolute inset-0 opacity-0 cursor-pointer"

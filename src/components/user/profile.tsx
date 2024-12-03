@@ -6,6 +6,19 @@ import { updateProfileImage } from '@/api/user'
 import { useDetailProfile, useSimpleProfile } from '@/hooks/queries/useUserQuery'
 import { User, UserSimple } from '@/types/types'
 
+interface ProfileInfo {
+    id: number;
+    nickName: string;
+    imageUrl: string;
+    comment: string | null;
+    address: string | null;
+    postCount: number;
+    pathCount: number;
+    subscribeByCount: number,
+    isSubscribed?: boolean;
+    point: number;
+}
+
 interface ProfileProps {
     userId: number;
     isDetailView: boolean;
@@ -77,28 +90,34 @@ export default function Profile({
                 <div className="flex flex-row justify-between items-start">
                     <div className="flex flex-row gap-4 items-center">
                         <div className="relative">
-                            {profileInfo.imageUrl ? (
-                                <img
-                                    src={profileInfo.imageUrl}
-                                    alt="Profile"
-                                    className="w-12 h-12 rounded-full object-cover"
-                                />
-                            ) : (
-                                <Camera className="w-12 h-12 p-2 bg-muted rounded-full" />
-                            )}
-                            {isDetailView && (
-                                <input
-                                    type="file"
-                                    className="absolute inset-0 opacity-0 cursor-pointer"
-                                    onChange={(e) => {
-                                        const file = e.target.files?.[0];
-                                        if (file) {
-                                            updateProfileImage(profileInfo.id, file);
-                                        }
-                                    }}
-                                    accept="image/*"
-                                />
-                            )}
+                            <div className={`medal w-20 h-20 rounded-full ${profileInfo.point >= 5000 ? 'bg-[url(/medal/gold.png)]' : profileInfo.point >= 3000 ? 'bg-[url(/medal/silver.png)]' : profileInfo.point >= 1000 ? 'bg-[url(/medal/bronze.png)]' : null} bg-cover bg-center`}>
+                                <div className="absolute inset-0 flex items-center justify-center">
+                                    {profileInfo.imageUrl ? (
+                                        <img
+                                            src={profileInfo.imageUrl}
+                                            alt="Profile"
+                                            className="w-12 h-12 rounded-full object-cover"
+                                            style={{ position: "absolute", transform: "translate(-50%, -50%)", top: "60%", left: "50%" }}
+                                        />
+                                    ) : (
+                                        <Camera className="w-12 h-12 p-2 bg-muted rounded-full" style={{ position: "absolute", transform: "translate(-50%, -50%)", top: "60%", left: "50%" }} />
+                                    )}
+                                </div>
+                                {isDetailView && (
+                                    <input
+                                        type="file"
+                                        className="absolute inset-0 opacity-0 cursor-pointer"
+                                        onChange={(e) => {
+                                            const file = e.target.files?.[0];
+                                            if (file) {
+                                                updateProfileImage(profileInfo.id, file);
+                                            }
+                                        }}
+                                        accept="image/*"
+                                    />
+                                )}
+
+                            </div>
                         </div>
                         <div className="flex flex-col">
                             <div className="flex flex-row items-center gap-2">

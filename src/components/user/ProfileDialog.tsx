@@ -15,6 +15,19 @@ interface ProfileDialogProps {
     onOpenChange?: (open: boolean) => void;
 }
 
+interface ProfileInfo {
+    id: number;
+    nickName: string;
+    imageUrl: string;
+    comment: string | null;
+    address: string | null;
+    postCount: number;
+    subscribeByCount: number;
+    pathCount: number;
+    isSubscribed?: boolean;
+    point: number;
+}
+
 interface JWTPayload {
     id: number;
 }
@@ -23,7 +36,6 @@ export default function ProfileDialog({ userId, className, onOpenChange }: Profi
     const [open, setOpen] = useState(false);
     const [isDetailView, setIsDetailView] = useState(false);
 
-    // React Query hooks
     const {
         data: simpleProfile,
         isLoading: simpleLoading,
