@@ -77,6 +77,7 @@ export default function BoardList() {
     useEffect(() => {
         return () => {
             useSearchStore.getState().setQuery('');
+            setSelectedLocation('내 현재위치');
         }
     }, []);
 
