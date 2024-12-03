@@ -6,11 +6,12 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import ValidateMessage from "@/components/auth/ValidateMessage";
-import { emailValidate } from "@/components/auth/EmailVerification";
 import EmailPopup from "@/components/auth/EmailPopup";
 import { passWordEmail } from "@/api/mail";
 import { useRouter } from "next/navigation";
 import { nameValidation } from "@/util/validation";
+import { PopupData } from "@/types/types_JHW";
+import CustomDialoguePopup from "@/components/auth/CustomDialoguePopup";
 
 const HomePage = () => {
   let router = useRouter();
@@ -22,7 +23,8 @@ const HomePage = () => {
   const [emailValidMessage, setEmailValidMessage] = useState("");
   const [isEmailPopupOpen, setIsEmailPopupOpen] = useState(false);
   const [findButtonLock, setFindButtonLock] = useState(false);
-
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [popupData, setPopupData] = useState<PopupData>({});
 
   /**
    * 이름 입력 Input
@@ -43,7 +45,7 @@ const HomePage = () => {
   const handleCertifyEmail = (e: React.MouseEvent) => {
     e.preventDefault();
     setIsEmailPopupOpen(true);
-  }
+  };
 
   /**
    * 찾기 Button
@@ -59,12 +61,27 @@ const HomePage = () => {
 
     // console.log(result);
     if (result === 1) {
-      alert("새 비밀번호가 발급되었습니다. 이메일을 확인해주세요");
+      setPopupData({
+        title: "성공",
+        description : "새 비밀빈호가 이메일로 발급되었습니다.",
+        content: "로그인 후 반드시 비밀번호를 변경해주세요",
+        onConfirm: () => {
+          setIsPopupOpen(false);
+          router.push("/auth/login");
+        },
+      });
+      setIsPopupOpen(true);
+    } else {
+      setPopupData({
+        title: "오류",
+        content: "입력하신 이름과 이메일에 일치하는 회원이 없습니다",
+        onConfirm: () => {
+          setIsPopupOpen(false);
+          router.push("/auth/login");
+        },
+      });
+      setIsPopupOpen(true);
     }
-    else {
-      alert("입력하신 이름과 이메일에 일치하는 회원이 없습니다");
-    }
-    router.push("/auth/login");
   };
 
   /**
@@ -83,7 +100,7 @@ const HomePage = () => {
   return (
     <div className="w-full max-w-screen-md p-4 space-y-4 animate-fade-in">
       {/* Card Component */}
-      <Card className="max-w-screen-md">
+      <Card className="max-w-screen-md w-[300px] h-[335px] overflow-auto no-scrollbar">
         <CardHeader>
           <CardTitle>비밀번호 찾기</CardTitle>
           <CardDescription>필요한 정보를 입력하세요.</CardDescription>
@@ -125,7 +142,7 @@ const HomePage = () => {
         <CardFooter className="flex justify-center flex-col">
           <Button
             variant="outline"
-            className="w-full"
+            className="w-full w-full bg-purple-400 hover:bg-purple-500"
             onClick={(e) => {
               handleAuthFind(e);
             }}
@@ -135,6 +152,7 @@ const HomePage = () => {
           </Button>
         </CardFooter>
       </Card>
+      {isPopupOpen && <CustomDialoguePopup popupData={popupData} />}
     </div>
   );
 };

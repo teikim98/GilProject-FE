@@ -1,22 +1,24 @@
 import axios from "axios";
+import { customInterceptors } from "./interceptors";
 
 const api = axios.create({
   baseURL: `${process.env.NEXT_PUBLIC_API_URL}`,
 });
 
 // Auth 토큰 설정
-api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem("access");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
+customInterceptors(api);
+// api.interceptors.request.use(
+//   (config) => {
+//     const token = localStorage.getItem("access");
+//     if (token) {
+//       config.headers.Authorization = `Bearer ${token}`;
+//     }
+//     return config;
+//   },
+//   (error) => {
+//     return Promise.reject(error);
+//   }
+// );
 
 // 댓글 목록 조회
 export const getComments = async (postId: number) => {

@@ -6,6 +6,7 @@ import { Button } from "../ui/button";
 import { changePassword } from "@/api/auth";
 import { checkLength } from "@/util/Regex";
 import ValidateMessage from "./ValidateMessage";
+import { PopupData } from "@/types/types_JHW";
 
 const PasswordChangePopup = () => {
   const [password, setPassword] = useState("");
@@ -13,6 +14,13 @@ const PasswordChangePopup = () => {
   const [newPasswordConfirm, setNewPasswordConfirm] = useState("");
   const [ispasswordValid,setIsPasswordValid] = useState(false);
   const [passwordValidMessage,setPasswordValidMessage] = useState("");
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [popupData, setPopupData] = useState<PopupData>({
+    title: "",
+    description: "",
+    content: "",
+    onConfirm: () => {},
+  }); 
 
   /**
    * 비밀번호 Input
@@ -42,15 +50,28 @@ const PasswordChangePopup = () => {
       console.log(result);
       
       if(result === "비밀번호가 일치하지 않습니다"){
-        alert("비밀번호 변경 실패");
+        setPopupData({
+          title : "오류",
+          description : "비밀번호 변경 실패",
+          content : "비밀번호가 일치하지 않습니다. 다시 확인해주세요."
+        })
+        setIsPopupOpen(true);
       }
       else{
-        alert("비밀번호 변경 성공");
+        setPopupData({
+          title : "성공",
+          content : "비밀번호 변경에 성공하셨습니다"
+        })
+        setIsPopupOpen(true);
       }
     }
     catch(error){
       // console.log("비밀번호 변경 실패");
-      alert("비밀번호 변경 실패");
+      setPopupData({
+        title : "오류",
+        content : "비밀번호 변경 실패"
+      })
+      setIsPopupOpen(true);
     }
 
   }
