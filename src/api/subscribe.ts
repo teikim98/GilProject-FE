@@ -5,28 +5,7 @@ const api = axios.create({
   baseURL: `${process.env.NEXT_PUBLIC_API_URL}`,
 });
 
-// const getAuthToken = (): string | null => {
-//     const token = localStorage.getItem("access");
-//     console.log('Current Token:', token); // 토큰 확인용
-//     return token;
-// };
-
 customInterceptors(api);
-// api.interceptors.request.use(
-//     (config) => {
-//         const token = getAuthToken();
-//         if (token) {
-//             config.headers.Authorization = `Bearer ${token}`;
-//             console.log('Request Headers:', config.headers); // 요청 헤더 확인용
-//         } else {
-//             console.log('No token found!'); // 토큰이 없는 경우
-//         }
-//         return config;
-//     },
-//     (error) => {
-//         return Promise.reject(error);
-//     }
-// );
 
 interface UserSimpleResDTO {
   id: number;
@@ -54,7 +33,8 @@ export const getMySubscribes = async (): Promise<UserSimpleResDTO[]> => {
 
 export const subscribeUser = async (userId: number): Promise<number> => {
   try {
-    const response = await api.post(`/${userId}`);
+    const response = await api.post(`/subscribe/${userId}`);
+    console.log(response.data);
     return response.data;
   } catch (error) {
     throw error;
@@ -65,7 +45,7 @@ export const unsubscribeUser = async (
   subscribeUserId: number
 ): Promise<void> => {
   try {
-    await api.delete(`/${subscribeUserId}`);
+    await api.delete(`/subscribe/${subscribeUserId}`);
   } catch (error) {
     console.error("Error unsubscribing user:", error);
     throw error;
