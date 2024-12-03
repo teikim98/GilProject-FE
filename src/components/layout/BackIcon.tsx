@@ -83,11 +83,16 @@ const BackButton = ({
                 variant="ghost"
                 size="icon"
                 onClick={handleBack}
-                className={`w-fit p-2 group flex items-center gap-1 hover:gap-2 transition-all ${className}`}
+                className={`w-fit p-2 group flex items-center gap-1 hover:gap-2 transition-all hover:bg-purple-100 dark:hover:bg-purple-900/40 ${className}`}
                 {...props}
             >
-                <ArrowLeft size={32} className="dark:text-gray-300" />
-                <span className="dark:text-gray-300">뒤로</span>
+                <ArrowLeft
+                    size={32}
+                    className="text-purple-900 dark:text-purple-100 transition-colors"
+                />
+                <span className="text-purple-900 dark:text-purple-100 transition-colors">
+                    뒤로
+                </span>
             </Button>
 
             {alertConfig && (
