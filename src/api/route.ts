@@ -1,5 +1,6 @@
 import axios from "axios";
 import { Post, Path, CreatePostPath } from "@/types/types";
+import { customInterceptors } from "./interceptors";
 
 // 단일 axios 인스턴스 생성
 const api = axios.create({
@@ -12,18 +13,19 @@ const getAuthToken = (): string | null => {
 };
 
 // 인터셉터 설정
-api.interceptors.request.use(
-  (config) => {
-    const token = getAuthToken();
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
+customInterceptors(api);
+// api.interceptors.request.use(
+//   (config) => {
+//     const token = getAuthToken();
+//     if (token) {
+//       config.headers.Authorization = `Bearer ${token}`;
+//     }
+//     return config;
+//   },
+//   (error) => {
+//     return Promise.reject(error);
+//   }
+// );
 
 // 현재 로그인한 사용자의 경로 가져오기
 export const getAllUserPaths = async (): Promise<Path[]> => {

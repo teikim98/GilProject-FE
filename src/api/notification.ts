@@ -1,3 +1,4 @@
+
 export const markNotificationAsRead = async (notificationId: number) => {
   const token = localStorage.getItem("access");
   const response = await fetch(

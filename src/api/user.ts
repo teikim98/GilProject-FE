@@ -2,6 +2,7 @@ import { User, UserSimple } from "@/types/types";
 import axios from "axios";
 import { cookies } from "next/headers";
 import { GetUserPostsResponse} from "@/types/types";
+import { customInterceptors } from "./interceptors";
 
 //유저(마이페이지) 관련 API///////////////
 
@@ -13,73 +14,76 @@ const getAuthToken = (): string | null => {
   return localStorage.getItem("access");
 };
 
+customInterceptors(api);
 //프론트가 보낸 요청 인터셉터
-api.interceptors.request.use(
-  (config) => {
-    console.log("api.interceptors call");
+// requestInterceptor(api);
+// api.interceptors.request.use(
+//   (config) => {
+//     console.log("api.interceptors call");
 
-    const token = getAuthToken();
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
+//     const token = getAuthToken();
+//     if (token) {
+//       config.headers.Authorization = `Bearer ${token}`;
+//     }
+//     return config;
+//   },
+//   (error) => {
+//     return Promise.reject(error);
+//   }
+// );
 
 //프론트가 받은 응답 인터셉터
-api.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    //원래 요청
-    const originalRequest = error.config;
-    console.log("원래 요청" + originalRequest);
-    console.log(originalRequest);
+// responseInterceptor(api);
+// api.interceptors.response.use(
+//   (response) => response,
+//   async (error) => {
+//     //원래 요청
+//     const originalRequest = error.config;
+//     console.log("원래 요청" + originalRequest);
+//     console.log(originalRequest);
 
-    // 900에러 처리
-    if (error.response && error.response.status === 900) {
-      console.log("access 토큰이 만료되거나 정상이 아님");
-      const errorMessage = error.response.data;
-      console.log("백엔드에서 온 에러 메세지 : " + errorMessage);
+//     // 900에러 처리
+//     if (error.response && error.response.status === 900) {
+//       console.log("access 토큰이 만료되거나 정상이 아님");
+//       const errorMessage = error.response.data;
+//       console.log("백엔드에서 온 에러 메세지 : " + errorMessage);
 
-      try {
-        const reissueResponse = await axios.post(
-          `${process.env.NEXT_PUBLIC_API_URL}/reissue`,
-          null,
-          {
-            withCredentials: true, // 쿠키 포함
-          }
-        );
+//       try {
+//         const reissueResponse = await axios.post(
+//           `${process.env.NEXT_PUBLIC_API_URL}/reissue`,
+//           null,
+//           {
+//             withCredentials: true, // 쿠키 포함
+//           }
+//         );
 
-        //새로운 토큰을 헤더에서 찾음
-        const newAccessToken =
-          reissueResponse.headers["newaccess"].split("Bearer ")[1];
+//         //새로운 토큰을 헤더에서 찾음
+//         const newAccessToken =
+//           reissueResponse.headers["newaccess"].split("Bearer ")[1];
 
-        //새로운 토큰을 로컬스토리지에 저장
-        if (newAccessToken) {
-          localStorage.setItem("access", newAccessToken);
-          console.log("새로운 access 토큰 스토리지에 저장됨!");
+//         //새로운 토큰을 로컬스토리지에 저장
+//         if (newAccessToken) {
+//           localStorage.setItem("access", newAccessToken);
+//           console.log("새로운 access 토큰 스토리지에 저장됨!");
 
-          // 원래 요청 재시도
-          originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
+//           // 원래 요청 재시도
+//           originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
 
-          return api(originalRequest);
-        }
-      } catch (reissueError) {
-        console.error("Token reissue failed:", reissueError);
+//           return api(originalRequest);
+//         }
+//       } catch (reissueError) {
+//         console.error("Token reissue failed:", reissueError);
 
-        localStorage.removeItem("access");
-        localStorage.removeItem("address-popup");
-        //쿠키에 있는 refresh 토큰 삭제? -> 안해도됨 어차피 로그인하면 다시 저장됨
-        window.location.href = "/auth/login";
-      }
-    }
+//         localStorage.removeItem("access");
+//         localStorage.removeItem("address-popup");
+//         //쿠키에 있는 refresh 토큰 삭제? -> 안해도됨 어차피 로그인하면 다시 저장됨
+//         window.location.href = "/auth/login";
+//       }
+//     }
 
-    return Promise.reject(error);
-  }
-);
+//     return Promise.reject(error);
+//   }
+// );
 
 // 심플 프로필 정보 조회
 export const getSimpleProfile = async (userId: number): Promise<UserSimple> => {

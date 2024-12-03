@@ -1,11 +1,14 @@
 import { Notice } from "@/types/types_JHW";
 import axios from "axios";
+import { customInterceptors } from "./interceptors";
 
 //공지 관련 API///////////////
 
 const api = axios.create({
-  baseURL: "http://localhost:8080/notice",
+  baseURL: `${process.env.NEXT_PUBLIC_API_URL}/notice`,
 });
+
+customInterceptors(api);
 
 
 /**

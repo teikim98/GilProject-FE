@@ -1,30 +1,32 @@
 import axios from "axios";
+import { customInterceptors } from "./interceptors";
 
 const api = axios.create({
-    baseURL: "http://localhost:8080"
+    baseURL: `${process.env.NEXT_PUBLIC_API_URL}`
 });
 
-const getAuthToken = (): string | null => {
-    const token = localStorage.getItem("access");
-    console.log('Current Token:', token); // 토큰 확인용
-    return token;
-};
+// const getAuthToken = (): string | null => {
+//     const token = localStorage.getItem("access");
+//     console.log('Current Token:', token); // 토큰 확인용
+//     return token;
+// };
 
-api.interceptors.request.use(
-    (config) => {
-        const token = getAuthToken();
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
-            console.log('Request Headers:', config.headers); // 요청 헤더 확인용
-        } else {
-            console.log('No token found!'); // 토큰이 없는 경우
-        }
-        return config;
-    },
-    (error) => {
-        return Promise.reject(error);
-    }
-);
+customInterceptors(api);
+// api.interceptors.request.use(
+//     (config) => {
+//         const token = getAuthToken();
+//         if (token) {
+//             config.headers.Authorization = `Bearer ${token}`;
+//             console.log('Request Headers:', config.headers); // 요청 헤더 확인용
+//         } else {
+//             console.log('No token found!'); // 토큰이 없는 경우
+//         }
+//         return config;
+//     },
+//     (error) => {
+//         return Promise.reject(error);
+//     }
+// );
 
 export interface UserSimpleResDTO {
     id: number;

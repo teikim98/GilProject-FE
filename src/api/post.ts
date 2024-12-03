@@ -1,27 +1,31 @@
 import axios from "axios";
 import { Post } from "@/types/types";
 import { GetUserPostsResponse} from "@/types/types";
+import { customInterceptors } from "./interceptors";
 
 const api = axios.create({
   baseURL: `${process.env.NEXT_PUBLIC_API_URL}/posts`,
 });
 
-const getAuthToken = (): string | null => {
-  return localStorage.getItem("access");
-};
+customInterceptors(api);
+// const getAuthToken = (): string | null => {
+//   return localStorage.getItem("access");
+// };
 
-api.interceptors.request.use(
-  (config) => {
-    const token = getAuthToken();
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
+// api.interceptors.request.use(
+//   (config) => {
+//     const token = getAuthToken();
+//     if (token) {
+//       config.headers.Authorization = `Bearer ${token}`;
+//     }
+//     return config;
+//   },
+//   (error) => {
+//     return Promise.reject(error);
+//   }
+// );
+
+
 
 //집 주변 산책길 리트 가져오기
 export const getPosts = async (

@@ -39,7 +39,7 @@ export default function Page() {
     const createAddressCondition = async () => {
       try {
         const response = await getDetailProfile();
-        console.log("lat : " + response.latitude + "lon" + response.longitude);
+        // console.log("lat : " + response.latitude + "lon" + response.longitude);
 
         if (response.latitude && response.longitude) {
           localStorage.setItem("address-popup", "0");

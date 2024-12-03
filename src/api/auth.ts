@@ -3,6 +3,7 @@ import axios from "axios";
 
 //회원가입, 로그인 관련 API///////////////
 import { getDetailProfile } from "./user";
+import { customInterceptors } from "./interceptors";
 
 const api = axios.create({
   baseURL: `${process.env.NEXT_PUBLIC_API_URL}/auth`,
@@ -12,6 +13,8 @@ const api = axios.create({
 interface JWTPayload {
   id: number;
 }
+
+customInterceptors(api);
 
 /**
  * 이메일 로그인

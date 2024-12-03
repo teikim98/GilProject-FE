@@ -124,7 +124,7 @@ const HomePage = () => {
             <Button variant="outline" className="w-full" onClick={handleLogin}>
               Sign in
             </Button>
-            <Button
+            {/* <Button
               variant="outline"
               className="w-full"
               onClick={() => {
@@ -132,7 +132,8 @@ const HomePage = () => {
               }}
             >
               메인화면 가기
-            </Button>
+            </Button> */}
+            <br/>
             <h2>
               아직 회원이 아니라면{" "}
               <a href="/auth/signup" className=" bg-slate-500">

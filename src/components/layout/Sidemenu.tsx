@@ -34,7 +34,7 @@ export default function Sidemenu() {
 
     const handleLogout = () => {
         logout();
-        router.push('/'); // 로그아웃 후 홈페이지로 이동
+        // router.push('/'); // 로그아웃 후 홈페이지로 이동
     };
 
     return (

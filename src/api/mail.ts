@@ -1,10 +1,13 @@
 import axios from "axios";
+import { customInterceptors } from "./interceptors";
 
 //이메일 관련 API///////////////
 
 const api = axios.create({
   baseURL: `${process.env.NEXT_PUBLIC_API_URL}/mail`,
 });
+
+customInterceptors(api);
 
 /**
  * 이메일 전송
