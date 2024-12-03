@@ -88,6 +88,18 @@ export const existNickname = async (nickName: string) => {
 };
 
 /**
+ * 비밀번호 변경
+ * @param id
+ * @param nickName 
+ */
+export const changeNickName = async (nickName : string)=>{
+  // const response = await 
+  // return response.data;
+  
+  return 1;
+}
+
+/**
  * 이메일 DB 조회
  */
 export const existEmail = async (email: string) => {

@@ -146,8 +146,8 @@ const HomePage = () => {
             </form>
           </CardContent>
           <CardFooter className="flex justify-center flex-col">
-            <Button variant="outline" className="w-full bg-purple-400  hover:bg-purple-500 " onClick={handleLogin}>
-              로그인
+            <Button variant="outline" className="w-full bg-purple-400  hover:bg-purple-500" onClick={handleLogin}>
+              Sign In
             </Button>
             {/* <Button
               variant="outline"

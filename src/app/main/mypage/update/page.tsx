@@ -11,12 +11,14 @@ import { User } from '@/types/types';
 import { Input } from '@/components/ui/input';
 import { useRouter } from 'next/navigation';
 import ValidateMessage from '@/components/auth/ValidateMessage';
+import NickNameChangePopup from '@/components/auth/NickNameChangePopup';
 
 export default function Page() {
     const [profileInfo, setProfileInfo] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const router = useRouter();
+    const [isNickNamePopupOpen, setIsNickNamePopupOpen] = useState(true);
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -66,6 +68,14 @@ export default function Page() {
 
     const updateUserSave = ()=>{
         router.push('/main/mypage');
+    }
+
+    /**
+     * 닉네임 변경 후 콜백 함수
+     * @param nickName
+     */
+    const nickNameChangeComplete = (nickName : string)=>{
+        console.log("변경된 nickName = " + nickName);
     }
 
     return (
@@ -194,7 +204,7 @@ export default function Page() {
                     </Button>
                 </CardFooter>
             </Card>
-        
+            <NickNameChangePopup initialNickName='initialNickName' isPopupOpen={isNickNamePopupOpen} setIsPopupOpen={setIsNickNamePopupOpen} callback={nickNameChangeComplete} />
         </div>
     );
 }
