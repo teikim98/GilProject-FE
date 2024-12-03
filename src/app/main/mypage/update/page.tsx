@@ -59,12 +59,12 @@ export default function Page() {
         );
     }
 
-    const updateUserSave = ()=>{
-        router.push('/main/mypage');
+    const updatePassword = ()=>{
+        router.push('/main/mypage/update/password')
     }
 
-    const updateUserAddress = ()=>{
-        router.push('/main/mypage/update/password')
+    const updateUserSave = ()=>{
+        router.push('/main/mypage');
     }
 
     return (
@@ -168,7 +168,7 @@ export default function Page() {
                                 <div className="flex flex-row items-center gap-10">
                                     <span className="font-bold text-lg">비밀번호</span>
                                     <Button
-                                        onClick={updateUserAddress}
+                                        onClick={updatePassword}
                                         className="w-[30%] bg-red-600 text-white hover:bg-red-700"
                                     >
                                     비밀번호 변경
@@ -176,19 +176,18 @@ export default function Page() {
                                 </div>
                                 <Separator className='my-5 border-t-2 border-muted-foreground' />
                                 <div className="flex flex-col items-center justify-center space-y-4">
-                                   
-                                    <Button
-                                        onClick={updateUserSave}
-                                        className="w-[40%]"
-                                    >
-                                    수정하기
-                                    </Button>
+                                    
                                 </div>
                             </div>
                         </div>
                 </CardContent>
                 <CardFooter className="px-6 pt-0 flex justify-center">
-                    
+                    <Button
+                        onClick={updateUserSave}
+                        className="w-[40%]"
+                    >
+                    수정 정보 저장
+                    </Button>
                 </CardFooter>
             </Card>
         
