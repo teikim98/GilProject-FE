@@ -3,40 +3,41 @@ import { Camera, Loader2, Pencil, Users } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { updateProfileImage } from '@/api/user'
-
-interface ProfileInfo {
-    id: number;
-    nickName: string;
-    imageUrl: string;
-    comment: string | null;
-    address: string | null;
-    postCount: number;
-    pathCount: number;
-    subscribeByCount: number,
-    isSubscribed?: boolean;
-}
+import { useDetailProfile, useSimpleProfile } from '@/hooks/queries/useUserQuery'
 
 interface ProfileProps {
-    profileInfo: ProfileInfo | null;
-    loading: boolean;
-    error: string | null;
+    userId: number;
     isDetailView: boolean;
     onSubscribeToggle: () => Promise<void>;
     width?: string;
 }
 
 export default function Profile({
-    profileInfo,
-    loading,
-    error,
+    userId,
     isDetailView,
     onSubscribeToggle,
     width = "w-full"
 }: ProfileProps) {
+    const {
+        data: simpleProfile,
+        isLoading: simpleLoading,
+        error: simpleError
+    } = useSimpleProfile(userId);
+
+    const {
+        data: detailProfile,
+        isLoading: detailLoading,
+        error: detailError
+    } = useDetailProfile();
+
+    const profileInfo = isDetailView ? detailProfile : simpleProfile;
+    const loading = isDetailView ? detailLoading : simpleLoading;
+    const error = isDetailView ? detailError : simpleError;
+
     if (error) {
         return (
             <Card className={`${width} border-0 shadow-none min-h-[200px] flex items-center justify-center`}>
-                <div className="text-destructive">{error}</div>
+                <div className="text-destructive">{error.message}</div>
             </Card>
         );
     }
@@ -138,7 +139,7 @@ export default function Profile({
                     </Button>
                 ) : (
                     <>
-                        <Button
+                        {/* <Button
                             variant={profileInfo.isSubscribed ? "secondary" : "default"}
                             onClick={onSubscribeToggle}
                             disabled={loading}
@@ -147,7 +148,7 @@ export default function Profile({
                         >
                             <Users className="w-4 h-4" />
                             {profileInfo.isSubscribed ? '구독중' : '구독하기'}
-                        </Button>
+                        </Button> */}
                         <Button
                             variant="secondary"
                             onClick={() => {/* 글 목록 보기 */ }}
