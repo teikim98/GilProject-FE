@@ -6,7 +6,6 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import ValidateMessage from "@/components/auth/ValidateMessage";
-import { emailValidate } from "@/components/auth/EmailVerification";
 import EmailPopup from "@/components/auth/EmailPopup";
 import { passWordEmail } from "@/api/mail";
 import { useRouter } from "next/navigation";
@@ -101,7 +100,7 @@ const HomePage = () => {
   return (
     <div className="w-full max-w-screen-md p-4 space-y-4 animate-fade-in">
       {/* Card Component */}
-      <Card className="max-w-screen-md">
+      <Card className="max-w-screen-md w-[300px] h-[335px] overflow-auto no-scrollbar">
         <CardHeader>
           <CardTitle>비밀번호 찾기</CardTitle>
           <CardDescription>필요한 정보를 입력하세요.</CardDescription>
@@ -143,7 +142,7 @@ const HomePage = () => {
         <CardFooter className="flex justify-center flex-col">
           <Button
             variant="outline"
-            className="w-full"
+            className="w-full w-full bg-purple-400 hover:bg-purple-500"
             onClick={(e) => {
               handleAuthFind(e);
             }}

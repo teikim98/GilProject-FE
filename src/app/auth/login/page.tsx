@@ -12,6 +12,8 @@ import Image from "next/image";
 import { PopupData } from "../../../types/types_JHW";
 import { NoticeContainer } from "@/components/notice/NoticeContainer";
 import CustomDialoguePopup from "@/components/auth/CustomDialoguePopup";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import Link from "next/link";
 
 const HomePage = () => {
   const router = useRouter();
@@ -41,7 +43,8 @@ const HomePage = () => {
 
   return (
     <>
-      <div className="w-full max-w-screen-md p-4 space-y-4 animate-fade-in">
+      {/* <div className="w-full max-w-screen-md p-4 space-y-4 animate-fade-in"> */}
+      <div className="w-[500px] h-[600px] max-w-screen-md p-4 space-y-4 animate-fade-in">
         <NoticeContainer />
         {/* Card Component */}
         <Card className="max-w-screen-md">
@@ -96,33 +99,50 @@ const HomePage = () => {
                   <p />
                   <div className="flex justify-center gap-14">
                     {/* Google Button */}
-                    <a href="http://localhost:8080/oauth2/authorization/google" className="block w-[40px] h-[40px]  rounded-md hover:border-gray-600">
+                    <Link href="http://localhost:8080/oauth2/authorization/google" passHref>
+                      <Avatar className="cursor-pointer">
+                        <AvatarImage src="/Resources/Google/web_neutral_sq_na@4x.png" />
+                      </Avatar>
+                    </Link>
+
+                    <Link href="http://localhost:8080/oauth2/authorization/naver" passHref>
+                      <Avatar className="cursor-pointer">
+                        <AvatarImage src="/Resources/Naver/btnG_아이콘사각.png" />
+                      </Avatar>
+                    </Link>
+
+                    <Link href="http://localhost:8080/oauth2/authorization/kakao" passHref>
+                      <Avatar className="cursor-pointer">
+                        <AvatarImage src="/Resources/Kakao/카카오톡.png" />
+                      </Avatar>
+                    </Link>
+                    {/* <a href="http://localhost:8080/oauth2/authorization/google" className="block w-[40px] h-[40px]  rounded-md hover:border-gray-600">
                       <div className="relative w-full h-full">
                         <Image src="/Resources/Google/web_neutral_sq_na@4x.png" alt="Sign in with Google" layout="fill" />
                       </div>
-                    </a>
+                    </a> */}
 
                     {/* Naver Button */}
-                    <a href="http://localhost:8080/oauth2/authorization/naver" className="block w-[40px] h-[40px]  rounded-md hover:border-gray-600">
+                    {/* <a href="http://localhost:8080/oauth2/authorization/naver" className="block w-[40px] h-[40px]  rounded-md hover:border-gray-600">
                       <div className="relative w-full h-full">
                         <Image src="/Resources/Naver/btnG_아이콘사각.png" alt="Sign in with Naver" layout="fill" />
                       </div>
-                    </a>
+                    </a> */}
 
                     {/* Kakao Button */}
-                    <a href="http://localhost:8080/oauth2/authorization/kakao" className="block w-[40px] h-[40px]  rounded-md hover:border-gray-600">
+                    {/* <a href="http://localhost:8080/oauth2/authorization/kakao" className="block w-[40px] h-[40px]  rounded-md hover:border-gray-600">
                       <div className="relative w-full h-full">
                         <Image src="/Resources/Kakao/카카오톡.png" alt="Sign in with Kakao" layout="fill" />
                       </div>
-                    </a>
+                    </a> */}
                   </div>
                 </div>
               </div>
             </form>
           </CardContent>
           <CardFooter className="flex justify-center flex-col">
-            <Button variant="outline" className="w-full" onClick={handleLogin}>
-              Sign in
+            <Button variant="outline" className="w-full bg-purple-400  hover:bg-purple-500 " onClick={handleLogin}>
+              로그인
             </Button>
             {/* <Button
               variant="outline"
@@ -133,21 +153,21 @@ const HomePage = () => {
             >
               메인화면 가기
             </Button> */}
-            <br/>
+            <br />
             <h2>
               아직 회원이 아니라면{" "}
-              <a href="/auth/signup" className=" bg-slate-500">
-                여기를
-              </a>{" "}
-              눌러 회원가입
+              <a href="/auth/signup" className=" bg-slate-400">
+                여기
+              </a>
+              를 눌러 회원가입
             </h2>
 
             <h2>
               비밀번호를 잊으셨다면{" "}
-              <a href="/auth/find" className=" bg-slate-500">
-                여기를
-              </a>{" "}
-              눌러 비밀번호 찾기
+              <a href="/auth/find" className=" bg-slate-400">
+                여기
+              </a>
+              를 눌러 비밀번호 찾기
             </h2>
           </CardFooter>
         </Card>

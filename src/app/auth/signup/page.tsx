@@ -12,13 +12,14 @@ import EmailPopup from "../../../components/auth/EmailPopup";
 import { emailSend } from "@/api/mail";
 import { checkLength, checkKor, checkKorOrEngOrNum, checkEmailForm } from "@/util/Regex";
 import ValidateMessage from "@/components/auth/ValidateMessage";
-import EmailVerificationPopup, { EmailCertification } from "@/components/auth/EmailVerification";
 import { nameValidation } from "@/util/validation";
 import CustomDialoguePopup from "@/components/auth/CustomDialoguePopup";
 import { PopupData } from "@/types/types_JHW";
+import { PreventRefreshAndBack } from "@/util/preventRefreshAndBack";
 
 const HomePage = () => {
   let router = useRouter();
+  PreventRefreshAndBack();
 
   const [name, setName] = useState("");
   const [nickName, setNickName] = useState("");
@@ -192,7 +193,7 @@ const HomePage = () => {
     <div className="w-full max-w-screen-md p-4 space-y-4 animate-fade-in">
       {/* Card Component */}
       <Card
-        className="max-w-screen-md"
+        className="w-[400px] h-[590px] max-w-none overflow-auto no-scrollbar"
       >
         <CardHeader>
           <CardTitle>회원 가입</CardTitle>
@@ -266,7 +267,7 @@ const HomePage = () => {
           </form>
         </CardContent>
         <CardFooter className="flex justify-center flex-col">
-          <Button variant="outline" className="w-full" onClick={handleJoin} disabled={!(isNameValid && isNickNameValid && isNickNameDuplicationValid && isEmailValid && isPasswordValid)}>
+          <Button variant="outline" className="w-full bg-purple-400 hover:bg-purple-500" onClick={handleJoin} disabled={!(isNameValid && isNickNameValid && isNickNameDuplicationValid && isEmailValid && isPasswordValid)}>
             Sign up
           </Button>
         </CardFooter>
