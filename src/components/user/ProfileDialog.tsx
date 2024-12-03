@@ -23,6 +23,7 @@ interface ProfileInfo {
     subscribeByCount: number;
     pathCount: number;
     isSubscribed?: boolean;
+    point: number;
 }
 
 interface JWTPayload {

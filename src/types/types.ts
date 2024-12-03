@@ -152,6 +152,7 @@ export interface UserSimple {
   postCount: number;
   pathCount: number;
   subscribeByCount: number;
+  point: number;
 }
 
 export interface UserUpdateDTO {
