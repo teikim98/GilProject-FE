@@ -11,6 +11,7 @@ const config: Config = {
     extend: {
       fontFamily: {
         sebang: ["SEBANG_Gothic_Bold", "sans-serif"],
+        pretendard: ["Pretendard Variable", "sans-serif"],
       },
       keyframes: {
         "slide-up": {

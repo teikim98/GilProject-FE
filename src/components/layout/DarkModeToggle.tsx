@@ -11,7 +11,7 @@ export function DarkModeToggle() {
         <Button
             variant="ghost"
             onClick={toggleDarkMode}
-            className="ml-auto"
+            className="ml-auto px-2"
         >
             {isDarkMode ? (
                 <Sun className="h-7 w-7" />
