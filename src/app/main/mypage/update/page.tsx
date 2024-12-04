@@ -10,7 +10,7 @@ import { getDetailProfile, updateProfileImage } from '@/api/user';
 import { User } from '@/types/types';
 import { Input } from '@/components/ui/input';
 import { useRouter } from 'next/navigation';
-import UpdateprofileImg from '@/components/user/UpdateprofileImg';
+import UpdateprofileImg from '@/components/user/updateprofileImg';
 import PasswordChangePopup from '@/components/auth/PasswordChangePopup';
 import NickNameChangePopup from '@/components/auth/NickNameChangePopup';
 import AddressChangePopup from '@/components/auth/AddressChangePopup';
