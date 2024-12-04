@@ -7,7 +7,7 @@ const api = axios.create({
 
 customInterceptors(api);
 
-interface UserSimpleResDTO {
+export interface UserSimpleResDTO {
   id: number;
   nickName: string;
   imageUrl: string;
@@ -17,7 +17,7 @@ interface UserSimpleResDTO {
 //내 구독자 리스트 보기
 export const getMySubscribes = async (): Promise<UserSimpleResDTO[]> => {
   try {
-    const response = await axios.get<UserSimpleResDTO[]>(
+    const response = await api.get<UserSimpleResDTO[]>(
       `${process.env.NEXT_PUBLIC_API_URL}/user/mypage/subscribe`
     );
     if (response.status === 200 && Array.isArray(response.data)) {

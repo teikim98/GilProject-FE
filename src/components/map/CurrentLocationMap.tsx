@@ -55,7 +55,7 @@ export function CurrentLocationMap({ width, height }: SizeProps) {
         return (
             <Card className="flex items-center justify-center p-4" style={{ width, height }}>
                 <div className="w-full">
-                    <Skeleton className="h-[200px] w-full" />
+                    <Skeleton className="h-48 w-full" />
                 </div>
             </Card>
         );
