@@ -67,7 +67,7 @@ const HomePage = () => {
               >
                 <div className=" w-full items-center gap-4 flex flex-col">
                   {/* Email Input */}
-                  <div className="flex flex-col space-y-1.5">
+                  <div className="flex flex-col space-y-1.5 w-full">
                     <Label htmlFor="email">Email</Label>
                     <Input
                       type="email"
@@ -86,7 +86,7 @@ const HomePage = () => {
                   </div>
 
                   {/* Password Input */}
-                  <div className="flex flex-col space-y-1.5">
+                  <div className="flex flex-col space-y-1.5 w-full">
                     <Label htmlFor="password">Password</Label>
                     <Input
                       name="password"
@@ -105,33 +105,34 @@ const HomePage = () => {
                   </div>
 
                   {/* Social Login Buttons */}
-                  <div className="flex flex-col space-y-5">
-                    {/* <Label htmlFor="OAuth">간편 로그인</Label> */}
-                    <div className="flex justify-center gap-5">
-                      {/* Google Button */}
+                  <div className="flex flex-row justify-center items-center gap-4 w-full">
+                    <div className="flex-1 flex justify-center">
                       <Link href="http://localhost:8080/oauth2/authorization/google" passHref>
                         <Avatar className="cursor-pointer">
                           <AvatarImage src="/Resources/Google/web_neutral_sq_na@4x.png" />
                         </Avatar>
                       </Link>
+                    </div>
 
+                    <div className="flex-1 flex justify-center">
                       <Link href="http://localhost:8080/oauth2/authorization/naver" passHref>
                         <Avatar className="cursor-pointer">
                           <AvatarImage src="/Resources/Naver/btnG_아이콘사각.png" />
                         </Avatar>
                       </Link>
+                    </div>
 
+                    <div className="flex-1 flex justify-center">
                       <Link href="http://localhost:8080/oauth2/authorization/kakao" passHref>
                         <Avatar className="cursor-pointer">
                           <AvatarImage src="/Resources/Kakao/카카오톡.png" />
                         </Avatar>
                       </Link>
                     </div>
-
                   </div>
-                    <Button type="submit" variant="outline" className="w-full bg-purple-400 hover:bg-purple-500" onClick={handleLogin}>
-                      Sign In
-                    </Button>
+                  <Button type="submit" variant="outline" className="w-full bg-purple-400 hover:bg-purple-500" onClick={handleLogin}>
+                    Sign In
+                  </Button>
                 </div>
               </form>
             </CardContent>
