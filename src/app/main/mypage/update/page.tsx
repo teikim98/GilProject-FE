@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react';
-import { Camera, Loader2, Pencil, Users } from 'lucide-react'
+import { Camera, Loader2} from 'lucide-react'
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
@@ -10,12 +10,15 @@ import { getDetailProfile, updateProfileImage } from '@/api/user';
 import { User } from '@/types/types';
 import { Input } from '@/components/ui/input';
 import { useRouter } from 'next/navigation';
+import UpdateprofileImg from '../../../../components/user/UpdateprofileImg';
 
 export default function Page() {
     const [profileInfo, setProfileInfo] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const router = useRouter();
+
+    const [isUpdateImgPopupOpen, setIsUpdateImgPopupOpen]= useState(false);
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -63,8 +66,20 @@ export default function Page() {
         router.push('/main/mypage/update/password')
     }
 
-    const updateUserSave = ()=>{
-        router.push('/main/mypage');
+
+    const handleProfileImgPopup =(e: React.MouseEvent)=>{
+        console.log("프로필 바꾸러 가쟈!!");
+        e.preventDefault();
+        setIsUpdateImgPopupOpen(true);
+    }
+
+    const handleProfileImgVerified = (profileImgUrl : string)=>{
+        if(profileImgUrl !== ""){
+            console.log(`입력된 프로필 이미지 Url: ${profileImgUrl}`);
+            setProfileInfo(prev => prev ? { ...prev, imageUrl: profileImgUrl } : prev );
+        }
+        
+
     }
 
     return (
@@ -101,6 +116,15 @@ export default function Page() {
                                         accept="image/*"
                                     />
                                   </div>
+                                  <Button
+                                        name="profileImgUploadBtn"
+                                        className="w-[10%]"
+                                        onClick={(e)=>{
+                                            handleProfileImgPopup(e);
+                                        }}
+                                        
+                                    >변경</Button>
+                                  <UpdateprofileImg imageUrl={profileInfo.imageUrl} isPopupOpen={isUpdateImgPopupOpen} setIsPopupOpen={setIsUpdateImgPopupOpen} callback={handleProfileImgVerified} duplicateCheck={true}/>
                                 </div>
                                 <Separator className='my-5 border-t-2 border-muted-foreground' />
                                 <div className="flex flex-row items-center gap-10">
@@ -117,19 +141,19 @@ export default function Page() {
                                     <Input className='w-[50%] text-lg'
                                         name="nickName"
                                         value={profileInfo?.nickName}
-                                        onChange={(e) => setProfileInfo(prev => ({ ...prev, nickName: e.target.value }))}
+                                        onChange={(e) => {setProfileInfo(prev => prev ? { ...prev, nickName: e.target.value } : prev );}}
                                     />
                                     <Button
                                         onClick={() => {/* 닉네임 중복 체크*/ }}
-                                        className="w-[20%]"
-                                    >중복 체크</Button>
+                                        className="w-[10%]"
+                                    >변경</Button>
                                 </div>
                                 <Separator className='my-5 border-t-2 border-muted-foreground' />
                                 <div className="flex flex-row items-center gap-10">
                                     <span className="font-bold text-lg">이메일</span>
                                     <Input className='w-[50%] text-lg bg-gray-100 border-muted'
                                         name="email"
-                                        value={profileInfo?.email}
+                                        value={profileInfo?.email || '이메일 미설정'}
                                         readOnly
                                     />
                                 </div>
@@ -143,8 +167,8 @@ export default function Page() {
                                     />
                                     <Button
                                         onClick={()=>{/*주소 변경 컴포넌트*/}}
-                                        className="w-[20%]"
-                                    >주소 변경</Button>
+                                        className="w-[10%]"
+                                    >변경</Button>
                                 </div>
                                 <Separator className='my-5 border-t-2 border-muted-foreground' />
                                 <div className="flex flex-row items-center gap-10">
@@ -152,8 +176,12 @@ export default function Page() {
                                     <Input className='w-[50%] text-lg'
                                         name="comment"
                                         value={profileInfo?.comment || '자기소개가 없습니다.'}
-                                        onChange={(e) => setProfileInfo(prev => ({ ...prev, comment: e.target.value }))}
+                                        onChange={(e) => {setProfileInfo(prev => prev ? { ...prev, nickName: e.target.value } : prev );}}
                                     />
+                                    <Button
+                                        onClick={()=>{/*주소 변경 컴포넌트*/}}
+                                        className="w-[10%]"
+                                    >변경</Button>
                                 </div>
                                 <Separator className='my-5 border-t-2 border-muted-foreground' />
                                 <div className="flex flex-row items-center gap-10">
@@ -182,12 +210,7 @@ export default function Page() {
                         </div>
                 </CardContent>
                 <CardFooter className="px-6 pt-0 flex justify-center">
-                    <Button
-                        onClick={updateUserSave}
-                        className="w-[40%]"
-                    >
-                    수정 정보 저장
-                    </Button>
+                   
                 </CardFooter>
             </Card>
         
