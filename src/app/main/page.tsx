@@ -2,7 +2,7 @@
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Footprints } from "lucide-react";
+import { Footprints, PlusSquare, Share } from "lucide-react";
 import PWAInstallButton from "@/components/layout/PwaInstallBtn";
 import Sidemenu from "@/components/layout/Sidemenu";
 import Link from "next/link";
@@ -13,11 +13,25 @@ import AnimatedCards from "@/components/layout/AnimatedCards";
 import { verifiRefreshToken } from "@/api/auth";
 import AddressChangePopup from "@/components/auth/AddressChangePopup";
 import { getDetailProfile } from "@/api/user";
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 export default function Page() {
   const [addressPopupOpen, setAddressPopUpOpen] = useState(false);
+  const [showIOSModal, setShowIOSModal] = useState(false);
 
   useEffect(() => {
+
+    const checkIOSDevice = () => {
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+      const hasShownIOSGuide = localStorage.getItem('ios-pwa-guide-shown');
+
+      if (isIOS && !hasShownIOSGuide) {
+        setShowIOSModal(true);
+        localStorage.setItem('ios-pwa-guide-shown', 'true');
+      }
+    };
+
     /**
      * access, refresh 토큰 저장
      */
@@ -76,6 +90,8 @@ export default function Page() {
       fetchData();
     }
 
+    checkIOSDevice();
+
   }, []);
 
   return (
@@ -105,9 +121,46 @@ export default function Page() {
       <Separator className="my-4 dark:bg-gray-700" />
 
       <PWAInstallButton />
+      <IOSInstallGuideModal
+        isOpen={showIOSModal}
+        setIsOpen={setShowIOSModal}
+      />
+
 
       {addressPopupOpen && <AddressChangePopup isMypage={false} />}
       <AnimatedCards />
     </div>
   );
 }
+
+const IOSInstallGuideModal = ({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (open: boolean) => void }) => {
+  return (
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>iOS에서 길따라 앱 설치하기</DialogTitle>
+          <DialogDescription>
+            더 나은 경험을 위해 길따라 앱을 설치해보세요!
+          </DialogDescription>
+        </DialogHeader>
+        <div className="space-y-4">
+          <div className="flex items-center gap-2">
+            <Share className="w-5 h-5 text-blue-500" />
+            <p>1. 하단의 "공유" 버튼을 눌러주세요</p>
+          </div>
+          <div className="flex items-center gap-2">
+            <PlusSquare className="w-5 h-5 text-blue-500" />
+            <p>2. "홈 화면에 추가" 를 선택해주세요</p>
+          </div>
+        </div>
+        <DialogFooter className="sm:justify-start">
+          <DialogClose asChild>
+            <Button type="button" variant="secondary">
+              다음에 하기
+            </Button>
+          </DialogClose>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+};
