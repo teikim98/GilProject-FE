@@ -10,6 +10,7 @@ import { calculatePathDistance } from "@/util/calculatePathDistance";
 import { MarkerWithOverlay } from "./MarkerWithOverlay";
 import { MapMarker } from "react-kakao-maps-sdk";
 import { createEndMarker, createStartMarker } from "./CustomMarkerIcon";
+import { updateUserPoints } from "@/api/user";
 
 interface FollowMapProps {
     route: Path;
@@ -89,12 +90,12 @@ export function FollowMap({ route, width, height }: FollowMapProps) {
     const [snappedPosition, setSnappedPosition] = useState<KakaoPosition | null>(null);
     const [hasStarted, setHasStarted] = useState(false); // 실제 이동 시작 여부
 
-    const checkCompletion = (
+    const checkCompletion = async (
         currentPoint: KakaoPosition,
         endPoint: KakaoPosition,
         completedDistance: number,
         visitedPoints: number
-    ): boolean => {
+    ): Promise<boolean> => {  // 반환 타입을 Promise<boolean>으로 변경
         const distanceToEnd = calculateDistance(currentPoint, endPoint);
         const totalDistance = route.distance * 1000; // km to m
         const completionThreshold = 3; // 3미터 이내
@@ -113,16 +114,21 @@ export function FollowMap({ route, width, height }: FollowMapProps) {
             requiredCompletionRatio = 0.85;     // 85%
         }
 
-
         const hasMinimumDistance = completedDistance > (totalDistance * requiredCompletionRatio);
-
         const requiredPoints = Math.max(2, Math.min(3, Math.floor(totalDistance / 200)));
         const hasMinimumPoints = visitedPoints > requiredPoints;
-
-        const minimumTime = totalDistance <= 100 ? 5000 : 10000; // 100m 이하는 5초, 그 이상은 10초
+        const minimumTime = totalDistance <= 100 ? 5000 : 10000;
         const hasMinimumTime = startTime ? (Date.now() - startTime) > minimumTime : false;
 
-        return isNearEnd && hasMinimumDistance && hasMinimumPoints && hasMinimumTime;
+        if (isNearEnd && hasMinimumDistance && hasMinimumPoints && hasMinimumTime) {
+            try {
+                await updateUserPoints(route.id);
+            } catch (error) {
+                console.error('포인트 업데이트 중 오류 발생:', error);
+            }
+            return true;
+        }
+        return false;
     };
 
 
@@ -130,7 +136,7 @@ export function FollowMap({ route, width, height }: FollowMapProps) {
     useEffect(() => {
         if (isFollowing && !watchId) {
             const id = navigator.geolocation.watchPosition(
-                (position) => {
+                async (position) => {
                     const newPosition = {
                         lat: position.coords.latitude,
                         lng: position.coords.longitude
@@ -166,12 +172,13 @@ export function FollowMap({ route, width, height }: FollowMapProps) {
                         }
 
                         // 완주 조건 체크
-                        const isCompleted = checkCompletion(
+                        const isCompleted = await checkCompletion(
                             snapped,
                             pathAsKakaoPositions[pathAsKakaoPositions.length - 1],
                             completedDistance,
                             completed.length
                         );
+
 
                         // 상태 업데이트
                         updateStatus({

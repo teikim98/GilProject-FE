@@ -173,6 +173,15 @@ export const updateProfileImage = async (userId: number, file: File) => {
   }
 };
 
+export const updateUserPoints = async (pathId: number) => {
+  try {
+    await api.patch("/point", pathId);
+  } catch (error) {
+    console.error("포인트 업데이트 실패:", error);
+    throw error;
+  }
+};
+
 export const logout = async () => {
   // 2. 서버 측 로그아웃 요청 (Refresh 토큰 전송)
   try {
@@ -252,7 +261,7 @@ export const changePassword = async (password: string, newPassword: string) => {
 /**
  * 닉네임 변경
  */
-export const changeNickname = async (nickName : string) => {
+export const changeNickname = async (nickName: string) => {
   try {
     const formData = new FormData();
     formData.append("nickName", nickName);
