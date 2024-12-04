@@ -7,6 +7,7 @@ import { useSearchStore } from '@/store/useSearchStore';
 import { useLocationStore } from '@/store/useLocationStore';
 import { useBoardListQuery } from '@/hooks/queries/usePostQuery';
 import { useSearchParams } from 'next/navigation';
+import BoardCardSkeleton from '@/components/layout/BoardSkeleton';
 
 export default function BoardList() {
     const [initialUserLocation, setInitialUserLocation] = useState<{ lat: number; lng: number } | null>(null);
@@ -113,9 +114,11 @@ export default function BoardList() {
             )}
 
             {(isLoading || isFetchingNextPage) && (
-                <div className="flex justify-center items-center h-20">
-                    <Loader className="w-6 h-6 animate-spin text-primary" />
-                </div>
+                Array(3).fill(0).map((_, index) => (
+                    <div key={index}>
+                        <BoardCardSkeleton />
+                    </div>
+                ))
             )}
 
             {isError && (

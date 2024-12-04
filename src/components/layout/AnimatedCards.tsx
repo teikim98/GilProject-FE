@@ -306,7 +306,7 @@ const AnimatedCards: React.FC = () => {
                 />
                 <AnimatedCard
                     href="/main/mypage/myRoute"
-                    title="내가 기록한 산책길 보러가기"
+                    title={<span className="whitespace-pre-line">내가 기록한{'\n'}산책길 보러가기</span>}
                     Background={MyRouteBackground}
                     className="w-[48%] block"
                 />
