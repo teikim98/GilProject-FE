@@ -18,7 +18,7 @@ export default function BackHeader({
 }: BackHeaderProps) {
     return (
         <>
-            <div className="fixed top-0 left-0 right-0 z-50">
+            <div className="fixed top-0 left-0 right-0 z-50 max-w-screen-md mx-auto">
                 <div className="absolute inset-0 bg-purple-50/80 dark:bg-purple-900/80 backdrop-blur-sm border-b border-purple-100 dark:border-purple-700" />
 
                 <div className={`relative flex items-center justify-between px-4 h-16 ${className}`}>
