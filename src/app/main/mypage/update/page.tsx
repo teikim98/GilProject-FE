@@ -10,8 +10,9 @@ import { getDetailProfile, updateProfileImage } from '@/api/user';
 import { User } from '@/types/types';
 import { Input } from '@/components/ui/input';
 import { useRouter } from 'next/navigation';
-import ValidateMessage from '@/components/auth/ValidateMessage';
+import PasswordChangePopup from '../../../../components/auth/PasswordChangePopup';
 import NickNameChangePopup from '@/components/auth/NickNameChangePopup';
+import AddressChangePopup from '@/components/auth/AddressChangePopup';
 
 export default function Page() {
     const [profileInfo, setProfileInfo] = useState<User | null>(null);
@@ -19,6 +20,8 @@ export default function Page() {
     const [error, setError] = useState<string | null>(null);
     const router = useRouter();
     const [isNickNamePopupOpen, setIsNickNamePopupOpen] = useState(true);
+    const [isPasswordPopupOpen, setIsPasswordPopupOpen] = useState(true);
+
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -76,6 +79,13 @@ export default function Page() {
      */
     const nickNameChangeComplete = (nickName : string)=>{
         console.log("변경된 nickName = " + nickName);
+    }
+
+    /**
+     * 비밀번호 변경 후 콜백 함수
+     */
+    const passwordChangeComplete = (password : string)=>{
+        console.log("변경된 password = " + password);
     }
 
     return (
@@ -136,7 +146,6 @@ export default function Page() {
                                         className="w-[20%]"
                                     >중복 체크</Button>
                                 </div>
-                                <ValidateMessage validCondition={true} message={"asdas"} />
                                 <Separator className='my-5 border-t-2 border-muted-foreground' />
                                 <div className="flex flex-row items-center gap-10">
                                     <span className="font-bold text-lg">이메일</span>
@@ -204,7 +213,9 @@ export default function Page() {
                     </Button>
                 </CardFooter>
             </Card>
-            <NickNameChangePopup initialNickName='initialNickName' isPopupOpen={isNickNamePopupOpen} setIsPopupOpen={setIsNickNamePopupOpen} callback={nickNameChangeComplete} />
+            {/* <NickNameChangePopup initialData='initialNickName' isPopupOpen={isNickNamePopupOpen} setIsPopupOpen={setIsNickNamePopupOpen} callback={nickNameChangeComplete} /> */}
+            {/* <PasswordChangePopup initialData='' isPopupOpen={isPasswordPopupOpen} setIsPopupOpen={setIsPasswordPopupOpen} callback={passwordChangeComplete} /> */}
+            {/* <AddressChangePopup isMypage={true} /> */}
         </div>
     );
 }

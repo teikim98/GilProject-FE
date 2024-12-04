@@ -2,24 +2,20 @@ import React, { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "../ui/dialog";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "../ui/dialog";
 import DaumPostcode from "react-daum-postcode";
 import { Checkbox } from "@/components/ui/checkbox";
 import { updateAddress } from "@/api/user";
 import { PopupData } from "@/types/types_JHW";
 import CustomDialoguePopup from "./CustomDialoguePopup";
+import { Alert } from "../ui/alert";
+import { AlertDialog, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "../ui/alert-dialog";
 
 /**
  * 주소변경 컴포넌트
  * @returns
  */
-const AddressChangePopup = () => {
+const AddressChangePopup = ({ isMypage }: { isMypage: boolean }) => {
   const [isRouteListOpen, setIsRouteListOpen] = useState(true);
   const [openDaumPost, setOpenDaumPost] = useState(false);
   const [address, setAddress] = useState("");
@@ -27,7 +23,7 @@ const AddressChangePopup = () => {
   const [lon, setLon] = useState(0); // 경도
   const [isChecked, setIsChecked] = useState(false); // 다시보지않기 체크
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [popupData, setPopupData] = useState<PopupData>({}); 
+  const [popupData, setPopupData] = useState<PopupData>({});
 
   useEffect(() => {
     // Kakao 지도 API 초기화
@@ -80,25 +76,25 @@ const AddressChangePopup = () => {
     try {
       await updateAddress(address, lat, lon); // DB 업데이트
       setPopupData({
-        title : "성공",
-        content : "주소가 저장되었습니다!",
-        onConfirm : ()=>{
+        title: "성공",
+        content: "주소가 저장되었습니다!",
+        onConfirm: () => {
           localStorage.setItem("address-popup", "0");
           setIsRouteListOpen(false);
           setIsPopupOpen(false);
-        }
+        },
       });
       setIsPopupOpen(true);
     } catch (error) {
       console.error("DB 업데이트 실패:", error);
 
       setPopupData({
-        title : "실패",
-        content : "주소가 저장에 실패하였습니다",
-        onConfirm : ()=>{
+        title: "실패",
+        content: "주소가 저장에 실패하였습니다",
+        onConfirm: () => {
           // setIsRouteListOpen(false);
           setIsPopupOpen(false);
-        }
+        },
       });
       setIsPopupOpen(true);
     }
@@ -121,21 +117,16 @@ const AddressChangePopup = () => {
 
   return (
     <>
-      <Dialog open={isRouteListOpen} onOpenChange={setIsRouteListOpen}>
-        <DialogContent className="max-h-[80vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>주소 등록</DialogTitle>
-          </DialogHeader>
+      <AlertDialog open={isRouteListOpen} onOpenChange={setIsRouteListOpen}>
+        <AlertDialogContent className="max-h-[80vh] overflow-y-auto">
+          <AlertDialogHeader>
+            <AlertDialogTitle>주소 등록</AlertDialogTitle>
+          </AlertDialogHeader>
           <div className="grid w-full items-center gap-4">
             <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="address">
-                자택 주소를 등록하면 더욱 많고 유용한 정보를 보실 수 있습니다
-              </Label>
+              <Label htmlFor="address">자택 주소를 등록하면 더욱 많고 유용한 정보를 보실 수 있습니다</Label>
               {!openDaumPost && (
-                <Button
-                  variant="outline"
-                  onClick={() => setOpenDaumPost(true)}
-                >
+                <Button variant="outline" onClick={() => setOpenDaumPost(true)}>
                   주소 검색
                 </Button>
               )}
@@ -146,44 +137,34 @@ const AddressChangePopup = () => {
               )}
               {address && (
                 <>
-                  <Input
-                    id="address"
-                    value={address}
-                    readOnly
-                    placeholder="입력된 주소"
-                  />
-                  <Button
-                    variant="outline"
-                    className="w-auto"
-                    onClick={handleSave}
-                  >
+                  <Input id="address" value={address} readOnly placeholder="입력된 주소" />
+                  <Button variant="outline" className="w-auto" onClick={handleSave}>
                     저장
                   </Button>
                 </>
               )}
             </div>
           </div>
-          <DialogFooter>
-  <div className="flex justify-between items-center w-full">
-    <div className="flex items-center space-x-2">
-      <Checkbox
-        id="terms"
-        checked={isChecked}
-        onCheckedChange={handleCheckboxChange}
-      />
-      <label htmlFor="terms">다시보지 않기</label>
-    </div>
-    <div
-      onClick={handleNextTimeButtonClick}
-      className="text-blue-500 cursor-pointer flex-shrink-0"
-    >
-      다음에 할래요
-    </div>
-  </div>
-</DialogFooter>
-        </DialogContent>
-      </Dialog>
-      {isPopupOpen && <CustomDialoguePopup popupData={popupData}/>}
+
+          <AlertDialogFooter>
+            <div className="flex justify-between items-center w-full">
+              <div className="flex items-center space-x-2">
+                {!isMypage && (
+                  <>
+                    <Checkbox id="terms" checked={isChecked} onCheckedChange={handleCheckboxChange} />
+                    <label htmlFor="terms">다시보지 않기</label>
+                  </>
+                )}
+              </div>
+
+              <div onClick={handleNextTimeButtonClick} className="text-blue-500 cursor-pointer flex-shrink-0">
+                다음에 할래요
+              </div>
+            </div>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+      {isPopupOpen && <CustomDialoguePopup popupData={popupData} />}
     </>
   );
 };

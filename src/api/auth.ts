@@ -88,18 +88,6 @@ export const existNickname = async (nickName: string) => {
 };
 
 /**
- * 비밀번호 변경
- * @param id
- * @param nickName 
- */
-export const changeNickName = async (nickName : string)=>{
-  // const response = await 
-  // return response.data;
-  
-  return 1;
-}
-
-/**
  * 이메일 DB 조회
  */
 export const existEmail = async (email: string) => {
@@ -118,23 +106,3 @@ export const verifiRefreshToken = async () => {
   return response;
 };
 
-/**
- * 비밀번호 변경
- */
-export const changePassword = async (password: string, newPassword: string) => {
-  try {
-    const formData = new FormData();
-    formData.append("password", password);
-    formData.append("newPassword", newPassword);
-
-    const response = await axios.put("/mypage/updatePwd", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-      withCredentials: true,
-    });
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-};

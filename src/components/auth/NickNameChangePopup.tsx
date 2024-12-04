@@ -6,22 +6,22 @@ import { Input } from "../ui/input";
 import ValidateMessage from "./ValidateMessage";
 import { Button } from "../ui/button";
 import { checkKorOrEngOrNum, checkLength } from "@/util/Regex";
-import { changeNickName, existNickname } from "@/api/auth";
 import CustomDialoguePopup from "./CustomDialoguePopup";
-import { PopupData } from "@/types/types_JHW";
+import { ChangePopupData, PopupData } from "@/types/types_JHW";
+import { existNickname } from "@/api/auth";
+import { changeNickname } from "@/api/user";
 
-const NickNameChangePopup = ({ isPopupOpen, setIsPopupOpen, initialNickName,callback }: { isPopupOpen: boolean; setIsPopupOpen: React.Dispatch<React.SetStateAction<boolean>>, initialNickName: string, callback : (nickname : string)=>void}) => {
-  const [nickName, setNickName] = useState(initialNickName);
+const NickNameChangePopup = (props: ChangePopupData) => {
+  const [nickName, setNickName] = useState(props.initialData);
   const [isNickNameValid, setIsNickNameValid] = useState(false);
   const [isNickNameDuplicationValid, setIsNickNameDuplicationValid] = useState(false);
   const [nickNameValidMessage, setnickNameValidMessage] = useState("");
-  const [isCustomPopupOpen,setIsCustomPopupOpen] = useState(false);
+  const [isCustomPopupOpen, setIsCustomPopupOpen] = useState(false);
   const [popupData, setPopupData] = useState<PopupData>({});
-
 
   /**
    * 유효성 검사 - 닉네임
-   * @param e 
+   * @param e
    */
   const nickNameValidation = (e: any) => {
     let value = e.target.value;
@@ -46,49 +46,47 @@ const NickNameChangePopup = ({ isPopupOpen, setIsPopupOpen, initialNickName,call
 
   /**
    * 닫기 Button
-   * @param e 
+   * @param e
    */
   function handleClose(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
     e.preventDefault();
-    setIsPopupOpen(false);
+    props.setIsPopupOpen(false);
   }
 
   /**
    * 변경 Button
-   * @param e 
+   * @param e
    */
   async function handleChange(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
     e.preventDefault();
 
-    const result = await changeNickName(nickName);
+    const result = await changeNickname(nickName);
 
-    if(result===1){
-      callback(nickName);
+    if (result === 1) {
+      props.callback(nickName);
       setIsCustomPopupOpen(true);
       setPopupData({
-        title : "성공",
-        content : "닉네임 변경에 성공하셨습니다",
-        onConfirm : ()=>{
-          setIsPopupOpen(false);
-        }
+        title: "성공",
+        content: "닉네임 변경에 성공하셨습니다",
+        onConfirm: () => {
+          props.setIsPopupOpen(false);
+        },
       });
-    }
-    else{
+    } else {
       setIsCustomPopupOpen(true);
       setPopupData({
-        title : "오류",
-        content : "닉네임 변경에 실패하셨습니다",
-        onConfirm : ()=>{
+        title: "오류",
+        content: "닉네임 변경에 실패하셨습니다",
+        onConfirm: () => {
           setIsCustomPopupOpen(false);
-        }
+        },
       });
     }
-
   }
 
   /**
    * 닉네임 입력 Input
-   * @param e 
+   * @param e
    */
   function handleNickName(e: React.ChangeEvent<HTMLInputElement>): void {
     nickNameValidation(e);
@@ -114,37 +112,39 @@ const NickNameChangePopup = ({ isPopupOpen, setIsPopupOpen, initialNickName,call
 
   return (
     <>
-      <AlertDialog open={isPopupOpen} onOpenChange={setIsPopupOpen}>
+      <AlertDialog open={props.isPopupOpen} onOpenChange={props.setIsPopupOpen}>
         <AlertDialogContent className="max-h-[80vh] overflow-y-auto">
           <AlertDialogHeader>
             <AlertDialogTitle>닉네임 변경</AlertDialogTitle>
           </AlertDialogHeader>
-          <div className="grid w-full items-center gap-4">
-            <Label htmlFor="address">변경할 닉네임을 입력해주세요</Label>
+          <form>
+            <div className="grid w-full items-center gap-4">
+              <Label htmlFor="address">변경할 닉네임을 입력해주세요</Label>
 
-            <div className="flex flex-col space-y-1.5">
-              <Input
-                name="nickname"
-                value={nickName}
-                onChange={(e) => handleNickName(e)}
-                placeholder="닉네임을 입력해주세요"
-                onInput={(e: any) => {
-                  e.target.value = e.target.value.replace(/\s/g, ""); // 공백 제거
-                }}
-              />
-              <ValidateMessage validCondition={isNickNameValid && isNickNameDuplicationValid} message={nickNameValidMessage} />
-              <Button
-                variant="outline"
-                className={`w-auto`}
-                onClick={(e) => {
-                  handleCheck(e);
-                }}
-                disabled={!isNickNameValid}
-              >
-                중복 확인
-              </Button>
+              <div className="flex flex-col space-y-1.5">
+                <Input
+                  name="nickname"
+                  value={nickName}
+                  onChange={(e) => handleNickName(e)}
+                  placeholder="닉네임을 입력해주세요"
+                  onInput={(e: any) => {
+                    e.target.value = e.target.value.replace(/\s/g, ""); // 공백 제거
+                  }}
+                />
+                <ValidateMessage validCondition={isNickNameValid && isNickNameDuplicationValid} message={nickNameValidMessage} />
+                <Button
+                  variant="outline"
+                  className={`w-auto`}
+                  onClick={(e) => {
+                    handleCheck(e);
+                  }}
+                  disabled={!isNickNameValid}
+                >
+                  중복 확인
+                </Button>
+              </div>
             </div>
-          </div>
+          </form>
           <AlertDialogFooter>
             <AlertDialogCancel
               onClick={(e) => {
@@ -164,7 +164,7 @@ const NickNameChangePopup = ({ isPopupOpen, setIsPopupOpen, initialNickName,call
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-      {isCustomPopupOpen && <CustomDialoguePopup popupData={popupData}/>}
+      {isCustomPopupOpen && <CustomDialoguePopup popupData={popupData} />}
     </>
   );
 };
