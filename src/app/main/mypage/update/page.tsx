@@ -10,18 +10,19 @@ import { getDetailProfile, updateProfileImage } from '@/api/user';
 import { User } from '@/types/types';
 import { Input } from '@/components/ui/input';
 import { useRouter } from 'next/navigation';
-import UpdateprofileImg from '../../../../components/user/UpdateprofileImg';
-import PasswordChangePopup from '../../../../components/auth/PasswordChangePopup';
+import UpdateprofileImg from '@/components/user/updateprofileImg';
 import NickNameChangePopup from '@/components/auth/NickNameChangePopup';
 import AddressChangePopup from '@/components/auth/AddressChangePopup';
+import PasswordChangePopup from '@/components/auth/PasswordChangePopup';
 
 export default function Page() {
     const [profileInfo, setProfileInfo] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const router = useRouter();
-    const [isNickNamePopupOpen, setIsNickNamePopupOpen] = useState(true);
-    const [isPasswordPopupOpen, setIsPasswordPopupOpen] = useState(true);
+    const [isNickNamePopupOpen, setIsNickNamePopupOpen] = useState(false);
+    const [isAddressPopupOpen, setIsAddressPopupOpen] = useState(false);
+    const [isPasswordPopupOpen, setIsPasswordPopupOpen] = useState(false);
 
 
     const [isUpdateImgPopupOpen, setIsUpdateImgPopupOpen] = useState(false);
@@ -69,7 +70,8 @@ export default function Page() {
     }
 
     const updatePassword = () => {
-        router.push('/main/mypage/update/password')
+        // router.push('/main/mypage/update/password')
+        setIsPasswordPopupOpen(true);
     }
 
 
@@ -89,20 +91,13 @@ export default function Page() {
     }
 
     /**
-     * 닉네임 변경 후 콜백 함수
+     * 데에터 변경 후 콜백 함수
      * @param nickName
      */
-    const nickNameChangeComplete = (nickName: string) => {
-        console.log("변경된 nickName = " + nickName);
+    const dataChangeComplete = async (data: string) => {
+        console.log("변경된 data = " + data);
+        setProfileInfo(await getDetailProfile());
     }
-
-    /**
-     * 비밀번호 변경 후 콜백 함수
-     */
-    const passwordChangeComplete = (password: string) => {
-        console.log("변경된 password = " + password);
-    }
-
 
     return (
         <div className='animate-fade-in flex flex-col pb-20'>
@@ -167,7 +162,7 @@ export default function Page() {
                                     onChange={(e) => { setProfileInfo(prev => prev ? { ...prev, nickName: e.target.value } : prev); }}
                                 />
                                 <Button
-                                    onClick={() => {/* 닉네임 중복 체크*/ }}
+                                    onClick={() => {setIsNickNamePopupOpen(true)}}
                                     className="w-[10%]"
                                 >변경</Button>
                             </div>
@@ -189,7 +184,7 @@ export default function Page() {
                                     readOnly
                                 />
                                 <Button
-                                    onClick={() => {/*주소 변경 컴포넌트*/ }}
+                                    onClick={() => {setIsAddressPopupOpen(true)}}
                                     className="w-[10%]"
                                 >변경</Button>
                             </div>
@@ -236,9 +231,13 @@ export default function Page() {
 
                 </CardFooter>
             </Card>
-            {/* <NickNameChangePopup initialData='initialNickName' isPopupOpen={isNickNamePopupOpen} setIsPopupOpen={setIsNickNamePopupOpen} callback={nickNameChangeComplete} />
-            <PasswordChangePopup initialData='' isPopupOpen={isPasswordPopupOpen} setIsPopupOpen={setIsPasswordPopupOpen} callback={passwordChangeComplete} />
-            <AddressChangePopup isMypage={true} /> */}
+            <NickNameChangePopup initialData={profileInfo?.nickName} isPopupOpen={isNickNamePopupOpen} setIsPopupOpen={setIsNickNamePopupOpen} callback={dataChangeComplete} />
+            <AddressChangePopup props={{
+                isPopupOpen: isAddressPopupOpen,
+                setIsPopupOpen: setIsAddressPopupOpen,
+                callback : dataChangeComplete
+                }} isMypage={true} />
+            <PasswordChangePopup isPopupOpen={isPasswordPopupOpen} setIsPopupOpen={setIsPasswordPopupOpen} callback={()=>{}} />
         </div>
     );
 }

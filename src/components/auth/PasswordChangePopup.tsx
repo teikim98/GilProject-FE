@@ -39,6 +39,15 @@ const PasswordChangePopup = (props:ChangePopupData) => {
   const handleClose =(e : React.MouseEvent) =>{
     e.preventDefault();
     props.setIsPopupOpen(false);
+    reset();
+  }
+
+  const reset = ()=>{
+    setPassword("");
+    setNewPassword("");
+    setNewPasswordConfirm("");
+    setIsPasswordValid(false);
+    setPasswordValidMessage("");
   }
 
   /**
@@ -57,7 +66,9 @@ const PasswordChangePopup = (props:ChangePopupData) => {
           title: "오류",
           description: "비밀번호 변경 실패",
           content: "비밀번호가 일치하지 않습니다. 다시 확인해주세요.",
-          onConfirm : ()=>{setIsCustomPopupOpen(false)}
+          onConfirm : ()=>{
+            setIsCustomPopupOpen(false);
+          }
         });
         // setIsPopupOpen(true);
         setIsCustomPopupOpen(true);
@@ -65,7 +76,10 @@ const PasswordChangePopup = (props:ChangePopupData) => {
         setPopupData({
           title: "성공",
           content: "비밀번호 변경에 성공하셨습니다",
-          onConfirm : ()=>{setIsCustomPopupOpen(false)}
+          onConfirm : ()=>{
+            setIsCustomPopupOpen(false);
+            props.setIsPopupOpen(false);
+          }
         });
         // setIsPopupOpen(true);
         setIsCustomPopupOpen(true);
@@ -75,7 +89,9 @@ const PasswordChangePopup = (props:ChangePopupData) => {
       setPopupData({
         title: "오류",
         content: "비밀번호 변경 실패",
-        onConfirm : ()=> {setIsCustomPopupOpen(false)}
+        onConfirm : ()=> {
+          setIsCustomPopupOpen(false);
+        }
       });
       // setIsPopupOpen(true);
       setIsCustomPopupOpen(true);
@@ -197,6 +213,7 @@ const PasswordChangePopup = (props:ChangePopupData) => {
               onClick={(e) => {
                 handleUpdatePassword(e);
               }}
+              disabled = {!ispasswordValid}
             >
               변경
             </AlertDialogAction>

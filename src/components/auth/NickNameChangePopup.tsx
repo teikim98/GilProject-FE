@@ -51,6 +51,14 @@ const NickNameChangePopup = (props: ChangePopupData) => {
   function handleClose(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
     e.preventDefault();
     props.setIsPopupOpen(false);
+    reset();
+  }
+
+  const reset = ()=>{
+    setNickName(props.initialData);
+    setIsNickNameValid(false);
+    setIsNickNameDuplicationValid(false);
+    setnickNameValidMessage("");
   }
 
   /**
@@ -63,13 +71,14 @@ const NickNameChangePopup = (props: ChangePopupData) => {
     const result = await changeNickname(nickName);
 
     if (result === 1) {
-      props.callback(nickName);
+      if(nickName) props.callback(nickName);
       setIsCustomPopupOpen(true);
       setPopupData({
         title: "성공",
         content: "닉네임 변경에 성공하셨습니다",
         onConfirm: () => {
           props.setIsPopupOpen(false);
+          setIsCustomPopupOpen(false);
         },
       });
     } else {
@@ -98,8 +107,8 @@ const NickNameChangePopup = (props: ChangePopupData) => {
    */
   async function handleCheck(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
     e.preventDefault();
-
-    const response = await existNickname(nickName);
+    let response;
+    if(nickName) response = await existNickname(nickName);
 
     if (response === 1) {
       setIsNickNameDuplicationValid(false);

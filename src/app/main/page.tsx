@@ -106,7 +106,7 @@ export default function Page() {
 
       <PWAInstallButton />
 
-      {addressPopupOpen && <AddressChangePopup isMypage={false} />}
+      <AddressChangePopup props={{isPopupOpen : addressPopupOpen, setIsPopupOpen : setAddressPopUpOpen, callback : ()=>{}}} isMypage={false} />
       <AnimatedCards />
     </div>
   );

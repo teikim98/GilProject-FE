@@ -6,17 +6,17 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "
 import DaumPostcode from "react-daum-postcode";
 import { Checkbox } from "@/components/ui/checkbox";
 import { updateAddress } from "@/api/user";
-import { PopupData } from "@/types/types_JHW";
 import CustomDialoguePopup from "./CustomDialoguePopup";
 import { Alert } from "../ui/alert";
 import { AlertDialog, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "../ui/alert-dialog";
+import { ChangePopupData, PopupData } from "@/types/types_JHW";
 
 /**
  * 주소변경 컴포넌트
  * @returns
  */
-const AddressChangePopup = ({ isMypage }: { isMypage: boolean }) => {
-  const [isRouteListOpen, setIsRouteListOpen] = useState(true);
+const AddressChangePopup = ({ props, isMypage }: {props: ChangePopupData ,isMypage: boolean }) => {
+  // const [isRouteListOpen, setIsRouteListOpen] = useState(true);
   const [openDaumPost, setOpenDaumPost] = useState(false);
   const [address, setAddress] = useState("");
   const [lat, setLat] = useState(0); // 위도
@@ -75,12 +75,14 @@ const AddressChangePopup = ({ isMypage }: { isMypage: boolean }) => {
   const handleSave = async () => {
     try {
       await updateAddress(address, lat, lon); // DB 업데이트
+      props.callback(address);
       setPopupData({
         title: "성공",
         content: "주소가 저장되었습니다!",
         onConfirm: () => {
           localStorage.setItem("address-popup", "0");
-          setIsRouteListOpen(false);
+          // setIsRouteListOpen(false);
+          props.setIsPopupOpen(false);
           setIsPopupOpen(false);
         },
       });
@@ -112,12 +114,13 @@ const AddressChangePopup = ({ isMypage }: { isMypage: boolean }) => {
    * 다음에 할래요 클릭 핸들러
    */
   const handleNextTimeButtonClick = () => {
-    setIsRouteListOpen(false);
+    // setIsRouteListOpen(false);
+    props.setIsPopupOpen(false);
   };
 
   return (
     <>
-      <AlertDialog open={isRouteListOpen} onOpenChange={setIsRouteListOpen}>
+      <AlertDialog open={props.isPopupOpen} onOpenChange={props.setIsPopupOpen}>
         <AlertDialogContent className="max-h-[80vh] overflow-y-auto">
           <AlertDialogHeader>
             <AlertDialogTitle>주소 등록</AlertDialogTitle>

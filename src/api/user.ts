@@ -252,10 +252,10 @@ export const changePassword = async (password: string, newPassword: string) => {
 /**
  * 닉네임 변경
  */
-export const changeNickname = async (nickName : string) => {
+export const changeNickname = async (nickName : string | undefined) => {
   try {
     const formData = new FormData();
-    formData.append("nickName", nickName);
+    if(nickName) formData.append("nickName", nickName);
 
     const response = await api.put("/mypage/update/nickname", formData, {
       headers: {
