@@ -82,7 +82,7 @@ export default function Page() {
         <div className='animate-fade-in flex flex-col pb-20'>
             <BackHeader content='마이 페이지' />
             <Card className="w-full border-0 shadow-none">
-                <CardHeader className="px-6 pb-3">
+                <CardHeader className="pt-0 px-6 pb-3">
                     <div className="flex flex-row justify-between items-start">
                         <div className="flex flex-row gap-4 items-center">
                             <div className="relative">
@@ -132,19 +132,19 @@ export default function Page() {
                 <CardContent className="px-6 pb-3">
                     <div className="w-full flex flex-row justify-between border rounded-lg p-4 bg-muted/50">
                         <div className="flex flex-col items-center">
-                            <p className="text-sm text-muted-foreground">내가 쓴 글</p>
+                            <p className="text-sm">내가 쓴 글</p>
                             <p className="text-lg font-semibold text-foreground">
                                 {profileInfo.postCount}
                             </p>
                         </div>
                         <div className="flex flex-col items-center">
-                            <p className="text-sm text-muted-foreground">따라걷기 수</p>
+                            <p className="text-sm">따라걷기 수</p>
                             <p className="text-lg font-semibold text-foreground">
                                 {profileInfo.pathCount}
                             </p>
                         </div>
                         <div className="flex flex-col items-center">
-                            <p className="text-sm text-muted-foreground">구독자 수</p>
+                            <p className="text-sm">구독자 수</p>
                             <p className="text-lg font-semibold text-foreground">
                                 {profileInfo.subscribeByCount}
                             </p>

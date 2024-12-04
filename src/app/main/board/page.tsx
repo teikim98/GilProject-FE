@@ -35,7 +35,7 @@ export default function Board() {
                     variant="ghost"
                     size="icon"
                     onClick={() => setIsSearchOpen(true)}
-                    className="hover:bg-purple-100"
+                    className="hover:bg-purple-100 dark:hover:bg-purple-900"
                 >
                     <Search className="!w-7 !h-7" />
                 </Button>
