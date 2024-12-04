@@ -10,6 +10,7 @@ import {
     AlertDialogAction,
     AlertDialogTitle
 } from '../ui/alert-dialog';
+import { changeComment } from "@/api/user";
 
 /**
  * 프로필 이미지 수정 컴포넌트
@@ -19,7 +20,7 @@ import {
  * @returns 
  */
 const UpdateComment = ({postComment, isPopupOpen, setIsPopupOpen, callback, duplicateCheck } :{ postComment: string | null; isPopupOpen: boolean; setIsPopupOpen: React.Dispatch<React.SetStateAction<boolean>>; callback: (profileImgUrl: string) => void; duplicateCheck: boolean } ) => {
-    const [comment, setComment]= useState(postComment ?? "입력된 자기소개글이 없습니다.");
+    const [comment, setComment]= useState(postComment);
     const [useButtonLock, setUseButtonLock] = useState(true);
 
     /**
@@ -50,9 +51,19 @@ const UpdateComment = ({postComment, isPopupOpen, setIsPopupOpen, callback, dupl
     /**
      * 저장 Button
      */
-    const handleUse = (e: React.MouseEvent)=>{
-        callback(comment);
-        reset();
+    async function handleUse(e: React.MouseEvent){
+        e.preventDefault();
+
+        const result = await changeComment(comment);
+
+        if(result === 1){
+            console.log("자기소개글 변경 성공");
+        } else{
+            console.log("자기소개글 변경 실패")
+        }
+
+
+        callback(comment || "");
     }
 
     
@@ -71,7 +82,8 @@ const UpdateComment = ({postComment, isPopupOpen, setIsPopupOpen, callback, dupl
                         <Input
                             name="imageUrl"
                             type="text"
-                            value={comment}
+                            value={comment || ""}
+                            placeholder="자기소개가 없습니다"
                             onChange={(e)=>handleComment(e)}
                         />
                         </div>        
