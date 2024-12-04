@@ -9,12 +9,11 @@ import BackHeader from '@/components/layout/BackHeader';
 import { getDetailProfile, updateProfileImage } from '@/api/user';
 import { User } from '@/types/types';
 import { Input } from '@/components/ui/input';
-import { useRouter } from 'next/navigation';
-import UpdateprofileImg from '@/components/user/updateprofileImg';
 import NickNameChangePopup from '@/components/auth/NickNameChangePopup';
 import AddressChangePopup from '@/components/auth/AddressChangePopup';
 import PasswordChangePopup from '@/components/auth/PasswordChangePopup';
 import UpdateComment from '@/components/user/UpdateComment';
+import UpdateprofileImg from '@/components/user/UpdateprofileImg';
 
 export default function Page() {
     const [profileInfo, setProfileInfo] = useState<User | null>(null);
@@ -113,61 +112,41 @@ export default function Page() {
     return (
         <div className='animate-fade-in flex flex-col pb-20'>
             <BackHeader content='마이 페이지' />
-            <h2 className='mt-4 mb-4'>내 정보 수정</h2>
             <Card className="w-full border-0 shadow-none">
-                <CardHeader className="px-6 pb-3">
-                </CardHeader>
                 <CardContent>
-                    <div className=''>
                         <div className="flex flex-col">
-                            <Separator className='my-5 border-t-2 border-muted-foreground' />
-                            <div className="flex flex-row items-center gap-10">
-                                <span className="font-bold text-lg">프로필 이미지</span>
+                            <Separator className='my-4 border-t-2 border-muted-foreground' />
+                            <div className="flex flex-row items-center gap-5">
+                                <span className="font-bold text-base">프로필</span>
                                 <div className="relative">
                                     {profileInfo?.imageUrl ? (
                                         <img
                                             src={profileInfo.imageUrl}
                                             alt="Profile"
                                             className="w-12 h-12 rounded-full object-cover"
+                                            onClick={(e) => {
+                                                handleProfileImgPopup(e);
+                                            }}
                                         />
                                     ) : (
                                         <Camera className="w-12 h-12 p-2 bg-muted rounded-full" />
                                     )}
-                                    <input
-                                        type="file"
-                                        className="absolute inset-0 opacity-0 cursor-pointer"
-                                        onChange={(e) => {
-                                            const file = e.target.files?.[0];
-                                            if (file && profileInfo) {
-                                                updateProfileImage(profileInfo.id, file);
-                                            }
-                                        }}
-                                        accept="image/*"
-                                    />
                                 </div>
-                                <Button
-                                    name="profileImgUploadBtn"
-                                    className="w-[10%]"
-                                    onClick={(e) => {
-                                        handleProfileImgPopup(e);
-                                    }}
-
-                                >변경</Button>
                                 <UpdateprofileImg imageUrl={profileInfo!.imageUrl} isPopupOpen={isUpdateImgPopupOpen} setIsPopupOpen={setIsUpdateImgPopupOpen} callback={handleProfileImgVerified} duplicateCheck={true} />
                             </div>
-                            <Separator className='my-5 border-t-2 border-muted-foreground' />
-                            <div className="flex flex-row items-center gap-10">
-                                <span className="font-bold text-lg">이름</span>
-                                <Input className='w-[50%] text-lg bg-gray-100 border-muted'
+                            <Separator className='my-4 border-t-2 border-muted-foreground' />
+                            <div className="flex flex-row items-center gap-5">
+                                <span className="font-bold text-base">이름</span>
+                                <Input className='w-[50%] text-sm bg-gray-100 border-muted'
                                     name="name"
                                     value={profileInfo?.name}
                                     readOnly
                                 />
                             </div>
-                            <Separator className='my-5 border-t-2 border-muted-foreground' />
-                            <div className="flex flex-row items-center gap-10">
-                                <span className="font-bold text-lg">닉네임</span>
-                                <Input className='w-[50%] text-lg'
+                            <Separator className='my-4 border-t-2 border-muted-foreground' />
+                            <div className="flex flex-row items-center gap-5">
+                                <span className="font-bold text-base">닉네임</span>
+                                <Input className='w-[50%] text-sm'
                                     name="nickName"
                                     value={profileInfo?.nickName}
                                     onChange={(e) => { setProfileInfo(prev => prev ? { ...prev, nickName: e.target.value } : prev); }}
@@ -177,19 +156,19 @@ export default function Page() {
                                     className="w-[10%]"
                                 >변경</Button>
                             </div>
-                            <Separator className='my-5 border-t-2 border-muted-foreground' />
-                            <div className="flex flex-row items-center gap-10">
-                                <span className="font-bold text-lg">이메일</span>
-                                <Input className='w-[50%] text-lg bg-gray-100 border-muted'
+                            <Separator className='my-4 border-t-2 border-muted-foreground' />
+                            <div className="flex flex-row items-center gap-5">
+                                <span className="font-bold text-base">이메일</span>
+                                <Input className='w-[50%] text-sm bg-gray-100 border-muted'
                                     name="email"
                                     value={profileInfo?.email || '이메일 미설정'}
                                     readOnly
                                 />
                             </div>
-                            <Separator className='my-5 border-t-2 border-muted-foreground' />
-                            <div className="flex flex-row items-center gap-10">
-                                <span className="font-bold text-lg">주소</span>
-                                <Input className='w-[50%] text-lg'
+                            <Separator className='my-4 border-t-2 border-muted-foreground' />
+                            <div className="flex flex-row items-center gap-5">
+                                <span className="font-bold text-base">주소</span>
+                                <Input className='w-[50%] text-sm'
                                     name="address"
                                     value={profileInfo?.address || '주소 미설정'}
                                     readOnly
@@ -199,10 +178,10 @@ export default function Page() {
                                     className="w-[10%]"
                                 >변경</Button>
                             </div>
-                            <Separator className='my-5 border-t-2 border-muted-foreground' />
-                            <div className="flex flex-row items-center gap-10">
-                                <span className="font-bold text-lg">자기소개</span>
-                                <Input className='w-[50%] text-lg'
+                            <Separator className='my-4 border-t-2 border-muted-foreground' />
+                            <div className="flex flex-row items-center gap-5">
+                                <span className="font-bold text-base">자기소개</span>
+                                <Input className='w-[50%] text-sm'
                                     name="comment"
                                     value={profileInfo?.comment || ""}
                                     readOnly
@@ -217,18 +196,18 @@ export default function Page() {
                                 >변경</Button>
                                 <UpdateComment postComment={profileInfo!.comment} isPopupOpen={isUpdateCommentPopupOpen} setIsPopupOpen={setIsUpdateCommentPopupOpen} callback={handleCommentVerified} duplicateCheck={true} />
                             </div>
-                            <Separator className='my-5 border-t-2 border-muted-foreground' />
-                            <div className="flex flex-row items-center gap-10">
-                                <span className="font-bold text-lg">가입일자</span>
-                                <Input className='w-[50%] text-lg bg-gray-100 border-muted'
+                            <Separator className='my-4 border-t-2 border-muted-foreground' />
+                            <div className="flex flex-row items-center gap-5">
+                                <span className="font-bold text-base">가입일자</span>
+                                <Input className='w-[50%] text-sm bg-gray-100 border-muted'
                                     name="comment"
                                     value={profileInfo?.joinDate.split("T")[0]}
                                     readOnly
                                 />
                             </div>
-                            <Separator className='my-5 border-t-2 border-muted-foreground' />
-                            <div className="flex flex-row items-center gap-10">
-                                <span className="font-bold text-lg">비밀번호</span>
+                            <Separator className='my-4 border-t-2 border-muted-foreground' />
+                            <div className="flex flex-row items-center gap-5">
+                                <span className="font-bold text-base">비밀번호</span>
                                 <Button
                                     onClick={updatePassword}
                                     className="w-[30%] bg-red-600 text-white hover:bg-red-700"
@@ -236,12 +215,11 @@ export default function Page() {
                                     비밀번호 변경
                                 </Button>
                             </div>
-                            <Separator className='my-5 border-t-2 border-muted-foreground' />
+                            <Separator className='my-4 border-t-2 border-muted-foreground' />
                             <div className="flex flex-col items-center justify-center space-y-4">
 
                             </div>
                         </div>
-                    </div>
                 </CardContent>
                 <CardFooter className="px-6 pt-0 flex justify-center">
 
