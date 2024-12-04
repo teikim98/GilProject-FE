@@ -90,7 +90,7 @@ export default function Profile({
                 <div className="flex flex-row justify-between items-start">
                     <div className="flex flex-row gap-4 items-center">
                         <div className="relative">
-                            <div className={`medal w-20 h-20 rounded-full ${profileInfo.point >= 5000 ? 'bg-[url(/medal/gold.png)]' : profileInfo.point >= 3000 ? 'bg-[url(/medal/silver.png)]' : profileInfo.point >= 1000 ? 'bg-[url(/medal/bronze.png)]' : null} bg-cover bg-center`}>
+                            <div className={`medal w-20 h-20 rounded-full ${profileInfo.point >= 500 ? 'bg-[url(/medal/gold.png)]' : profileInfo.point >= 300 ? 'bg-[url(/medal/silver.png)]' : profileInfo.point >= 100 ? 'bg-[url(/medal/bronze.png)]' : null} bg-cover bg-center`}>
                                 <div className="absolute inset-0 flex items-center justify-center">
                                     {profileInfo.imageUrl ? (
                                         <img
