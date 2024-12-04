@@ -26,26 +26,31 @@ const NoticeComponent = ({ notice }: { notice: Notice }) => {
   }
 
   return (
-    <Button className="w-full h-full flex bg-transparent hover:bg-gray-100 text-black transition duration-200 dark:text-white dark:hover:bg-gray-700"
-    onClick={(e)=>{handleNotice(e)}} >
-      {/* 날짜 */}
-      <div className="text-sm font-semibold px-2 py-1 border rounded-full bg-purple-200 text-gray-700">
-        {formatDate(notice.writeDate)}
-      </div>
+    <Button 
+  className="w-full h-full flex items-center bg-transparent hover:bg-gray-100 text-black transition duration-200 dark:text-white dark:hover:bg-gray-700 overflow-hidden"
+  onClick={(e) => handleNotice(e)}
+>
+  {/* 날짜 */}
+  <div className="text-sm font-semibold px-2 py-1 border rounded-full bg-purple-200 text-gray-700 flex-shrink-0">
+    {formatDate(notice.writeDate)}
+  </div>
 
-      {/* 제목 */}
-      <div className="flex-grow mx-4 text-xl font-bold text-center ">
-        {notice.title}
-      </div>
+  {/* 제목 */}
+  <div 
+    className="ml-1 flex-grow text-xl font-bold truncate text-center"
+    style={{ minWidth: '0' }} // Flexbox에서 truncate가 제대로 동작하도록 설정
+  >
+    {notice.title}
+  </div>
 
-      {/* <Button onClick={(e)=>{handleNotice(e)}}>확인</Button> */}
+  {/* 다이얼로그 */}
+  {isDialogOpen && 
+    <NoticeDetail 
+      notice={notice} 
+      onClose={() => setIsDialogOpen(false)} 
+    />}
+</Button>
 
-      {isDialogOpen && 
-        <NoticeDetail 
-          notice={notice} 
-          onClose={() => setIsDialogOpen(false)} // 닫기 함수 전달
-        />}
-    </Button>
   );
 };
 

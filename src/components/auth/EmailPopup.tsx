@@ -178,7 +178,7 @@ const EmailPopup = ({ isPopupOpen, setIsPopupOpen, callback, duplicateCheck }: {
   return (
     <>
       <AlertDialog open={isPopupOpen} onOpenChange={setIsPopupOpen}>
-        <AlertDialogContent className="max-h-[80vh] overflow-y-auto">
+        <AlertDialogContent className="max-h-[80vh] overflow-y-auto no-scrollbar">
           <AlertDialogHeader>
             <AlertDialogTitle>이메일 인증</AlertDialogTitle>
           </AlertDialogHeader>

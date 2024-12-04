@@ -98,9 +98,9 @@ const HomePage = () => {
   };
 
   return (
-    <div className="w-full max-w-screen-md p-4 space-y-4 animate-fade-in">
+    <div className="w-full h-screen flex justify-center items-center">
       {/* Card Component */}
-      <Card className="max-w-screen-md w-[300px] h-[335px] overflow-auto no-scrollbar">
+      <Card className="max-w-screen-md w-[80vw] h-[60vh] overflow-auto no-scrollbar">
         <CardHeader>
           <CardTitle>비밀번호 찾기</CardTitle>
           <CardDescription>필요한 정보를 입력하세요.</CardDescription>

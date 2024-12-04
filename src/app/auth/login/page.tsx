@@ -49,8 +49,8 @@ const HomePage = () => {
   return (
     <>
       {/* <div className="w-full max-w-screen-md p-4 space-y-4 animate-fade-in"> */}
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="w-[80%] h-[80%] max-w-screen-md p-4 space-y-4 animate-fade-in">
+      <div className="w-full animate-fade-in flex flex-col justify-center items-center min-h-screen">
+        <div className="w-[80vw] h-[95vh] p-2 space-y-2 animate-fade-in">
           <NoticeContainer />
           {/* Card Component */}
           <Card className="max-w-screen-md">
@@ -100,9 +100,8 @@ const HomePage = () => {
                   </div>
 
                   {/* Social Login Buttons */}
-                  <div className="flex flex-col space-y-1.5">
+                  <div className="flex flex-col">
                     {/* <Label htmlFor="OAuth">간편 로그인</Label> */}
-                    <p />
                     <div className="flex justify-center gap-14">
                       {/* Google Button */}
                       <Link href="http://localhost:8080/oauth2/authorization/google" passHref>
@@ -122,59 +121,31 @@ const HomePage = () => {
                           <AvatarImage src="/Resources/Kakao/카카오톡.png" />
                         </Avatar>
                       </Link>
-                      {/* <a href="http://localhost:8080/oauth2/authorization/google" className="block w-[40px] h-[40px]  rounded-md hover:border-gray-600">
-                      <div className="relative w-full h-full">
-                        <Image src="/Resources/Google/web_neutral_sq_na@4x.png" alt="Sign in with Google" layout="fill" />
-                      </div>
-                    </a> */}
-
-                      {/* Naver Button */}
-                      {/* <a href="http://localhost:8080/oauth2/authorization/naver" className="block w-[40px] h-[40px]  rounded-md hover:border-gray-600">
-                      <div className="relative w-full h-full">
-                        <Image src="/Resources/Naver/btnG_아이콘사각.png" alt="Sign in with Naver" layout="fill" />
-                      </div>
-                    </a> */}
-
-                      {/* Kakao Button */}
-                      {/* <a href="http://localhost:8080/oauth2/authorization/kakao" className="block w-[40px] h-[40px]  rounded-md hover:border-gray-600">
-                      <div className="relative w-full h-full">
-                        <Image src="/Resources/Kakao/카카오톡.png" alt="Sign in with Kakao" layout="fill" />
-                      </div>
-                    </a> */}
                     </div>
                   </div>
                 </div>
               </form>
             </CardContent>
-            <CardFooter className="flex justify-center flex-col">
-              <Button variant="outline" className="w-full bg-purple-400  hover:bg-purple-500" onClick={handleLogin}>
+            <CardFooter className="flex flex-col items-start space-y-5">
+              <Button variant="outline" className="w-full bg-purple-400 hover:bg-purple-500" onClick={handleLogin}>
                 Sign In
               </Button>
-              {/* <Button
-              variant="outline"
-              className="w-full"
-              onClick={() => {
-                router.push("/main");
-              }}
-            >
-              메인화면 가기
-            </Button> */}
-              <br />
-              <h2>
+
+              <p className="text-xs">
                 아직 회원이 아니라면{" "}
-                <a href="/auth/signup" className=" bg-slate-400">
+                <a href="/auth/signup" className="bg-slate-400">
                   여기
                 </a>
                 를 눌러 회원가입
-              </h2>
+              </p>
 
-              <h2>
+              <p className="text-xs">
                 비밀번호를 잊으셨다면{" "}
-                <a href="/auth/find" className=" bg-slate-400">
+                <a href="/auth/find" className="bg-slate-400">
                   여기
                 </a>
                 를 눌러 비밀번호 찾기
-              </h2>
+              </p>
             </CardFooter>
           </Card>
         </div>

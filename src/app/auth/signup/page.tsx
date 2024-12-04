@@ -190,10 +190,10 @@ const HomePage = () => {
   };
 
   return (
-    <div className="w-full max-w-screen-md p-4 space-y-4 animate-fade-in">
+    <div className="w-full max-w-screen-md p-2 space-y-2 animate-fade-in">
       {/* Card Component */}
       <Card
-        className="w-[400px] h-[590px] max-w-none overflow-auto no-scrollbar"
+        className="w-[80vw] h-[95vh] overflow-auto no-scrollbar"
       >
         <CardHeader>
           <CardTitle>회원 가입</CardTitle>
