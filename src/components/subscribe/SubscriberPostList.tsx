@@ -11,8 +11,8 @@ import { UserSimpleResDTO, getMySubscribes, unsubscribeUser } from '@/api/subscr
 
 interface SubscriberPostListProps {
     nickName: string;
-    isOpen: boolean;
-    onOpenChange: Dispatch<SetStateAction<boolean>>;
+    isOpen?: boolean;
+    onOpenChange?: (isOpen: boolean)=>void;
 }
 
 function PostCard({ post, user }: { post: PostResDTO, user: UserSimpleResDTO }) {
