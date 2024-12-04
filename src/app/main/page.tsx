@@ -2,7 +2,7 @@
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Pencil } from "lucide-react";
+import { Footprints } from "lucide-react";
 import PWAInstallButton from "@/components/layout/PwaInstallBtn";
 import Sidemenu from "@/components/layout/Sidemenu";
 import Link from "next/link";
@@ -97,7 +97,7 @@ export default function Page() {
             지금 경로 녹화 하러가기
           </h2>
           <Link href="/record">
-            <Pencil className="cursor-pointer hover:text-gray-600 dark:text-gray-300 dark:hover:text-gray-100" />
+            <Footprints className="cursor-pointer hover:text-gray-600 dark:text-gray-300 dark:hover:text-gray-100" />
           </Link>
         </div>
       </Card>
