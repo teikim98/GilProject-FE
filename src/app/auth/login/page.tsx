@@ -59,7 +59,12 @@ const HomePage = () => {
               <CardDescription>필요한 정보를 입력하세요.</CardDescription>
             </CardHeader>
             <CardContent>
-              <form>
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault(); // 기본 폼 제출 동작 방지
+                  handleLogin(); // 로그인 처리 함수 호출
+                }}
+              >
                 <div className="grid w-full items-center gap-4">
                   {/* Email Input */}
                   <div className="flex flex-col space-y-1.5">
@@ -100,7 +105,7 @@ const HomePage = () => {
                   </div>
 
                   {/* Social Login Buttons */}
-                  <div className="flex flex-col">
+                  <div className="flex flex-col space-y-5">
                     {/* <Label htmlFor="OAuth">간편 로그인</Label> */}
                     <div className="flex justify-center gap-14">
                       {/* Google Button */}
@@ -122,15 +127,15 @@ const HomePage = () => {
                         </Avatar>
                       </Link>
                     </div>
+
+                    <Button type="submit" variant="outline" className="w-full bg-purple-400 hover:bg-purple-500" onClick={handleLogin}>
+                      Sign In
+                    </Button>
                   </div>
                 </div>
               </form>
             </CardContent>
             <CardFooter className="flex flex-col items-start space-y-5">
-              <Button variant="outline" className="w-full bg-purple-400 hover:bg-purple-500" onClick={handleLogin}>
-                Sign In
-              </Button>
-
               <p className="text-xs">
                 아직 회원이 아니라면{" "}
                 <a href="/auth/signup" className="bg-slate-400">
@@ -138,7 +143,6 @@ const HomePage = () => {
                 </a>
                 를 눌러 회원가입
               </p>
-
               <p className="text-xs">
                 비밀번호를 잊으셨다면{" "}
                 <a href="/auth/find" className="bg-slate-400">
