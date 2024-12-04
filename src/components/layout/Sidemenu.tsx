@@ -76,7 +76,7 @@ export default function Sidemenu() {
                             postCount: profileInfo.postCount,
                             pathCount: profileInfo.pathCount,
                             subscribeByCount: profileInfo.subscribeByCount,
-                            point: profileInfo.point
+                            point: profileInfo.point,
                         } : null}
                         loading={isLoading}
                         error={error?.message ?? null}

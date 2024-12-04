@@ -103,6 +103,7 @@ export default function Page() {
         console.log("변경된 password = " + password);
     }
 
+
     return (
         <div className='animate-fade-in flex flex-col pb-20'>
             <BackHeader content='마이 페이지' />
@@ -146,7 +147,7 @@ export default function Page() {
                                     }}
 
                                 >변경</Button>
-                                <UpdateprofileImg imageUrl={profileInfo?.imageUrl} isPopupOpen={isUpdateImgPopupOpen} setIsPopupOpen={setIsUpdateImgPopupOpen} callback={handleProfileImgVerified} duplicateCheck={true} />
+                                <UpdateprofileImg imageUrl={profileInfo!.imageUrl} isPopupOpen={isUpdateImgPopupOpen} setIsPopupOpen={setIsUpdateImgPopupOpen} callback={handleProfileImgVerified} duplicateCheck={true} />
                             </div>
                             <Separator className='my-5 border-t-2 border-muted-foreground' />
                             <div className="flex flex-row items-center gap-10">
@@ -198,8 +199,7 @@ export default function Page() {
                                 <Input className='w-[50%] text-lg'
                                     name="comment"
                                     value={profileInfo?.comment || ""}
-                                    onChange={(e) => setProfileInfo(prev => ({ ...prev, comment: e.target.value }))}
-                                    placeholder='자기소개가 없습니다'
+                                    onChange={(e) => setProfileInfo(prev => prev ? { ...prev, comment: e.target.value } : null)} placeholder='자기소개가 없습니다'
                                 />
                                 <Button
                                     onClick={() => {/*주소 변경 컴포넌트*/ }}
@@ -236,9 +236,9 @@ export default function Page() {
 
                 </CardFooter>
             </Card>
-            {/* <NickNameChangePopup initialData='initialNickName' isPopupOpen={isNickNamePopupOpen} setIsPopupOpen={setIsNickNamePopupOpen} callback={nickNameChangeComplete} /> */}
-            {/* <PasswordChangePopup initialData='' isPopupOpen={isPasswordPopupOpen} setIsPopupOpen={setIsPasswordPopupOpen} callback={passwordChangeComplete} /> */}
-            {/* <AddressChangePopup isMypage={true} /> */}
+            {/* <NickNameChangePopup initialData='initialNickName' isPopupOpen={isNickNamePopupOpen} setIsPopupOpen={setIsNickNamePopupOpen} callback={nickNameChangeComplete} />
+            <PasswordChangePopup initialData='' isPopupOpen={isPasswordPopupOpen} setIsPopupOpen={setIsPasswordPopupOpen} callback={passwordChangeComplete} />
+            <AddressChangePopup isMypage={true} /> */}
         </div>
     );
 }
