@@ -65,7 +65,7 @@ const HomePage = () => {
                   handleLogin(); // 로그인 처리 함수 호출
                 }}
               >
-                <div className="grid w-full items-center gap-4">
+                <div className=" w-full items-center gap-4 flex flex-col">
                   {/* Email Input */}
                   <div className="flex flex-col space-y-1.5">
                     <Label htmlFor="email">Email</Label>
@@ -107,7 +107,7 @@ const HomePage = () => {
                   {/* Social Login Buttons */}
                   <div className="flex flex-col space-y-5">
                     {/* <Label htmlFor="OAuth">간편 로그인</Label> */}
-                    <div className="flex justify-center gap-14">
+                    <div className="flex justify-center gap-5">
                       {/* Google Button */}
                       <Link href="http://localhost:8080/oauth2/authorization/google" passHref>
                         <Avatar className="cursor-pointer">
@@ -128,10 +128,10 @@ const HomePage = () => {
                       </Link>
                     </div>
 
+                  </div>
                     <Button type="submit" variant="outline" className="w-full bg-purple-400 hover:bg-purple-500" onClick={handleLogin}>
                       Sign In
                     </Button>
-                  </div>
                 </div>
               </form>
             </CardContent>
