@@ -22,11 +22,14 @@ export default function Page() {
 
   useEffect(() => {
 
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
+      (window.navigator as any).standalone;
+
     const checkIOSDevice = () => {
       const isIOS = /iPad|iPhone|iPod/.test(navigator.platform) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
       const hasShownIOSGuide = localStorage.getItem('ios-pwa-guide-shown');
 
-      if (isIOS && !hasShownIOSGuide) {
+      if (isIOS && !isStandalone && !hasShownIOSGuide) {
         setShowIOSModal(true);
         localStorage.setItem('ios-pwa-guide-shown', 'true');
       }
