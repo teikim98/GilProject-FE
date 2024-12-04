@@ -7,15 +7,18 @@ import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import MypageBtn from '@/components/layout/MypageBtn';
 import BackHeader from '@/components/layout/BackHeader';
 import { getDetailProfile, updateProfileImage } from '@/api/user';
-import { User } from '@/types/types';
 import { getPoint } from '@/api/point';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useDetailProfile } from '@/hooks/queries/useUserQuery';
+import SubscriberDialog from '@/components/subscribe/SubscriberDialog';
+import PointDialog from '@/components/point/PointDialog';
 
 export default function Page() {
 
     const [points, setPoints] = useState(0);
+    const [isPointDialogOpen, setIsPointDialogOpen] = useState(false);
+    const [isSubscriberDialogOpen, setIsSubscriberDialogOpen] = useState(false);
 
     const router = useRouter();
     const { data: profileInfo, isLoading, error } = useDetailProfile();
@@ -161,8 +164,28 @@ export default function Page() {
             <MypageBtn link='myRoute' content='나의 경로 기록' /> <br />
             <MypageBtn link='myPost' content='내가 작성한 산책길 글 목록' /> <br />
             <MypageBtn link='myWishListPost' content='내가 찜한 산책길 글 목록' /> <br />
-            <MypageBtn link='mySubscribers' content='내가 구독한 유저목록' /> <br />
-            <MypageBtn link='point' content='나의 포인트' />
+
+            <MypageBtn
+                link='mySubscribers'
+                content='내가 구독한 유저목록'
+                onClick={() => setIsSubscriberDialogOpen(true)}
+            /> <br />
+
+            <MypageBtn
+                link='point'
+                content='나의 포인트'
+                onClick={() => setIsPointDialogOpen(true)}
+            />
+
+            <PointDialog
+                isOpen={isPointDialogOpen}
+                onOpenChange={setIsPointDialogOpen}
+            />
+
+            <SubscriberDialog
+                isOpen={isSubscriberDialogOpen}
+                onOpenChange={setIsSubscriberDialogOpen}
+            />
         </div>
     );
 }
