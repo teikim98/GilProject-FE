@@ -11,8 +11,6 @@ import { UserSimpleResDTO, getMySubscribes, unsubscribeUser } from '@/api/subscr
 
 interface SubscriberPostListProps {
     nickName: string;
-    isOpen: boolean;
-    onOpenChange: Dispatch<SetStateAction<boolean>>;
 }
 
 function PostCard({ post, user }: { post: PostResDTO, user: UserSimpleResDTO }) {
@@ -21,22 +19,22 @@ function PostCard({ post, user }: { post: PostResDTO, user: UserSimpleResDTO }) 
             {/* 헤더 섹션 */}
             <div className="p-4 pb-2">
                 <div className="flex items-center gap-3">
-                    <ProfileDialog 
-                        userId={user.id} 
+                    <ProfileDialog
+                        userId={user.id}
                         className="w-8 h-8"
                     />
                     {/* 사용자 정보 및 제목 */}
                     <div>
                         <div className="flex items-center gap-2">
-                        <Link href={`/main/board/${post.postId}`}>
-                            <span className="font-medium">{post.nickName || 'pubobo'}</span>
+                            <Link href={`/main/board/${post.postId}`}>
+                                <span className="font-medium">{post.nickName || 'pubobo'}</span>
                             </Link>
                             <span className="text-gray-500 text-sm">
                                 {new Date(post.writeDate).toLocaleDateString().replace(/202\d\. /, '')}
                             </span>
                         </div>
                         <Link href={`/main/board/${post.postId}`}>
-                        <h2 className="font-bold mt-1">{post.title}</h2>
+                            <h2 className="font-bold mt-1">{post.title}</h2>
                         </Link>
                     </div>
                 </div>
@@ -44,7 +42,7 @@ function PostCard({ post, user }: { post: PostResDTO, user: UserSimpleResDTO }) 
 
             {/* 지도 섹션 */}
             <div className="w-full h-[200px] relative">
-                <ViewingMap 
+                <ViewingMap
                     width='w-full'
                     height='h-full'
                     route={{
@@ -85,7 +83,7 @@ function PostCard({ post, user }: { post: PostResDTO, user: UserSimpleResDTO }) 
                         <span className="text-sm text-gray-600">
                             {post.pathResDTO?.time}분
                         </span>
-                        <Link 
+                        <Link
                             href={`/main/board/${post.postId}`}
                             className="ml-2 text-sm text-gray-500 hover:text-gray-700"
                         >
@@ -99,7 +97,7 @@ function PostCard({ post, user }: { post: PostResDTO, user: UserSimpleResDTO }) 
 }
 
 const SubscriberPostList: React.FC<SubscriberPostListProps> = ({ nickName }) => {
-    const [postsWithUsers, setPostsWithUsers] = useState<{post: PostResDTO, user: UserSimpleResDTO}[]>([]);
+    const [postsWithUsers, setPostsWithUsers] = useState<{ post: PostResDTO, user: UserSimpleResDTO }[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [page, setPage] = useState(0);
@@ -125,7 +123,7 @@ const SubscriberPostList: React.FC<SubscriberPostListProps> = ({ nickName }) => 
     useEffect(() => {
         const fetchPosts = async () => {
             if (subscribers.length === 0) return;
-            
+
             try {
                 setLoading(true);
                 const response = await getPostsByNickName2(nickName, page, size);
