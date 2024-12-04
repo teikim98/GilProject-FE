@@ -15,24 +15,11 @@ import { useDetailProfile } from '@/hooks/queries/useUserQuery';
 
 export default function Page() {
 
-    const [points, setPoints] = useState(0);
 
     const router = useRouter();
     const { data: profileInfo, isLoading, error } = useDetailProfile();
 
 
-    useEffect(() => {
-        const getPoints = async () => {
-            try {
-                const pointData = await getPoint();
-                setPoints(pointData);
-            } catch (error) {
-                console.error('포인트 조회 실패:', error);
-            }
-        };
-
-        getPoints();
-    }, []);
 
     if (error) {
         return (
@@ -84,7 +71,7 @@ export default function Page() {
                         <div className="flex flex-row gap-4 items-center">
                             <div className="relative">
                                 <div className={`medal w-20 h-20 rounded-full p-1
-                                ${points >= 5000 ? 'bg-[url(/medal/gold.png)]' : points >= 3000 ? 'bg-[url(/medal/silver.png)]' : points >= 1000 ? 'bg-[url(/medal/bronze.png)]' : null} bg-cover bg-center`}>
+                                ${profileInfo.point >= 500 ? 'bg-[url(/medal/gold.png)]' : profileInfo.point >= 300 ? 'bg-[url(/medal/silver.png)]' : profileInfo.point >= 100 ? 'bg-[url(/medal/bronze.png)]' : null} bg-cover bg-center`}>
                                     <div className="absolute inset-0 flex items-center justify-center">
                                         {profileInfo?.imageUrl ? (
                                             <img

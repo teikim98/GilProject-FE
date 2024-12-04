@@ -10,6 +10,7 @@ interface SideProfileProps {
         postCount: number;
         pathCount: number;
         subscribeByCount: number;
+        point: number;
     } | null;
     loading: boolean;
     error: string | null;
@@ -28,15 +29,22 @@ export default function SideProfile({
         <Card className="border-0 shadow-none mb-4">
             <CardContent className="p-4">
                 <div className="flex items-center gap-4 mb-4">
-                    {profileInfo.imageUrl ? (
-                        <img
-                            src={profileInfo.imageUrl}
-                            alt="Profile"
-                            className="w-12 h-12 rounded-full object-cover"
-                        />
-                    ) : (
-                        <Camera className="w-12 h-12 p-2 bg-muted rounded-full" />
-                    )}
+                    <div className="relative">
+                        <div className={`medal w-20 h-20 rounded-full ${profileInfo.point >= 500 ? 'bg-[url(/medal/gold.png)]' : profileInfo.point >= 300 ? 'bg-[url(/medal/silver.png)]' : profileInfo.point >= 100 ? 'bg-[url(/medal/bronze.png)]' : null} bg-cover bg-center`}>
+                            <div className="absolute inset-0 flex items-center justify-center">
+                                {profileInfo.imageUrl ? (
+                                    <img
+                                        src={profileInfo.imageUrl}
+                                        alt="Profile"
+                                        className="w-12 h-12 rounded-full object-cover"
+                                        style={{ position: "absolute", transform: "translate(-50%, -50%)", top: "60%", left: "50%" }}
+                                    />
+                                ) : (
+                                    <Camera className="w-12 h-12 p-2 bg-muted rounded-full"  style={{ position: "absolute", transform: "translate(-50%, -50%)", top: "60%", left: "50%" }}/>
+                                )}
+                            </div>
+                        </div>
+                    </div>
                     <div className="flex-1">
                         <p className="font-bold text-lg">{profileInfo.nickName}</p>
                     </div>
