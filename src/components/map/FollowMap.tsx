@@ -123,8 +123,9 @@ export function FollowMap({ route, width, height }: FollowMapProps) {
         if (isNearEnd && hasMinimumDistance && hasMinimumPoints && hasMinimumTime) {
             try {
                 await updateUserPoints(route.id);
+                alert('포인트 호출 완료');
             } catch (error) {
-                console.error('포인트 업데이트 중 오류 발생:', error);
+                alert('포인트 지급 중 오류가 발생했습니다.');
             }
             return true;
         }

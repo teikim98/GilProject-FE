@@ -176,7 +176,7 @@ export const updateProfileImage = async (userId: number, file: File) => {
 export const updateUserPoints = async (pathId: number) => {
   try {
     console.log(pathId);
-    await api.patch("/point", { pathId });
+    await api.patch("/point", { pathId: pathId });
   } catch (error) {
     console.error("포인트 업데이트 실패:", error);
     throw error;

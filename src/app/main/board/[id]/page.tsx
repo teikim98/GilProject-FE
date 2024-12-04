@@ -261,7 +261,7 @@ export default function PostPage({ params }: PostPageProps) {
             </Card>
 
             <Card className="p-4">
-                <div className="flex justify-between items-center">
+                <div className="flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-center">
                     <div className="flex gap-4">
                         <Button
                             variant="ghost"
@@ -285,11 +285,10 @@ export default function PostPage({ params }: PostPageProps) {
                             <Bookmark className={`w-5 h-5 ${post.wishListed ? 'fill-current' : ''}`} />
                             <span>{post.postWishListsNum}</span>
                         </Button>
-
                     </div>
-                    {/* 삭제버튼은 나중에 토큰에서 유저id를 빼와서 적용해야할듯 */}
+
                     {post.postUserId === userId && (
-                        <div className="flex gap-2">
+                        <div className="flex gap-2 w-full sm:w-auto justify-end">
                             <Link href={`/main/board/${params.id}/edit`}>
                                 <Button
                                     variant="outline"
