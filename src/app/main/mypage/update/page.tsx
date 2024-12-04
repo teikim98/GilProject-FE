@@ -10,10 +10,11 @@ import { getDetailProfile, updateProfileImage } from '@/api/user';
 import { User } from '@/types/types';
 import { Input } from '@/components/ui/input';
 import { useRouter } from 'next/navigation';
-import UpdateprofileImg from '../../../../components/user/UpdateprofileImg';
 import PasswordChangePopup from '../../../../components/auth/PasswordChangePopup';
 import NickNameChangePopup from '@/components/auth/NickNameChangePopup';
 import AddressChangePopup from '@/components/auth/AddressChangePopup';
+import UpdateprofileImg from '@/components/user/updateprofileImg';
+import UpdateComment from '@/components/user/UpdateComment';
 
 export default function Page() {
     const [profileInfo, setProfileInfo] = useState<User | null>(null);
@@ -22,9 +23,8 @@ export default function Page() {
     const router = useRouter();
     const [isNickNamePopupOpen, setIsNickNamePopupOpen] = useState(true);
     const [isPasswordPopupOpen, setIsPasswordPopupOpen] = useState(true);
-
-
     const [isUpdateImgPopupOpen, setIsUpdateImgPopupOpen] = useState(false);
+    const [isUpdateCommentPopupOpen, setIsUpdateCommentPopupOpen] = useState(false);
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -79,13 +79,24 @@ export default function Page() {
         setIsUpdateImgPopupOpen(true);
     }
 
-    const handleProfileImgVerified = (profileImgUrl: string) => {
-        if (profileImgUrl !== "") {
-            console.log(`입력된 프로필 이미지 Url: ${profileImgUrl}`);
-            setProfileInfo(prev => prev ? { ...prev, imageUrl: profileImgUrl } : prev);
+    const handleProfileImgVerified = (inputImgUrl: string) => {
+        if (inputImgUrl !== "") {
+            console.log(`입력된 프로필 이미지 Url: ${inputImgUrl}`);
+            setProfileInfo(prev => prev ? { ...prev, imageUrl: inputImgUrl } : prev);
         }
+    }
 
+    const handleCommentPopup = (e)=>{
+        console.log("자기소개글 바꾸러 가쟈!!");
+        e.preventDefault();
+        setIsUpdateCommentPopupOpen(true);
+    }
 
+    const handleCommentVerified = (inputComment: string)=>{
+        if(inputComment !=="") {
+            console.log(`입력된 자기소개글로 바꾸기 : ${inputComment}`);
+            setProfileInfo(prev => prev ? { ...prev, comment: inputComment } : prev);
+        }
     }
 
     /**
@@ -198,13 +209,17 @@ export default function Page() {
                                 <span className="font-bold text-lg">자기소개</span>
                                 <Input className='w-[50%] text-lg'
                                     name="comment"
-                                    value={profileInfo?.comment || ""}
+                                    value={profileInfo?.comment || "자기소개를 입력해주세요"}
+                                    readOnly
                                     onChange={(e) => setProfileInfo(prev => prev ? { ...prev, comment: e.target.value } : null)} placeholder='자기소개가 없습니다'
                                 />
                                 <Button
-                                    onClick={() => {/*주소 변경 컴포넌트*/ }}
+                                    onClick={(e) => {
+                                        handleCommentPopup(e);
+                                    }}
                                     className="w-[10%]"
                                 >변경</Button>
+                                <UpdateComment postComment={profileInfo!.comment} isPopupOpen={isUpdateCommentPopupOpen} setIsPopupOpen={setIsUpdateCommentPopupOpen} callback={handleCommentVerified} duplicateCheck={true} />
                             </div>
                             <Separator className='my-5 border-t-2 border-muted-foreground' />
                             <div className="flex flex-row items-center gap-10">
