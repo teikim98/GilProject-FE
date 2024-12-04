@@ -23,7 +23,7 @@ export default function Page() {
   useEffect(() => {
 
     const checkIOSDevice = () => {
-      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.platform) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
       const hasShownIOSGuide = localStorage.getItem('ios-pwa-guide-shown');
 
       if (isIOS && !hasShownIOSGuide) {
