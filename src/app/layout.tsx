@@ -36,7 +36,7 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/icons/icon-192x192.j" />
 
       </head>
-      <body>
+      <body className="font-pretendard">
         <Suspense
           fallback={
             <div className="animate-fade-in min-h-screen " />

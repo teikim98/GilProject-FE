@@ -21,7 +21,7 @@ export function NoticeContainer() {
       }
     };
 
-    fetchNotices(); // 비동기 함수 호출
+    fetchNotices();
   }, []);
 
   return (

@@ -22,6 +22,52 @@ import { getUserPosts } from '@/api/user';
 import { toast } from '@/hooks/use-toast';
 import { ViewingMap } from '../map/ViewingMapProps';
 
+export const PostCardSkeleton = () => {
+    return (
+        <Card className="p-4">
+            <div className="flex justify-between items-center mb-3">
+                <div className="space-y-2">
+                    {/* 제목 스켈레톤 */}
+                    <div className="h-7 w-48 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+                    {/* 작성자 정보 스켈레톤 */}
+                    <div className="h-4 w-32 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+                </div>
+                {/* 삭제 버튼 스켈레톤 */}
+                <div className="w-8 h-8 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+            </div>
+
+            <div className="flex">
+                {/* 지도 썸네일 스켈레톤 */}
+                <div className="w-32 h-32 mr-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+
+                {/* 내용 영역 스켈레톤 */}
+                <div className="flex-1">
+                    {/* 본문 내용 스켈레톤 */}
+                    <div className="space-y-2">
+                        <div className="h-4 w-full bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+                        <div className="h-4 w-full bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+                        <div className="h-4 w-3/4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+                    </div>
+
+                    {/* 하단 정보 스켈레톤 */}
+                    <div className="flex justify-between items-center mt-4">
+                        <div className="flex items-center gap-4">
+                            <div className="flex items-center gap-1">
+                                <div className="w-5 h-5 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+                                <div className="w-4 h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+                            </div>
+                            <div className="flex items-center gap-1">
+                                <div className="w-5 h-5 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+                                <div className="w-4 h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </Card>
+    );
+};
+
 const MyPostList: React.FC = () => {
     const [posts, setPosts] = useState<Post[]>([]);
     const [loading, setLoading] = useState(true);
@@ -85,7 +131,13 @@ const MyPostList: React.FC = () => {
     };
 
     if (loading && posts.length === 0) {
-        return <div className="text-center py-8">로딩 중...</div>;
+        return (
+            <div className="space-y-4">
+                {Array(5).fill(0).map((_, index) => (
+                    <PostCardSkeleton key={index} />
+                ))}
+            </div>
+        );
     }
 
     if (error) {

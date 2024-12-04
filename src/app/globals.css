@@ -1,7 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
+@import url("../../public/pretendardvariable.css");
 body {
   font-family: Arial, Helvetica, sans-serif;
 }
@@ -13,6 +13,7 @@ body {
   font-weight: normal;
   font-style: normal;
 }
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;

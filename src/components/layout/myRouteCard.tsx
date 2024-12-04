@@ -37,6 +37,42 @@ function formatRecordedTime(minutes: number) {
     return `${hours}시간 ${remainingMinutes}분`;
 }
 
+const RouteCardSkeleton = () => {
+    return (
+        <div>
+            <Card className="p-4">
+                <div className="flex">
+                    {/* 썸네일 지도 스켈레톤 */}
+                    <div className="min-w-32 h-32 mr-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+
+                    <div className="flex flex-col flex-1">
+                        {/* 제목 스켈레톤 */}
+                        <div className="flex justify-between items-start">
+                            <div className="h-6 w-1/3 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+                            <div className="w-5 h-5 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+                        </div>
+
+                        {/* 내용 스켈레톤 */}
+                        <div className="space-y-2 mt-2">
+                            <div className="h-4 w-full bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+                            <div className="h-4 w-5/6 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+                            <div className="h-4 w-4/6 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+                        </div>
+
+                        {/* 하단 정보 스켈레톤 */}
+                        <div className="flex justify-between mt-auto">
+                            <div className="h-4 w-24 bg-gray-200 dark:bg-gray-700 rounded animate-pulse self-end" />
+                            <div className="h-8 w-24 bg-gray-200 dark:bg-gray-700 rounded animate-pulse self-end" />
+                        </div>
+                    </div>
+                </div>
+            </Card>
+            <Separator className="my-4" />
+        </div>
+    )
+}
+
+
 function RouteCard({
     route,
     isWriteMode = false,
@@ -240,7 +276,13 @@ export default function MyRouteList({
     // }
 
     if (loading) {
-        return <div className="text-center py-8">로딩 중...</div>;
+        return (
+            <div className="space-y-4">
+                {Array(5).fill(0).map((_, index) => (
+                    <RouteCardSkeleton key={index} />
+                ))}
+            </div>
+        );
     }
 
     if (error) {

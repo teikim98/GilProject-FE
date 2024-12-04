@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/card';
 import Link from 'next/link';
-import { MapPin } from 'lucide-react';
+import { Camera, Heart, MapPin, Share2, Users } from 'lucide-react';
 import { Flag } from 'lucide-react';
 
 interface BackgroundProps {
@@ -179,39 +179,101 @@ const MyRouteBackground: React.FC<BackgroundProps> = () => {
 };
 
 const ShareBackground: React.FC<BackgroundProps> = () => {
-    const [dimensions, setDimensions] = React.useState({ width: 0, height: 0 });
-
-    React.useEffect(() => {
-        setDimensions({
-            width: window.innerWidth,
-            height: window.innerHeight
-        });
-    }, []);
-
     return (
-        <motion.div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-indigo-600 overflow-hidden">
-            {[...Array(30)].map((_, i) => (
-                <motion.div
-                    key={i}
-                    className="absolute w-1 h-1 bg-white/40 rounded-full"
-                    initial={{
-                        x: Math.random() * dimensions.width,
-                        y: Math.random() * dimensions.height
-                    }}
+        <motion.div className="absolute inset-0 bg-gradient-to-br from-violet-500 via-purple-500 to-fuchsia-500 overflow-hidden">
+            {/* 중앙 원형 경로 */}
+            <svg className="absolute inset-0 w-full h-full">
+                <motion.circle
+                    cx="50%"
+                    cy="50%"
+                    r="30"
+                    className="stroke-white/40 fill-none stroke-[2]"
+                    initial={{ scale: 0, opacity: 0 }}
                     animate={{
-                        y: [-20, dimensions.height + 20],
-                        opacity: [0, 1, 0],
+                        scale: [1, 2, 1],
+                        opacity: [0.2, 0.5, 0.2],
                     }}
                     transition={{
-                        duration: 2 + Math.random() * 2,
+                        duration: 3,
                         repeat: Infinity,
-                        delay: i * 0.2,
+                        ease: "easeInOut"
                     }}
                 />
-            ))}
+                <motion.circle
+                    cx="50%"
+                    cy="50%"
+                    r="30"
+                    className="stroke-white/30 fill-none stroke-[1.5]"
+                    initial={{ scale: 0, opacity: 0 }}
+                    animate={{
+                        scale: [1.2, 2.2, 1.2],
+                        opacity: [0.1, 0.3, 0.1],
+                    }}
+                    transition={{
+                        duration: 3,
+                        repeat: Infinity,
+                        delay: 0.5,
+                        ease: "easeInOut"
+                    }}
+                />
+            </svg>
+
+            {/* 움직이는 아이콘들 */}
+            <div className="absolute inset-0">
+                {/* 카메라 아이콘 */}
+                <motion.div
+                    className="absolute left-[20%] top-[30%]"
+                    animate={{
+                        x: ["0%", "30%", "0%"],
+                        y: ["0%", "-20%", "0%"],
+                        rotate: [0, -15, 0],
+                    }}
+                    transition={{
+                        duration: 4,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                    }}
+                >
+                    <Camera className="w-6 h-6 text-white" />
+                </motion.div>
+
+                {/* 유저 아이콘 */}
+                <motion.div
+                    className="absolute right-[20%] top-[30%]"
+                    animate={{
+                        x: ["0%", "-30%", "0%"],
+                        y: ["0%", "-20%", "0%"],
+                        rotate: [0, 15, 0],
+                    }}
+                    transition={{
+                        duration: 4,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                    }}
+                >
+                    <Users className="w-6 h-6 text-white" />
+                </motion.div>
+
+                {/* 연결선 */}
+                <svg className="absolute inset-0 w-full h-full">
+                    <motion.path
+                        d="M 30% 50% Q 50% 30%, 70% 50%"
+                        className="stroke-white/60 stroke-[2] fill-none"
+                        initial={{ pathLength: 0 }}
+                        animate={{ pathLength: 1 }}
+                        transition={{
+                            duration: 2,
+                            repeat: Infinity,
+                            ease: "easeInOut"
+                        }}
+                    />
+                </svg>
+            </div>
+
         </motion.div>
     );
 };
+
 
 const AnimatedCard: React.FC<AnimatedCardProps> = ({ href, title, Background, className = '' }) => {
     return (
@@ -238,13 +300,13 @@ const AnimatedCards: React.FC = () => {
             <div className="flex flex-row justify-between" style={{ height: '20vh' }}>
                 <AnimatedCard
                     href="/main/board"
-                    title="내 주변 산책로 보러가기"
+                    title="내 주변 산책길 보러가기"
                     Background={WalkingPathBackground}
                     className="w-[48%] block"
                 />
                 <AnimatedCard
                     href="/main/mypage/myRoute"
-                    title="내가 기록한 산책로 보러가기"
+                    title={<span className="whitespace-pre-line">내가 기록한{'\n'}산책길 보러가기</span>}
                     Background={MyRouteBackground}
                     className="w-[48%] block"
                 />
@@ -253,7 +315,7 @@ const AnimatedCards: React.FC = () => {
                 href="/main/board/post"
                 title="내 산책길 공유하기"
                 Background={ShareBackground}
-                className="w-[100%] block mt-4"
+                className="w-[100%] block mt-4 h-[13vh]"
             />
         </div>
     );

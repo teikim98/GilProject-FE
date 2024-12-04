@@ -106,23 +106,3 @@ export const verifiRefreshToken = async () => {
   return response;
 };
 
-/**
- * 비밀번호 변경
- */
-export const changePassword = async (password: string, newPassword: string) => {
-  try {
-    const formData = new FormData();
-    formData.append("password", password);
-    formData.append("newPassword", newPassword);
-
-    const response = await axios.put("/mypage/updatePwd", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-      withCredentials: true,
-    });
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-};

@@ -55,7 +55,7 @@ export default function SearchPage({ onClose }: SearchPageProps) {
                             className="flex-1 border-none focus-visible:ring-0"
                             autoFocus
                         />
-                        <Button type="submit" variant="ghost" size="sm">
+                        <Button type="submit" variant="ghost" size="sm" className='mr-5'>
                             검색
                         </Button>
                     </div>

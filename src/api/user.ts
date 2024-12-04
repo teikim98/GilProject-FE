@@ -227,3 +227,44 @@ export const getUserPostWishlist = async (
     throw error;
   }
 };
+
+/**
+ * 비밀번호 변경
+ */
+export const changePassword = async (password: string, newPassword: string) => {
+  try {
+    const formData = new FormData();
+    formData.append("password", password);
+    formData.append("newPassword", newPassword);
+
+    const response = await api.put("/mypage/update/pwd", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+/**
+ * 닉네임 변경
+ */
+export const changeNickname = async (nickName : string) => {
+  try {
+    const formData = new FormData();
+    formData.append("nickName", nickName);
+
+    const response = await api.put("/mypage/update/nickname", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
