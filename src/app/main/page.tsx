@@ -106,7 +106,7 @@ export default function Page() {
 
       <PWAInstallButton />
 
-      {addressPopupOpen && <AddressChangePopup />}
+      {addressPopupOpen && <AddressChangePopup isMypage={false} />}
       <AnimatedCards />
     </div>
   );
