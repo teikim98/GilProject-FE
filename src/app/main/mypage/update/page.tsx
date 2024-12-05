@@ -13,7 +13,7 @@ import NickNameChangePopup from '@/components/auth/NickNameChangePopup';
 import AddressChangePopup from '@/components/auth/AddressChangePopup';
 import PasswordChangePopup from '@/components/auth/PasswordChangePopup';
 import UpdateComment from '@/components/user/UpdateComment';
-import UpdateprofileImg from '@/components/user/UpdateprofileImg';
+import UpdateprofileImg from '@/components/user/updateprofileImg';
 
 export default function Page() {
     const [profileInfo, setProfileInfo] = useState<User | null>(null);
@@ -150,6 +150,7 @@ export default function Page() {
                                     name="nickName"
                                     value={profileInfo?.nickName}
                                     onChange={(e) => { setProfileInfo(prev => prev ? { ...prev, nickName: e.target.value } : prev); }}
+                                    readOnly={true}
                                 />
                                 <Button
                                     onClick={() => {setIsNickNamePopupOpen(true)}}
@@ -194,7 +195,7 @@ export default function Page() {
                                     }}
                                     className="w-[10%]"
                                 >변경</Button>
-                                <UpdateComment postComment={profileInfo!.comment} isPopupOpen={isUpdateCommentPopupOpen} setIsPopupOpen={setIsUpdateCommentPopupOpen} callback={handleCommentVerified} duplicateCheck={true} />
+                                <UpdateComment postComment={profileInfo!.comment} isPopupOpen={isUpdateCommentPopupOpen} setIsPopupOpen={setIsUpdateCommentPopupOpen} callback={handleCommentVerified} />
                             </div>
                             <Separator className='my-4 border-t-2 border-muted-foreground' />
                             <div className="flex flex-row items-center gap-5">

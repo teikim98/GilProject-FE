@@ -275,11 +275,11 @@ export const changeNickname = async (nickName : string | undefined) => {
 export const changeComment = async (comment : string | null) : Promise<number> => {
   try{
     const response = await api.put(`/mypage/update/comment/${comment}`);
-    console.log("여기는 제대로 된거");
+    // console.log("여기는 제대로 된거");
     console.log(response.data);
   return response.data;
   } catch(error) {
-    console.log("여기는 에러");
+    // console.log("여기는 에러");
     throw error;
   }
 };
