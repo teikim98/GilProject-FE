@@ -3,6 +3,7 @@ import axios from "axios";
 import { cookies } from "next/headers";
 import { GetUserPostsResponse } from "@/types/types";
 import { customInterceptors } from "./interceptors";
+import { removeLoginChecker } from "@/util/loginChecker";
 
 //유저(마이페이지) 관련 API///////////////
 
@@ -121,6 +122,7 @@ export const logout = async () => {
     );
     localStorage.removeItem("access");
     localStorage.removeItem("address-popup");
+    removeLoginChecker();
   } catch (error) {
     console.error("로그아웃 실패:", error);
   }
@@ -188,10 +190,10 @@ export const changePassword = async (password: string, newPassword: string) => {
 /**
  * 닉네임 변경
  */
-export const changeNickname = async (nickName: string) => {
+export const changeNickname = async (nickName: string | undefined) => {
   try {
     const formData = new FormData();
-    formData.append("nickName", nickName);
+    if (nickName) formData.append("nickName", nickName);
 
     const response = await api.put("/mypage/update/nickname", formData, {
       headers: {
@@ -201,6 +203,23 @@ export const changeNickname = async (nickName: string) => {
 
     return response.data;
   } catch (error) {
+    throw error;
+  }
+};
+
+/**
+ * 자기소개글 변경
+ */
+export const changeComment = async (
+  comment: string | null
+): Promise<number> => {
+  try {
+    const response = await api.put(`/mypage/update/comment/${comment}`);
+    // console.log("여기는 제대로 된거");
+    console.log(response.data);
+    return response.data;
+  } catch (error) {
+    // console.log("여기는 에러");
     throw error;
   }
 };

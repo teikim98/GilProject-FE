@@ -1,11 +1,39 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-const PROTECTED_PATHS = ["/main", "/record"];
-const AUTH_STATUS_COOKIE = "auth-status";
+// const PROTECTED_PATHS = ["/main", "/record"];
+const AUTH_STATUS_COOKIE = "loginchecker";
+const LOGIN_PAGE = "/auth/login"
+const MAIN_PAGE = "/main"
 
 export function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+  // const { pathname } = request.nextUrl;
+
+  const url = request.nextUrl.clone();
+  console.log(url.pathname);
+  // url.pathname = "/signin";
+  // return NextResponse.redirect(url);
+
+  const auth = request.cookies.has(AUTH_STATUS_COOKIE);
+  // console.log(auth);
+  // const auth = false;
+
+  if(url.pathname === "/") {
+    if(auth) return NextResponse.redirect(new URL(MAIN_PAGE, request.url));
+    return NextResponse.redirect(new URL(LOGIN_PAGE, request.url));
+  }
+
+  // 로그인 된 상태 + 로그인 페이지로 진입
+  if (auth && url.pathname.startsWith(LOGIN_PAGE)) {
+    console.log("로그인된 상태입니다 메인페이지로 갑니다");
+    return NextResponse.redirect(new URL(MAIN_PAGE, request.url));
+  }
+  
+  // 로그인 안된 상태 + 로그인 페이지를 제외한 곳으로 진입
+  if (!auth && !url.pathname.startsWith(LOGIN_PAGE)) {
+    console.log("로그아웃된 상태입니다 로그인페이지로 진입합니다");
+    return NextResponse.redirect(new URL(LOGIN_PAGE, request.url));
+  }
 
   //테스트용
   // if (pathname === "/") {
@@ -46,5 +74,12 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+  matcher: [
+    // '/((?!_next/static|_next/image|favicon.ico|Resources|icons|manifest|\\.jpg$|\\.png$|\\.css$|\\.js$|\\.svg$|\\.webp$).*)',
+    '/auth/:path*',
+    '/follow/:path*',
+    '/main/:path*',
+    '/record/:path*',
+    '/:path'
+  ],
 };

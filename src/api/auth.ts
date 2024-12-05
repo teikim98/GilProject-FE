@@ -4,6 +4,7 @@ import axios from "axios";
 //회원가입, 로그인 관련 API///////////////
 import { getDetailProfile } from "./user";
 import { customInterceptors } from "./interceptors";
+import { loginCheckerTokenGenerator } from "@/util/loginChecker";
 
 const api = axios.create({
   baseURL: `${process.env.NEXT_PUBLIC_API_URL}/auth`,
@@ -40,6 +41,9 @@ export const emailLogin = async (email: string, password: string) => {
       const accessToken = token.split(" ")[1];
       // console.log(accessToken);
       localStorage.setItem("access", accessToken);
+
+      //페이지 처리용 쿠키 생성
+      loginCheckerTokenGenerator();
 
       // 전체 유저 정보를 가져옴
       const userResponse = await getDetailProfile();
@@ -98,11 +102,10 @@ export const existEmail = async (email: string) => {
 
 /**
  * refresh 토큰 검증
- * @returns 
+ * @returns
  */
 export const verifiRefreshToken = async () => {
   const response = await api.post("/verification");
 
   return response;
 };
-

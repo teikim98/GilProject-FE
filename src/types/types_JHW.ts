@@ -21,6 +21,6 @@ export interface PopupData {
 export interface ChangePopupData {
   isPopupOpen: boolean;
   setIsPopupOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  initialData: string;
-  callback: (data: string) => void;
+  initialData?: string | undefined;
+  callback : (data: string) => void;
 }

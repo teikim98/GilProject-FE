@@ -22,7 +22,7 @@ import { Camera } from "lucide-react";
  * @returns 
  */
 const UpdateprofileImg = ({imageUrl, isPopupOpen, setIsPopupOpen, callback, duplicateCheck } :{ imageUrl: string; isPopupOpen: boolean; setIsPopupOpen: React.Dispatch<React.SetStateAction<boolean>>; callback: (profileImgUrl: string) => void; duplicateCheck: boolean } ) => {
-    const [profileImgUrl, setProfileImgUrl]= useState("수정할 이미지를 업로드해주세요");
+    const [profileImgUrl, setProfileImgUrl]= useState("여기를 클릭하여 수정할 이미지를 업로드해주세요");
     const [useButtonLock, setUseButtonLock] = useState(true);
 
     /**
@@ -79,15 +79,23 @@ const UpdateprofileImg = ({imageUrl, isPopupOpen, setIsPopupOpen, callback, dupl
                                     ) : (
                                     <Camera className="w-12 h-12 p-2 bg-muted rounded-full" />
                                     )}
-                    <div className="flex flex-col space-y-1.5">
+                </div>
+                <div className="relative">
+                        <div className="flex flex-col space-y-1.5">
                         <Input
                             name="imageUrl"
                             type="text"
                             value={profileImgUrl}
                             onChange={(e)=>handleImgUrl}
                         />
-                    </div>
-                </div>
+                        </div>
+                        <input
+                        type="file"
+                        className="absolute inset-0 opacity-0 cursor-pointer"
+                        onChange={(e) => {}}
+                        accept="image/*"
+                        />
+                    </div>  
                 <AlertDialogFooter>
                     <AlertDialogCancel
                         onClick={(e) => {
@@ -96,15 +104,6 @@ const UpdateprofileImg = ({imageUrl, isPopupOpen, setIsPopupOpen, callback, dupl
                     >
                     닫기
                     </AlertDialogCancel>
-                    <div className="relative">
-                    <Button>파일 선택</Button>
-                        <input
-                            type="file"
-                            className="absolute inset-0 opacity-0 cursor-pointer"
-                            onChange={(e) => {}}
-                            accept="image/*"
-                        />
-                    </div>
                     <AlertDialogAction
                         onClick={(e) => {
                         handleUse(e);
