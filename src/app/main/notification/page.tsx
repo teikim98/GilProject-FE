@@ -27,14 +27,14 @@ export default function NotificationsPage() {
         <div className='w-full animate-fade-in flex flex-col bg-background pb-20'>
             <BackHeader content='알림' />
 
-            <div className='flex flex-row items-center justify-between mb-8'>
-                <div className='flex items-center gap-2'>
+            <div className='flex flex-row items-center justify-between'>
+                <div className='flex items-center'>
                 </div>
                 {notifications.length > 0 && (
                     <AlertDialog>
                         <AlertDialogTrigger asChild>
-                            <Button variant="ghost" size="icon">
-                                <Trash2 className="h-5 w-5" />
+                            <Button variant="ghost" className='mr-6' size="icon">
+                                전체삭제 <Trash2 className="h-5 w-5" />
                             </Button>
                         </AlertDialogTrigger>
                         <AlertDialogContent>

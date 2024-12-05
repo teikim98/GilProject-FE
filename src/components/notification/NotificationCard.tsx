@@ -1,5 +1,5 @@
 import { Card } from '@/components/ui/card';
-import { formatDistanceToNow } from 'date-fns';
+import { formatDistanceToNow, parseISO } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import { MessageCircle, FileText, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -42,6 +42,21 @@ export function NotificationCard({ notification }: NotificationCardProps) {
             });
         } finally {
             setIsLoading(false);
+        }
+    };
+
+    const formatDate = (dateString: string) => {
+        try {
+            const parsedDate = parseISO(dateString);
+
+            const formattedDistance = formatDistanceToNow(parsedDate, {
+                addSuffix: true,
+                locale: ko,
+            });
+
+            return formattedDistance;
+        } catch (error) {
+            return dateString;
         }
     };
 
@@ -127,10 +142,7 @@ export function NotificationCard({ notification }: NotificationCardProps) {
                             {notification.content}
                         </div>
                         <div className="text-xs text-muted-foreground">
-                            {formatDistanceToNow(new Date(notification.date), {
-                                addSuffix: true,
-                                locale: ko,
-                            })}
+                            {formatDate(notification.date)}
                         </div>
                     </div>
                     <Button
