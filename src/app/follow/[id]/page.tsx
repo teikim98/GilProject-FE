@@ -189,7 +189,7 @@ export default function FollowPage({ params }: PostPageProps) {
 
                 {showCompletionDialog && (
                     <CelebrationAnimation
-                        elapsedTime={elapsedTime}
+                        elapsedTime={useFollowStore.getState().finalTime || elapsedTime}
                         distance={currentDistance}
                         onConfirm={() => {
                             setShowCompletionDialog(false);

@@ -14,6 +14,7 @@ interface FollowState {
   watchId: number | null;
   startTime: number | null;
   originalRoute: Path | null;
+  finalTime: number | null;
 
   setOriginalRoute: (route: Path) => void;
   startFollowing: () => void;
@@ -37,6 +38,7 @@ export const useFollowStore = create<FollowState>((set, get) => ({
   watchId: null,
   startTime: null,
   originalRoute: null,
+  finalTime: null,
 
   setOriginalRoute: (route: Path) =>
     set({
@@ -61,7 +63,7 @@ export const useFollowStore = create<FollowState>((set, get) => ({
   },
 
   stopFollowing: () => {
-    const { watchId } = get();
+    const { watchId, elapsedTime } = get();
     if (watchId) {
       navigator.geolocation.clearWatch(watchId);
     }
@@ -69,6 +71,7 @@ export const useFollowStore = create<FollowState>((set, get) => ({
       isFollowing: false,
       watchId: null,
       startTime: null,
+      finalTime: elapsedTime,
     });
   },
 
@@ -139,5 +142,6 @@ export const useFollowStore = create<FollowState>((set, get) => ({
       watchId: null,
       startTime: null,
       originalRoute: null,
+      finalTime: null,
     }),
 }));
