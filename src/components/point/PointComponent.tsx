@@ -4,7 +4,7 @@ import { getPoint } from '@/api/point';
 import PointProgress from '@/components/point/PointProgress';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
-interface PointDialogProps {
+export interface PointDialogProps {
     isOpen: boolean;
     onOpenChange: (open: boolean) => void;
 }

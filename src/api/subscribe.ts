@@ -14,6 +14,8 @@ export interface UserSimpleResDTO {
   comment: string;
 }
 
+
+
 //내 구독자 리스트 보기
 export const getMySubscribes = async (): Promise<UserSimpleResDTO[]> => {
   try {

@@ -2,6 +2,7 @@ import axios from "axios";
 import { Post } from "@/types/types";
 import { GetUserPostsResponse } from "@/types/types";
 import { customInterceptors } from "./interceptors";
+import { PostResDTO } from "@/types/types_JG";
 
 const api = axios.create({
   baseURL: `${process.env.NEXT_PUBLIC_API_URL}/posts`,
@@ -142,4 +143,28 @@ export const updatePost = async (postId: number, formData: FormData) => {
     console.error("Error updating post:", error);
     throw error;
   }
+};
+
+
+//닉네임으로 Post가져오기
+export const getPostsByNickName = async (nickName: string, page: number = 0, size: number = 10) => {
+  try {
+      const response = await api.get('/nickName', {
+          params: {
+              nickName,
+              page,
+              size
+          }
+      });
+      return response.data;
+  } catch (error) {
+      console.error("Error fetching posts:", error);
+      throw error;
+  }
+};
+
+//id를 이용해서 게시글 상세보기
+export const getPostDetail = async (id: number): Promise<PostResDTO> => {
+  const response = await api.get(`/${id}`);
+  return response.data;
 };

@@ -1,0 +1,26 @@
+'use client';
+
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import SubscriberDialog from "@/components/subscribe/SubscriberList"
+
+export default function Page() {
+  const [isOpen, setIsOpen] = useState(true);
+  const router = useRouter();
+  
+  const handleOpenChange = (open: boolean) => {
+    setIsOpen(open);
+    if (!open) {
+      router.back(); // Dialog가 닫히면 이전 페이지(마이페이지)로 돌아감
+    }
+  };
+
+  return (
+    <div className='animate-fade-in flex flex-col relative pb-20'>
+      <SubscriberDialog 
+        isOpen={isOpen}
+        onOpenChange={handleOpenChange}
+      />
+    </div>
+  )
+}

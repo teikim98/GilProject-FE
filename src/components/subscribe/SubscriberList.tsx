@@ -10,12 +10,12 @@ import {
     DialogHeader, 
     DialogTitle,
     DialogDescription,
-    DialogFooter 
+    DialogFooter
 } from '@/components/ui/dialog';
 import { UserSimpleResDTO, getMySubscribes, unsubscribeUser } from '@/api/subscribe';
 import ProfileDialog from '@/components/user/ProfileDialog';
 
-interface SubscriberDialogProps {
+export interface SubscriberDialogProps {
     isOpen: boolean;
     onOpenChange: (open: boolean) => void;
 }
@@ -47,7 +47,7 @@ export default function SubscriberDialog({ isOpen, onOpenChange }: SubscriberDia
     }, [isOpen]);
 
     const handleViewPosts = (nickName: string) => {
-        router.push(`/main/mypage/subscriberPosts?nickName=${encodeURIComponent(nickName)}`);
+        router.push(`/main/board/subscriberPosts?nickName=${encodeURIComponent(nickName)}`);
     };
 
     const handleUnsubscribeClick = (user: UserSimpleResDTO) => {
@@ -74,7 +74,7 @@ export default function SubscriberDialog({ isOpen, onOpenChange }: SubscriberDia
         <>
             {/* 메인 구독자 목록 다이얼로그 */}
             <Dialog open={isOpen} onOpenChange={onOpenChange}>
-                <DialogContent className="max-h-[80vh] overflow-y-auto">
+                <DialogContent className="max-h-[80vh] overflow-y-auto ">
                     <DialogHeader>
                         <DialogTitle>구독 목록</DialogTitle>
                     </DialogHeader>
@@ -86,15 +86,15 @@ export default function SubscriberDialog({ isOpen, onOpenChange }: SubscriberDia
                         ) : (
                             <div className="space-y-4">
                                 {subscribers.map((subscriber) => (
-                                    <Card key={subscriber.id} className="hover:bg-gray-50">
-                                        <CardContent className="flex items-center p-4">
+                                    <Card key={subscriber.id} className="hover:bg-gray-50 dark:text-white dark:hover:bg-gray-700">
+                                        <CardContent className="flex items-center p-4 dark:text-white dark:hover:bg-gray-700">
                                             <ProfileDialog 
                                                 userId={subscriber.id} 
                                                 className="h-12 w-12"
                                             />
                                             <div className="ml-4 flex-grow">
-                                                <h3 className="font-semibold">{subscriber.nickName}</h3>
-                                                <p className="text-sm text-gray-600">{subscriber.comment}</p>
+                                                <h3 className="font-semibold dark:text-white">{subscriber.nickName}</h3>
+                                                <p className="text-sm text-gray-600 dark:text-white">{subscriber.comment}</p>
                                             </div>
                                             <div className="flex gap-2">
                                                 <Button
