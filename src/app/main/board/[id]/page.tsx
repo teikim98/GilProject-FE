@@ -33,6 +33,7 @@ import {
 import ProfileDialog from '@/components/user/ProfileDialog';
 import { jwtDecode } from "jwt-decode";
 import { useLocationStore } from '@/store/useLocationStore';
+import { formatFullDate } from '@/util/dateUtils';
 
 
 interface PostPageProps {
@@ -134,16 +135,6 @@ export default function PostPage({ params }: PostPageProps) {
     if (isError) return <div>게시글을 불러오는데 실패했습니다.</div>
     if (!post) return <div>게시글을 찾을 수 없습니다.</div>
 
-    const formatDate = (dateString: string) => {
-        return new Date(dateString).toLocaleDateString('ko-KR', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        })
-    }
-
     return (
         <div className="animate-fade-in flex flex-col min-h-screen pb-20">
             <BackHeader content={post.title} />
@@ -226,7 +217,7 @@ export default function PostPage({ params }: PostPageProps) {
                 <div>
                     <p className="font-semibold">{post.nickName}</p>
                     <p className="text-sm text-gray-500 dark:text-gray-400">
-                        {formatDate(post.writeDate)}
+                        {formatFullDate(post.writeDate)}
                     </p>
                 </div>
             </div>

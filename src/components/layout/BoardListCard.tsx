@@ -12,26 +12,10 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useLocationStore } from '@/store/useLocationStore';
 import { useSearchStore } from '@/store/useSearchStore';
+import { getTimeAgo } from '@/util/dateUtils';
 
 interface BoardCardProps {
     post: Post;
-}
-
-function formatDate(dateString: string): string {
-    const now = new Date();
-    const date = new Date(dateString);
-    const diffTime = Math.abs(now.getTime() - date.getTime());
-    const diffMinutes = Math.floor(diffTime / (1000 * 60));
-    const diffHours = Math.floor(diffTime / (1000 * 60 * 60));
-    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-
-    if (diffMinutes < 60) {
-        return `${diffMinutes}분 전`;
-    } else if (diffHours < 24) {
-        return `${diffHours}시간 전`;
-    } else {
-        return `${diffDays}일 전`;
-    }
 }
 
 export default function BoardCard({ post }: BoardCardProps) {
@@ -90,7 +74,7 @@ export default function BoardCard({ post }: BoardCardProps) {
                         <div>
                             <h3 className="font-semibold">{post.nickName}</h3>
                             <p className="text-sm text-gray-500 dark:text-gray-400">
-                                {formatDate(post.writeDate)}
+                                {getTimeAgo(post.writeDate)}
                             </p>
                         </div>
                     </div>
