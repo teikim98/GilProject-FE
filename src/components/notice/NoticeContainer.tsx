@@ -25,7 +25,7 @@ export function NoticeContainer() {
   }, []);
 
   return (
-    <>
+    <div className="max-w-screen-md w-full">
       <Carousel
         plugins={[plugin.current]}
         opts={{
@@ -47,7 +47,7 @@ export function NoticeContainer() {
         {/* <CarouselPrevious /> */}
         {/* <CarouselNext /> */}
       </Carousel>
-    </>
+    </div>
   );
 }
 

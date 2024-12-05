@@ -9,7 +9,7 @@ import { PopupData } from "@/types/types_JHW";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "../ui/alert-dialog";
 import { ChangePopupData } from '../../types/types_JHW';
 import CustomDialoguePopup from "./CustomDialoguePopup";
-import { changePassword } from "@/api/user";
+import { changePassword, logout } from "@/api/user";
 
 const PasswordChangePopup = (props:ChangePopupData) => {
   const [password, setPassword] = useState("");
@@ -75,10 +75,12 @@ const PasswordChangePopup = (props:ChangePopupData) => {
       } else {
         setPopupData({
           title: "성공",
-          content: "비밀번호 변경에 성공하셨습니다",
+          description :"비밀번호 변경에 성공하셨습니다",
+          content: "로그인 페이지로 돌아갑니다",
           onConfirm : ()=>{
             setIsCustomPopupOpen(false);
             props.setIsPopupOpen(false);
+            logout();
           }
         });
         // setIsPopupOpen(true);

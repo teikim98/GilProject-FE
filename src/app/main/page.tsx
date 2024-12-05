@@ -28,6 +28,7 @@ export default function Page() {
         const accessToken = response.headers["oauth2access"].split("Bearer ")[1];
 
         localStorage.setItem("access", accessToken);
+        window.location.reload();
       } catch (error) {
         console.error("Error fetching data:", error);
         console.log("access 토큰의 재발급을 실패했습니다");
@@ -40,13 +41,12 @@ export default function Page() {
     const createAddressCondition = async () => {
       try {
         const response = await getDetailProfile();
-        // console.log("lat : " + response.latitude + "lon" + response.longitude);
+        console.log("lat : " + response.latitude + " / lon : " + response.longitude);
 
         if (response.latitude && response.longitude) {
           localStorage.setItem("address-popup", "0");
           setAddressPopUpOpen(false);
-        }
-        else {
+        } else {
           localStorage.setItem("address-popup", "1");
           setAddressPopUpOpen(true);
         }
@@ -59,14 +59,14 @@ export default function Page() {
      * 주소 팝업 확인
      */
     const localStorageAddress = localStorage.getItem("address-popup");
-    if (localStorageAddress === null) { //로컬스토리지가 아예 없음
+    if (localStorageAddress === null) {
+      //로컬스토리지가 아예 없음
       createAddressCondition();
     } else {
       if (localStorageAddress === "0") {
         //팝업을 열지않겠다
         setAddressPopUpOpen(false);
-      }
-      else if (localStorageAddress === "1") {
+      } else if (localStorageAddress === "1") {
         //팝업을 열겠다
         setAddressPopUpOpen(true);
       }
@@ -75,15 +75,12 @@ export default function Page() {
     if (localStorage.getItem("access") === null) {
       fetchData();
     }
-
   }, []);
 
   return (
     <div className="w-full animate-fade-in flex flex-col bg-white dark:bg-gray-900 pb-20">
       <div className="flex flex-row justify-between mb-8">
-        <h2 className="font-sebang text-3xl font-semibold text-purple-800 dark:text-purple-400">
-          길따라
-        </h2>
+        <h2 className="font-sebang text-3xl font-semibold text-purple-800 dark:text-purple-400">길따라</h2>
         <DarkModeToggle />
         <Sidemenu />
       </div>
@@ -93,9 +90,7 @@ export default function Page() {
           <CurrentLocationMap width="w-full" height="h-48" />
         </CardContent>
         <div className="w-full flex flex-row justify-between">
-          <h2 className="text-gray-900 dark:text-white">
-            지금 경로 녹화 하러가기
-          </h2>
+          <h2 className="text-gray-900 dark:text-white">지금 경로 녹화 하러가기</h2>
           <Link href="/record">
             <Footprints className="cursor-pointer hover:text-gray-600 dark:text-gray-300 dark:hover:text-gray-100" />
           </Link>
@@ -106,7 +101,7 @@ export default function Page() {
 
       <PWAInstallButton />
 
-      <AddressChangePopup props={{isPopupOpen : addressPopupOpen, setIsPopupOpen : setAddressPopUpOpen, callback : ()=>{}}} isMypage={false} />
+      <AddressChangePopup props={{ isPopupOpen: addressPopupOpen, setIsPopupOpen: setAddressPopUpOpen, callback: () => {} }} isMypage={false} />
       <AnimatedCards />
     </div>
   );
