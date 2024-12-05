@@ -35,3 +35,4 @@ export const getPoint = async () => {
     throw error;
   }
 };
+

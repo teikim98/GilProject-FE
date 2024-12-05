@@ -11,14 +11,14 @@ import { getPoint } from '@/api/point';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useDetailProfile } from '@/hooks/queries/useUserQuery';
-import SubscriberDialog from '@/components/subscribe/SubscriberDialog';
-import PointDialog from '@/components/point/PointDialog';
+import SubscriberDialog from '@/components/subscribe/SubscriberList';
+import PointDialog from '@/components/point/PointComponent';
 
 export default function Page() {
 
     const [points, setPoints] = useState(0);
-    const [isPointDialogOpen, setIsPointDialogOpen] = useState(false);
-    const [isSubscriberDialogOpen, setIsSubscriberDialogOpen] = useState(false);
+    const [isPointOpen, setIsPointOpen] = useState(false);
+    const [isSubscriberOpen, setIsSubscriberOpen] = useState(false);
 
     const router = useRouter();
     const { data: profileInfo, isLoading, error } = useDetailProfile();
@@ -152,28 +152,29 @@ export default function Page() {
             <MypageBtn link='myRoute' content='나의 경로 기록' /> <br />
             <MypageBtn link='myPost' content='내가 작성한 산책길 글 목록' /> <br />
             <MypageBtn link='myWishListPost' content='내가 찜한 산책길 글 목록' /> <br />
-
-            <MypageBtn
-                link='mySubscribers'
-                content='내가 구독한 유저목록'
-                onClick={() => setIsSubscriberDialogOpen(true)}
-            /> <br />
-
-            <MypageBtn
-                link='point'
+            <MypageBtn 
+                link='mySubscribers' 
+                content='내가 구독한 유저목록' 
+                onClick={() => setIsSubscriberOpen(true)}
+            />
+            <br />
+            <MypageBtn 
+                link='point' 
                 content='나의 포인트'
-                onClick={() => setIsPointDialogOpen(true)}
+                onClick={() => setIsPointOpen(true)}
+            />
+
+            {/* Dialog 컴포넌트들 */}
+            <SubscriberDialog
+                isOpen={isSubscriberOpen}
+                onOpenChange={setIsSubscriberOpen}
             />
 
             <PointDialog
-                isOpen={isPointDialogOpen}
-                onOpenChange={setIsPointDialogOpen}
+                isOpen={isPointOpen}
+                onOpenChange={setIsPointOpen}
             />
 
-            <SubscriberDialog
-                isOpen={isSubscriberDialogOpen}
-                onOpenChange={setIsSubscriberDialogOpen}
-            />
         </div>
     );
 }
