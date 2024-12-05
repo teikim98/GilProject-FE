@@ -9,10 +9,10 @@ interface Level {
 }
 
 const levels: Level[] = [
-    { name: "Bronze", requiredPoints: 1000 },
-    { name: "Silver", requiredPoints: 3000 },
-    { name: "Gold", requiredPoints: 6000 },
-    { name: "Platinum", requiredPoints: 10000 }
+    { name: "No Medal", requiredPoints: 100},
+    { name: "Bronze", requiredPoints: 300 },
+    { name: "Silver", requiredPoints: 500 },
+    { name: "Gold", requiredPoints: 10000 }
 ];
 
 interface PointProgressProps {
@@ -31,7 +31,7 @@ const PointProgress = ({ currentPoints }: PointProgressProps) => {
 
     const getNextLevelProgress = () => {
         const currentLevel = getCurrentLevel();
-        if (currentLevel === levels.length) {
+        if (currentLevel+1 === levels.length) {
             return 100;
         }
         
@@ -52,16 +52,16 @@ const PointProgress = ({ currentPoints }: PointProgressProps) => {
                     <div className="flex justify-between items-center">
                         <span className="text-3xl font-bold">{currentPoints.toLocaleString()}</span>
                         <span className="text-sm text-gray-500">
-                            Level {getCurrentLevel()} - {levels[getCurrentLevel()]?.name || "MAX"}
+                            Level {getCurrentLevel()+1} - {levels[getCurrentLevel()]?.name || "GOLD"}
                         </span>
                     </div>
 
                     <div className="space-y-2">
-                        <Progress value={getNextLevelProgress()} className="h-2" />
+                        <Progress value= {getNextLevelProgress()} className="h-2" />
                         
                         <div className="flex justify-between text-sm text-gray-500">
                             <span>
-                                {getCurrentLevel() < levels.length 
+                                {getCurrentLevel() < levels.length -1
                                     ? `다음 레벨까지: ${(levels[getCurrentLevel()].requiredPoints - currentPoints).toLocaleString()} 포인트`
                                     : '최고 레벨 달성!'}
                             </span>
