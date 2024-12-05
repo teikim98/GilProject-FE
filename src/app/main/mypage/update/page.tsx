@@ -55,7 +55,7 @@ export default function Page() {
 
   const handleProfileImgVerified = (inputImgUrl: string) => {
     if (inputImgUrl !== "") {
-      console.log(`입력된 프로필 이미지 Url: ${inputImgUrl}`);
+      // console.log(`입력된 프로필 이미지 Url: ${inputImgUrl}`);
       setProfileInfo(prev => prev ? { ...prev, imageUrl: inputImgUrl } : prev);
     }
   }
