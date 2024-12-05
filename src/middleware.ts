@@ -3,6 +3,7 @@ import type { NextRequest } from "next/server";
 
 // const PROTECTED_PATHS = ["/main", "/record"];
 const AUTH_STATUS_COOKIE = "loginchecker";
+const AUTH_PATH = "/auth"
 const LOGIN_PAGE = "/auth/login"
 const MAIN_PAGE = "/main"
 
@@ -30,7 +31,7 @@ export function middleware(request: NextRequest) {
   }
   
   // 로그인 안된 상태 + 로그인 페이지를 제외한 곳으로 진입
-  if (!auth && !url.pathname.startsWith(LOGIN_PAGE)) {
+  if (!auth && !url.pathname.startsWith(AUTH_PATH)) {
     console.log("로그아웃된 상태입니다 로그인페이지로 진입합니다");
     return NextResponse.redirect(new URL(LOGIN_PAGE, request.url));
   }
