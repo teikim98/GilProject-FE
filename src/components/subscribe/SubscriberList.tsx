@@ -76,7 +76,7 @@ export default function SubscriberDialog({ isOpen, onOpenChange }: SubscriberDia
             <Dialog open={isOpen} onOpenChange={onOpenChange}>
                 <DialogContent className="max-h-[80vh] overflow-y-auto ">
                     <DialogHeader>
-                        <DialogTitle>구독 목록</DialogTitle>
+                        <DialogTitle>나의 길잡이 목록</DialogTitle>
                     </DialogHeader>
                     <div className="grid w-full items-center gap-4">
                         {loading ? (
@@ -117,7 +117,7 @@ export default function SubscriberDialog({ isOpen, onOpenChange }: SubscriberDia
                                 ))}
                                 {subscribers.length === 0 && (
                                     <div className="text-center p-8 text-gray-500">
-                                        구독중인 유저가 없습니다.
+                                        구독중인 길잡이가 없습니다.
                                     </div>
                                 )}
                             </div>
