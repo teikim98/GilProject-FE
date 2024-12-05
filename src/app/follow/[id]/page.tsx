@@ -36,7 +36,6 @@ export default function FollowPage({ params }: PostPageProps) {
     const [error, setError] = useState<string | null>(null);
     const [showCompletionDialog, setShowCompletionDialog] = useState(false);
     const [pointsUpdated, setPointsUpdated] = useState(false);
-    const [vibrationSupported, setVibrationSupported] = useState(false);
 
 
 
@@ -54,10 +53,6 @@ export default function FollowPage({ params }: PostPageProps) {
         setOriginalRoute
     } = useFollowStore();
 
-    useEffect(() => {
-        // 진동 API 지원 여부 확인
-        setVibrationSupported('vibrate' in navigator);
-    }, []);
 
     // 현재 위치 추적
     useEffect(() => {
@@ -95,15 +90,6 @@ export default function FollowPage({ params }: PostPageProps) {
             setError('이 브라우저는 위치 정보를 지원하지 않습니다.');
         }
     }, [route]);
-
-    const handleVibration = () => {
-        if (vibrationSupported) {
-            // 200ms 동안 진동
-            navigator.vibrate(200);
-        } else {
-            alert('이 디바이스는 진동 기능을 지원하지 않습니다.');
-        }
-    };
 
     useEffect(() => {
         const handleCompletion = async () => {
@@ -207,13 +193,6 @@ export default function FollowPage({ params }: PostPageProps) {
                     {isFollowing ? '따라걷기 중지하기' : '따라걷기 시작하기'}
                 </Button>
 
-                <Button
-                    className="w-full bg-purple-500 hover:bg-purple-600"
-                    onClick={handleVibration}
-                    size="lg"
-                >
-                    진동 테스트
-                </Button>
 
                 {showCompletionDialog && (
                     <CelebrationAnimation

@@ -7,17 +7,16 @@ export function MarkerOverlay({ content, imageUrl, pinId, position, visible, onC
 
     return (
         <CustomOverlayMap
-            position={{  // position을 KakaoPosition 형식으로 사용
-                lat: parseFloat(position.latitude),  // RouteCoordinate -> KakaoPosition 변환
+            position={{
+                lat: parseFloat(position.latitude),
                 lng: parseFloat(position.longitude)
             }}
             yAnchor={1.2}
             clickable={true}
         >
             <div
-                className="relative bottom-12 -left-2 bg-white dark:bg-gray-800 rounded-lg shadow-lg min-w-[200px] max-w-[300px]"
+                className="marker-overlay relative bottom-12 -left-2 bg-white dark:bg-gray-800 rounded-lg shadow-lg min-w-[200px] max-w-[300px]"
                 onClick={(e) => {
-                    e.preventDefault();
                     e.stopPropagation();
                 }}
             >
@@ -33,10 +32,7 @@ export function MarkerOverlay({ content, imageUrl, pinId, position, visible, onC
                     >
                         <X size={16} />
                     </button>
-                    <div
-                        className="mb-2 pr-6"
-                        onClick={(e) => e.stopPropagation()}
-                    >
+                    <div className="mb-2 pr-6 marker-overlay-content">
                         {content}
                     </div>
                     {imageUrl && (
@@ -44,11 +40,11 @@ export function MarkerOverlay({ content, imageUrl, pinId, position, visible, onC
                             src={imageUrl}
                             alt="Marker image"
                             className="w-[100px] h-[75px] overflow-hidden rounded"
-                            onClick={(e) => e.stopPropagation()}
                         />
                     )}
                 </div>
             </div>
         </CustomOverlayMap>
-    )
+    );
 }
+

@@ -302,6 +302,12 @@ export function FollowMap({ route, width, height }: FollowMapProps) {
                 <MarkerWithOverlay
                     key={pin.id}
                     marker={convertPinToMarker(pin)}
+                    currentPosition={snappedPosition}
+                    onMarkerNearby={() => {
+                        if (navigator.vibrate) {
+                            navigator.vibrate(200);
+                        }
+                    }}
                 />
             ))}
 

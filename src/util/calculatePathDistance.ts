@@ -6,7 +6,6 @@ const convertToKakaoPosition = (coord: RouteCoordinate): KakaoPosition => ({
   lng: parseFloat(coord.longitude),
 });
 
-// 기존 거리 계산 함수 (km 단위)
 export const calculatePathDistance = (path: KakaoPosition[]): number => {
   let totalDistance = 0;
 
