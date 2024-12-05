@@ -15,6 +15,7 @@ import { ViewingMap } from "@/components/map/ViewingMapProps";
 import { CreatePostRequest, Post, Path } from "@/types/types";
 import MyRouteList from "@/components/layout/myRouteCard";
 import { processPostImages } from "@/util/imageUtils";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface WritePostPageProps {
     isEdit?: boolean;
@@ -70,6 +71,7 @@ export default function PostForm({ isEdit, postId }: WritePostPageProps) {
     const [images, setImages] = useState<File[]>([]);
     const [previews, setPreviews] = useState<string[]>([]);
     const [deletedImageUrls, setDeletedImageUrls] = useState<string[]>([]);
+    const queryClient = useQueryClient();
 
     useEffect(() => {
         if (post.title || post.content) {
@@ -178,7 +180,13 @@ export default function PostForm({ isEdit, postId }: WritePostPageProps) {
                     formData.append('newImages', image);
                 });
 
+
+
                 await updatePost(postId, formData);
+
+                await queryClient.invalidateQueries({ queryKey: ['post', postId] });
+                await queryClient.invalidateQueries({ queryKey: ['posts'] });
+
                 router.push(`/main/board/${postId}`);
             } else {
                 // 새 게시글 생성 로직은 그대로 유지
