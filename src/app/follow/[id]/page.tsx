@@ -27,7 +27,7 @@ function checkDistanceToStart(position: RouteCoordinate, startPosition: RouteCoo
 }
 
 
-export default function FollowPage({ params }: PostPageProps) {
+export default async function FollowPage({ params }: PostPageProps) {
     const router = useRouter();
     const [route, setRoute] = useState<Path | null>(null);
     const [currentPosition, setCurrentPosition] = useState<RouteCoordinate | null>(null);
