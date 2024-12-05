@@ -16,19 +16,18 @@ import CelebrationAnimation from '@/components/layout/CelebrationAnimation ';
 import { updateUserPoints } from '@/api/user';
 
 // 페이지 props 인터페이스
-type Props = {
-    params: { id: string }
-    searchParams: { [key: string]: string | string[] | undefined }
+export interface PostPageProps {
+    params: {
+        id: string;
+    };
 }
-
-
 function checkDistanceToStart(position: RouteCoordinate, startPosition: RouteCoordinate): boolean {
     const distance = calculateRouteDistance([position, startPosition]);
     return distance <= 0.02; // 20m = 0.02km
 }
 
 
-export default function FollowPage({ params }: Props) {
+export default function FollowPage({ params }: PostPageProps) {
     const router = useRouter();
     const [route, setRoute] = useState<Path | null>(null);
     const [currentPosition, setCurrentPosition] = useState<RouteCoordinate | null>(null);
