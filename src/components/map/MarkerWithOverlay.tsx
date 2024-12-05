@@ -65,25 +65,6 @@ export function MarkerWithOverlay({ marker, currentPosition, onMarkerNearby }: M
     }, [currentPosition, marker.position, onMarkerNearby]);
 
 
-    useEffect(() => {
-        const handleClickOutside = (event: MouseEvent | TouchEvent) => {
-            const target = event.target as HTMLElement;
-            if (!target.closest('.marker-overlay') && isOverlayVisible) {
-                setIsOverlayVisible(false);
-            }
-        };
-
-        if (isOverlayVisible) {
-            document.addEventListener('click', handleClickOutside);
-            document.addEventListener('touchstart', handleClickOutside);
-        }
-
-        return () => {
-            document.removeEventListener('click', handleClickOutside);
-            document.removeEventListener('touchstart', handleClickOutside);
-        };
-    }, [isOverlayVisible]);
-
     return (
         <>
             <CustomMarker
