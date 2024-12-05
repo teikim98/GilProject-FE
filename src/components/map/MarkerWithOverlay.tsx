@@ -1,6 +1,7 @@
 "use client"
+import { useToast } from "@/hooks/use-toast";
 import { Pin } from "@/types/types";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { CustomMarker } from "./CustomMarkerProps";
 import { MarkerOverlay } from "./MarkerOverlay";
 
@@ -23,6 +24,9 @@ interface MarkerWithOverlayProps {
 
 export function MarkerWithOverlay({ marker, currentPosition, onMarkerNearby }: MarkerWithOverlayProps) {
     const [isOverlayVisible, setIsOverlayVisible] = useState(false);
+    const hasVibratedRef = useRef(false);
+    const { toast } = useToast();
+
 
     const calculateDistance = (pos1: { lat: number; lng: number }, pos2: { lat: number; lng: number }): number => {
         const R = 6371e3; // 지구의 반지름 (미터)
@@ -43,31 +47,23 @@ export function MarkerWithOverlay({ marker, currentPosition, onMarkerNearby }: M
     useEffect(() => {
         if (currentPosition) {
             const distance = calculateDistance(currentPosition, marker.position);
-            if (distance <= 10) { // 10미터 이내
+            if (distance <= 7) { // 7미터 이내
                 setIsOverlayVisible(true);
-                onMarkerNearby?.();
+                if (!hasVibratedRef.current) {
+                    onMarkerNearby?.();
+                    toast({
+                        title: "새로운 마커 발견! 📍",
+                        description: "주변에 새로운 마커가 있습니다. 마커를 클릭하여 내용을 확인해보세요.",
+                        duration: 3000,
+                    });
+                    hasVibratedRef.current = true;
+                }
+            } else {
+                hasVibratedRef.current = false;
             }
         }
     }, [currentPosition, marker.position, onMarkerNearby]);
 
-    useEffect(() => {
-        const handleClickOutside = (event: MouseEvent | TouchEvent) => {
-            const target = event.target as HTMLElement;
-            if (!target.closest('.marker-overlay') && isOverlayVisible) {
-                setIsOverlayVisible(false);
-            }
-        };
-
-        if (isOverlayVisible) {
-            document.addEventListener('click', handleClickOutside);
-            document.addEventListener('touchstart', handleClickOutside);
-        }
-
-        return () => {
-            document.removeEventListener('click', handleClickOutside);
-            document.removeEventListener('touchstart', handleClickOutside);
-        };
-    }, [isOverlayVisible]);
 
     return (
         <>
