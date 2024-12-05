@@ -11,7 +11,6 @@ import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
-import { getTimeAgo } from '@/util/dateUtils';
 
 interface NotificationCardProps {
     notification: NotificationData;
@@ -46,7 +45,20 @@ export function NotificationCard({ notification }: NotificationCardProps) {
         }
     };
 
+    const formatDate = (dateString: string) => {
+        try {
+            const parsedDate = parseISO(dateString);
 
+            const formattedDistance = formatDistanceToNow(parsedDate, {
+                addSuffix: true,
+                locale: ko,
+            });
+
+            return formattedDistance;
+        } catch (error) {
+            return dateString;
+        }
+    };
 
     const handleDelete = async (e: React.MouseEvent) => {
         e.stopPropagation();
@@ -130,7 +142,7 @@ export function NotificationCard({ notification }: NotificationCardProps) {
                             {notification.content}
                         </div>
                         <div className="text-xs text-muted-foreground">
-                            {getTimeAgo(notification.date)}
+                            {formatDate(notification.date)}
                         </div>
                     </div>
                     <Button
