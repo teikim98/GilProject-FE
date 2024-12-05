@@ -22,8 +22,6 @@ export default function Page() {
     const [isNickNamePopupOpen, setIsNickNamePopupOpen] = useState(false);
     const [isAddressPopupOpen, setIsAddressPopupOpen] = useState(false);
     const [isPasswordPopupOpen, setIsPasswordPopupOpen] = useState(false);
-
-
     const [isUpdateImgPopupOpen, setIsUpdateImgPopupOpen] = useState(false);
     const [isUpdateCommentPopupOpen, setIsUpdateCommentPopupOpen] = useState(false);
 
@@ -88,14 +86,14 @@ export default function Page() {
     }
 
     const handleCommentPopup = (e : any)=>{
-        console.log("자기소개글 바꾸러 가쟈!!");
+        //console.log("자기소개글 바꾸러 가쟈!!");
         e.preventDefault();
         setIsUpdateCommentPopupOpen(true);
     }
 
     const handleCommentVerified = (inputComment: string)=>{
         if(inputComment !=="") {
-            console.log(`입력된 자기소개글로 바꾸기 : ${inputComment}`);
+            //console.log(`입력된 자기소개글로 바꾸기 : ${inputComment}`);
             setProfileInfo(prev => prev ? { ...prev, comment: inputComment } : prev);
         }
     }
@@ -132,7 +130,7 @@ export default function Page() {
                                         <Camera className="w-12 h-12 p-2 bg-muted rounded-full" />
                                     )}
                                 </div>
-                                <UpdateprofileImg imageUrl={profileInfo!.imageUrl} isPopupOpen={isUpdateImgPopupOpen} setIsPopupOpen={setIsUpdateImgPopupOpen} callback={handleProfileImgVerified} duplicateCheck={true} />
+                                <UpdateprofileImg imageUrl={profileInfo!.imageUrl} isPopupOpen={isUpdateImgPopupOpen} setIsPopupOpen={setIsUpdateImgPopupOpen} callback={handleProfileImgVerified}/>
                             </div>
                             <Separator className='my-4 border-t-2 border-muted-foreground' />
                             <div className="flex flex-row items-center gap-5">
@@ -194,7 +192,7 @@ export default function Page() {
                                     }}
                                     className="w-[10%]"
                                 >변경</Button>
-                                <UpdateComment postComment={profileInfo!.comment} isPopupOpen={isUpdateCommentPopupOpen} setIsPopupOpen={setIsUpdateCommentPopupOpen} callback={handleCommentVerified} duplicateCheck={true} />
+                                <UpdateComment postComment={profileInfo!.comment} isPopupOpen={isUpdateCommentPopupOpen} setIsPopupOpen={setIsUpdateCommentPopupOpen} callback={handleCommentVerified}/>
                             </div>
                             <Separator className='my-4 border-t-2 border-muted-foreground' />
                             <div className="flex flex-row items-center gap-5">

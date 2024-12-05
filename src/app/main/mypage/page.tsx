@@ -89,17 +89,6 @@ export default function Page() {
                                         )}
                                     </div>
                                 </div>
-                                <input
-                                    type="file"
-                                    className="absolute inset-0 opacity-0 cursor-pointer"
-                                    onChange={(e) => {
-                                        const file = e.target.files?.[0];
-                                        if (file) {
-                                            updateProfileImage(profileInfo.id, file);
-                                        }
-                                    }}
-                                    accept="image/*"
-                                />
                             </div>
                             <div className="flex flex-col">
                                 <div className="flex flex-row items-center gap-2">

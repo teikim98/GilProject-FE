@@ -19,7 +19,7 @@ import { changeComment } from "@/api/user";
  * @param callback 완료됐을때 실행해줄 함수
  * @returns 
  */
-const UpdateComment = ({postComment, isPopupOpen, setIsPopupOpen, callback, duplicateCheck } :{ postComment: string | null; isPopupOpen: boolean; setIsPopupOpen: React.Dispatch<React.SetStateAction<boolean>>; callback: (profileImgUrl: string) => void; duplicateCheck: boolean } ) => {
+const UpdateComment = ({postComment, isPopupOpen, setIsPopupOpen, callback} :{ postComment: string | null; isPopupOpen: boolean; setIsPopupOpen: React.Dispatch<React.SetStateAction<boolean>>; callback: (profileImgUrl: string) => void;} ) => {
     const [comment, setComment]= useState(postComment);
     const [useButtonLock, setUseButtonLock] = useState(true);
 
@@ -45,7 +45,7 @@ const UpdateComment = ({postComment, isPopupOpen, setIsPopupOpen, callback, dupl
      * 로컬 상태 모두 초기화
      */
     const reset = ()=>{
-        setComment("");
+        setComment(postComment);
     }
     
     /**
