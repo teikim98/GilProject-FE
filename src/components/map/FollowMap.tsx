@@ -90,6 +90,8 @@ export function FollowMap({ route, width, height }: FollowMapProps) {
     const [remainingPath, setRemainingPath] = useState<KakaoPosition[]>(pathAsKakaoPositions);
     const [snappedPosition, setSnappedPosition] = useState<KakaoPosition | null>(null);
     const [hasStarted, setHasStarted] = useState(false); // 실제 이동 시작 여부
+    const [vibratedMarkers, setVibratedMarkers] = useState<Set<string>>(new Set());
+
 
 
     const checkCompletion = (
@@ -310,6 +312,7 @@ export function FollowMap({ route, width, height }: FollowMapProps) {
                     }}
                 />
             ))}
+
 
             {deviationAlert && isFollowing && (
                 <div className="absolute top-4 left-0 right-0 mx-4 z-50">
