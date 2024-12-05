@@ -5,6 +5,7 @@ import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { updateProfileImage } from '@/api/user'
 import { useDetailProfile, useSimpleProfile } from '@/hooks/queries/useUserQuery'
 import { User, UserSimple } from '@/types/types'
+import { useRouter } from 'next/navigation'
 
 interface ProfileInfo {
     id: number;
@@ -47,7 +48,7 @@ export default function Profile({
     const profileInfo = isDetailView ? detailProfile : simpleProfile;
     const loading = isDetailView ? detailLoading : simpleLoading;
     const error = isDetailView ? detailError : simpleError;
-
+    const router = useRouter();
     console.log("사용자 정보")
     console.log(profileInfo);
 
@@ -110,7 +111,7 @@ export default function Profile({
                                         onChange={(e) => {
                                             const file = e.target.files?.[0];
                                             if (file) {
-                                                updateProfileImage(profileInfo.id, file);
+                                                updateProfileImage(file);
                                             }
                                         }}
                                         accept="image/*"
@@ -180,7 +181,7 @@ export default function Profile({
                         </Button>
                         <Button
                             variant="secondary"
-                            onClick={() => {/* 글 목록 보기 */ }}
+                            onClick={() => { router.push(`/main/board/subscriberPosts?nickName=${encodeURIComponent(profileInfo.nickName)}`) }}
                             disabled={loading}
                             className="flex-1"
                         >
