@@ -6,11 +6,13 @@ import { BaseKakaoMap } from "./BaseKakaoMap";
 import { RoutePolyline } from "./RoutePolyline";
 import { CurrentLocationMarker } from "./CurrentLocationMarker";
 import { useFollowStore } from "@/store/useFollowStore";
-import { calculatePathDistance } from "@/util/calculatePathDistance";
+import { calculatePathDistance, isRouteDeviated } from "@/util/calculatePathDistance";
 import { MarkerWithOverlay } from "./MarkerWithOverlay";
 import { MapMarker } from "react-kakao-maps-sdk";
 import { createEndMarker, createStartMarker } from "./CustomMarkerIcon";
 import { updateUserPoints } from "@/api/user";
+import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
+import { AlertCircle } from "lucide-react";
 
 interface FollowMapProps {
     route: Path;
@@ -72,30 +74,30 @@ export function FollowMap({ route, width, height }: FollowMapProps) {
         updateStatus,
         watchId,
         remainingDistance,
-        progressPercent
     } = useFollowStore();
 
     const pathAsKakaoPositions = route.routeCoordinates.map(coord => ({
         lat: parseFloat(coord.latitude),
         lng: parseFloat(coord.longitude)
     }));
-
-
     const startPoint = pathAsKakaoPositions[0];
     const endPoint = pathAsKakaoPositions[pathAsKakaoPositions.length - 1];
     const totalDistance = route.distance;
-
+    const [isDeviated, setIsDeviated] = useState(false);
+    const [deviationAlert, setDeviationAlert] = useState(false);
+    const [deviationTimeout, setDeviationTimeout] = useState<NodeJS.Timeout | null>(null);
     const [completedPath, setCompletedPath] = useState<KakaoPosition[]>([]);
     const [remainingPath, setRemainingPath] = useState<KakaoPosition[]>(pathAsKakaoPositions);
     const [snappedPosition, setSnappedPosition] = useState<KakaoPosition | null>(null);
     const [hasStarted, setHasStarted] = useState(false); // 실제 이동 시작 여부
 
-    const checkCompletion = async (
+
+    const checkCompletion = (
         currentPoint: KakaoPosition,
         endPoint: KakaoPosition,
         completedDistance: number,
         visitedPoints: number
-    ): Promise<boolean> => {  // 반환 타입을 Promise<boolean>으로 변경
+    ): boolean => {
         const distanceToEnd = calculateDistance(currentPoint, endPoint);
         const totalDistance = route.distance * 1000; // km to m
         const completionThreshold = 3; // 3미터 이내
@@ -120,17 +122,38 @@ export function FollowMap({ route, width, height }: FollowMapProps) {
         const minimumTime = totalDistance <= 100 ? 5000 : 10000;
         const hasMinimumTime = startTime ? (Date.now() - startTime) > minimumTime : false;
 
-        if (isNearEnd && hasMinimumDistance && hasMinimumPoints && hasMinimumTime) {
-            try {
-                await updateUserPoints(route.id);
-                alert('포인트 호출 완료');
-            } catch (error) {
-                alert('포인트 지급 중 오류가 발생했습니다.');
-            }
-            return true;
-        }
-        return false;
+        return isNearEnd && hasMinimumDistance && hasMinimumPoints && hasMinimumTime;
     };
+
+    const checkRouteDeviation = (position: KakaoPosition) => {
+        const deviated = isRouteDeviated(position, pathAsKakaoPositions);
+
+        if (deviated && !isDeviated) {
+            setIsDeviated(true);
+            setDeviationAlert(true);
+
+            // 이전 타이머가 있다면 제거
+            if (deviationTimeout) {
+                clearTimeout(deviationTimeout);
+            }
+
+            // 5초 후에 알림 숨기기
+            const timeout = setTimeout(() => {
+                setDeviationAlert(false);
+            }, 5000);
+
+            setDeviationTimeout(timeout);
+        } else if (!deviated && isDeviated) {
+            setIsDeviated(false);
+            setDeviationAlert(false);
+
+            if (deviationTimeout) {
+                clearTimeout(deviationTimeout);
+                setDeviationTimeout(null);
+            }
+        }
+    };
+
 
 
 
@@ -152,6 +175,8 @@ export function FollowMap({ route, width, height }: FollowMapProps) {
                     // 경로 상의 가장 가까운 점 찾기
                     const snapped = findClosestPointOnPath(newPosition, pathAsKakaoPositions);
                     setSnappedPosition(snapped);
+
+                    checkRouteDeviation(newPosition);
 
                     // 경로 분할 지점 찾기
                     const pathIndex = pathAsKakaoPositions.findIndex(point =>
@@ -207,6 +232,9 @@ export function FollowMap({ route, width, height }: FollowMapProps) {
             if (watchId) {
                 navigator.geolocation.clearWatch(watchId);
                 updateStatus({ watchId: null });
+            }
+            if (deviationTimeout) {
+                clearTimeout(deviationTimeout);
             }
         };
     }, [isFollowing, route.routeCoordinates, hasStarted]);
@@ -276,6 +304,18 @@ export function FollowMap({ route, width, height }: FollowMapProps) {
                     marker={convertPinToMarker(pin)}
                 />
             ))}
+
+            {deviationAlert && isFollowing && (
+                <div className="absolute top-4 left-0 right-0 mx-4 z-50">
+                    <Alert variant="destructive">
+                        <AlertCircle className="h-4 w-4" />
+                        <AlertTitle>경로 이탈</AlertTitle>
+                        <AlertDescription>
+                            지정된 경로에서 벗어났습니다. 경로로 돌아와주세요.
+                        </AlertDescription>
+                    </Alert>
+                </div>
+            )}
         </BaseKakaoMap>
     );
 }

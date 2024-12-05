@@ -13,6 +13,7 @@ import { ProgressDisplay } from '@/components/layout/ProgressDisplay';
 import BackHeader from '@/components/layout/BackHeader';
 import { useRouter } from 'next/navigation';
 import CelebrationAnimation from '@/components/layout/CelebrationAnimation ';
+import { updateUserPoints } from '@/api/user';
 
 // 페이지 props 인터페이스
 export interface PostPageProps {
@@ -34,6 +35,7 @@ export default function FollowPage({ params }: PostPageProps) {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [showCompletionDialog, setShowCompletionDialog] = useState(false);
+    const [pointsUpdated, setPointsUpdated] = useState(false);
 
     const {
         isFollowing,
@@ -86,11 +88,22 @@ export default function FollowPage({ params }: PostPageProps) {
     }, [route]);
 
     useEffect(() => {
-        if (isCompleted) {
-            setShowCompletionDialog(true);
-            stopFollowing();
-        }
-    }, [isCompleted, stopFollowing]);
+        const handleCompletion = async () => {
+            if (isCompleted && !pointsUpdated && route) {
+                try {
+                    await updateUserPoints(route.id);
+                    setPointsUpdated(true);
+                    setShowCompletionDialog(true);
+                    stopFollowing();
+                } catch (error) {
+                    console.error('포인트 업데이트 실패:', error);
+                    setError('포인트 지급 중 오류가 발생했습니다.');
+                }
+            }
+        };
+
+        handleCompletion();
+    }, [isCompleted, pointsUpdated, route, stopFollowing]);
 
     // 경로 데이터 로드
     useEffect(() => {

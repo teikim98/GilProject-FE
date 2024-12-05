@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { emailLogin } from "@/api/auth";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { PopupData } from "../../../types/types_JHW";
+import { PopupData } from "@/types/types_JHW";
 import { NoticeContainer } from "@/components/notice/NoticeContainer";
 import CustomDialoguePopup from "@/components/auth/CustomDialoguePopup";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
@@ -42,9 +42,9 @@ const HomePage = () => {
     }
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     tokenClean();
-  },[]);
+  }, []);
 
   return (
     <>

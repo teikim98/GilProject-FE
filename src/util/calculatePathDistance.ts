@@ -62,7 +62,7 @@ export const isRouteDeviated = (
   currentPosition: KakaoPosition,
   routePath: KakaoPosition[]
 ): boolean => {
-  const DEVIATION_THRESHOLD = 0.05; // 50미터 (km 단위로 변환)
+  const DEVIATION_THRESHOLD = 0.03; // 50미터 (km 단위로 변환)
 
   // 현재 위치에서 가장 가까운 경로 상의 지점과의 거리 계산
   const distances = routePath.map((pathPoint) =>
