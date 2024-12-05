@@ -49,8 +49,8 @@ const HomePage = () => {
   return (
     <>
       {/* <div className="w-full max-w-screen-md p-4 space-y-4 animate-fade-in"> */}
-      <div className="w-full h-full animate-fade-in flex flex-col justify-center items-center min-h-screen">
-        <div className="w-[80vw] h-[95vh] max-w-screen-md p-2 space-y-2 animate-fade-in flex flex-col justify-center items-center">
+      <div className="w-full h-full animate-fade-in flex flex-col items-center min-h-screen">
+        <div className="w-[90vw] h-[95vh] max-w-screen-md p-2 space-y-2 animate-fade-in flex flex-col justify-center items-center">
           <NoticeContainer />
           {/* Card Component */}
           <Card className="max-w-screen-md w-full">

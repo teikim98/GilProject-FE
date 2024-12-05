@@ -11,7 +11,7 @@ import { ChangePopupData } from '../../types/types_JHW';
 import CustomDialoguePopup from "./CustomDialoguePopup";
 import { changePassword, logout } from "@/api/user";
 
-const PasswordChangePopup = (props:ChangePopupData) => {
+const PasswordChangePopup = (props: ChangePopupData) => {
   const [password, setPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [newPasswordConfirm, setNewPasswordConfirm] = useState("");
@@ -21,7 +21,7 @@ const PasswordChangePopup = (props:ChangePopupData) => {
 
   // const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [popupData, setPopupData] = useState<PopupData>({});
-  const [isCustomPopupOpen,setIsCustomPopupOpen] = useState(false);
+  const [isCustomPopupOpen, setIsCustomPopupOpen] = useState(false);
 
   /**
    * 비밀번호 Input
@@ -36,13 +36,13 @@ const PasswordChangePopup = (props:ChangePopupData) => {
   /**
    * 닫기 Button
    */
-  const handleClose =(e : React.MouseEvent) =>{
+  const handleClose = (e: React.MouseEvent) => {
     e.preventDefault();
     props.setIsPopupOpen(false);
     reset();
   }
 
-  const reset = ()=>{
+  const reset = () => {
     setPassword("");
     setNewPassword("");
     setNewPasswordConfirm("");
@@ -66,7 +66,7 @@ const PasswordChangePopup = (props:ChangePopupData) => {
           title: "오류",
           description: "비밀번호 변경 실패",
           content: "비밀번호가 일치하지 않습니다. 다시 확인해주세요.",
-          onConfirm : ()=>{
+          onConfirm: () => {
             setIsCustomPopupOpen(false);
           }
         });
@@ -75,9 +75,9 @@ const PasswordChangePopup = (props:ChangePopupData) => {
       } else {
         setPopupData({
           title: "성공",
-          description :"비밀번호 변경에 성공하셨습니다",
+          description: "비밀번호 변경에 성공하셨습니다",
           content: "로그인 페이지로 돌아갑니다",
-          onConfirm : ()=>{
+          onConfirm: () => {
             setIsCustomPopupOpen(false);
             props.setIsPopupOpen(false);
             logout();
@@ -91,7 +91,7 @@ const PasswordChangePopup = (props:ChangePopupData) => {
       setPopupData({
         title: "오류",
         content: "비밀번호 변경 실패",
-        onConfirm : ()=> {
+        onConfirm: () => {
           setIsCustomPopupOpen(false);
         }
       });
@@ -148,7 +148,7 @@ const PasswordChangePopup = (props:ChangePopupData) => {
     <>
       <AlertDialog open={props.isPopupOpen} onOpenChange={props.setIsPopupOpen}>
         <AlertDialogContent className="max-h-[80vh] overflow-y-auto">
-        <AlertDialogHeader>
+          <AlertDialogHeader>
             <AlertDialogTitle>비밀번호 변경</AlertDialogTitle>
           </AlertDialogHeader>
           <form>
@@ -204,7 +204,7 @@ const PasswordChangePopup = (props:ChangePopupData) => {
             </div>
           </form>
           <AlertDialogFooter>
-          <AlertDialogCancel
+            <AlertDialogCancel
               onClick={(e) => {
                 handleClose(e);
               }}
@@ -212,10 +212,10 @@ const PasswordChangePopup = (props:ChangePopupData) => {
               닫기
             </AlertDialogCancel>
             <AlertDialogAction
-              onClick={(e) => {
+              onClick={(e: React.MouseEvent<Element, MouseEvent>) => {
                 handleUpdatePassword(e);
               }}
-              disabled = {!ispasswordValid}
+              disabled={!ispasswordValid}
             >
               변경
             </AlertDialogAction>
@@ -223,81 +223,6 @@ const PasswordChangePopup = (props:ChangePopupData) => {
         </AlertDialogContent>
       </AlertDialog>
       {isCustomPopupOpen && <CustomDialoguePopup popupData={popupData} />}
-
-
-
-      {/* <Card>
-        <CardHeader>
-          <CardTitle>비밀번호 변경</CardTitle>
-          <CardDescription>필요한 정보를 입력하세요.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form>
-            <div className="grid w-full items-center gap-4">
-              <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="email">비밀번호</Label>
-                <Input
-                  type="password"
-                  name="password"
-                  value={password}
-                  onChange={(e) => {
-                    handlePassword(e);
-                  }}
-                  onInput={(e: any) => {
-                    e.target.value = e.target.value.replace(/\s/g, ""); // 공백 제거
-                  }}
-                  placeholder="비밀번호를 입력해주세요"
-                />
-              </div>
-
-              <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="email">새 비밀번호</Label>
-                <Input
-                  type="password"
-                  name="newPassword"
-                  value={newPassword}
-                  onChange={(e) => {
-                    handleNewPassword(e);
-                  }}
-                  onInput={(e: any) => {
-                    e.target.value = e.target.value.replace(/\s/g, ""); // 공백 제거
-                  }}
-                  placeholder="새 비밀번호를 입력해주세요"
-                />
-              </div>
-
-              <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="email">새 비밀번호 확인</Label>
-                <Input
-                  type="password"
-                  name="newPasswordConfirm"
-                  value={newPasswordConfirm}
-                  onChange={(e) => {
-                    handleNewPasswordConfirm(e);
-                  }}
-                  onInput={(e: any) => {
-                    e.target.value = e.target.value.replace(/\s/g, ""); // 공백 제거
-                  }}
-                  placeholder="새 비밀번호를 다시 입력해주세요"
-                />
-              </div>
-              <ValidateMessage validCondition={ispasswordValid} message={passwordValidMessage} />
-            </div>
-          </form>
-        </CardContent>
-        <CardFooter className="flex justify-center flex-col">
-          <Button
-            variant="outline"
-            className="w-full"
-            onClick={(e) => {
-              handleUpdatePassword(e);
-            }}
-            disabled={!ispasswordValid || password === ""}
-          >
-            확인
-          </Button>
-        </CardFooter>
-      </Card> */}
     </>
   );
 };

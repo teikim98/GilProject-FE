@@ -15,7 +15,8 @@ import { ChangePopupData, PopupData } from "@/types/types_JHW";
  * 주소변경 컴포넌트
  * @returns
  */
-const AddressChangePopup = ({ props, isMypage }: {props: ChangePopupData ,isMypage: boolean }) => {
+
+const AddressChangePopup = ({ props, isMypage }: { props: ChangePopupData, isMypage: boolean }) => {
   // const [isRouteListOpen, setIsRouteListOpen] = useState(true);
   const [openDaumPost, setOpenDaumPost] = useState(false);
   const [address, setAddress] = useState("");

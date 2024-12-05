@@ -26,6 +26,8 @@ export default function Page() {
   const [isUpdateImgPopupOpen, setIsUpdateImgPopupOpen] = useState(false);
   const [isUpdateCommentPopupOpen, setIsUpdateCommentPopupOpen] = useState(false);
 
+
+
   useEffect(() => {
     const fetchProfile = async () => {
       try {
