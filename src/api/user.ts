@@ -79,22 +79,19 @@ export const updateAddress = async (
   }
 };
 
-// 프로필 이미지 업로드
-export const updateProfileImage = async (userId: number, file: File) => {
+// 프로필 이미지 수정
+export const updateProfileImage = async (file: File) => {
   try {
     const formData = new FormData();
     formData.append("file", file);
 
-    const response = await api.post(`/mypage/profile/${userId}`, formData, {
+    const response = await api.post(`/mypage/profile`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
     });
 
-    // 이미지 업로드 후 전체 정보를 다시 가져와서 store 업데이트
-    const updatedUser = await getDetailProfile();
-
-    return updatedUser;
+    return response.data;
   } catch (error) {
     throw error;
   }

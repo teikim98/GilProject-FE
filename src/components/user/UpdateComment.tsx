@@ -13,7 +13,7 @@ import { PopupData } from "@/types/types_JHW";
  * @param callback 완료됐을때 실행해줄 함수
  * @returns
  */
-const UpdateComment = ({ postComment, isPopupOpen, setIsPopupOpen, callback}: { postComment: string | null; isPopupOpen: boolean; setIsPopupOpen: React.Dispatch<React.SetStateAction<boolean>>; callback: (profileImgUrl: string) => void;}) => {
+const UpdateComment = ({ postComment, isPopupOpen, setIsPopupOpen, callback }: { postComment: string | null; isPopupOpen: boolean; setIsPopupOpen: React.Dispatch<React.SetStateAction<boolean>>; callback: (profileImgUrl: string) => void; }) => {
   const [comment, setComment] = useState(postComment);
   const [useButtonLock, setUseButtonLock] = useState(true);
   const [isCustomPopupOpen, setIsCustomPopupOpen] = useState(false);
