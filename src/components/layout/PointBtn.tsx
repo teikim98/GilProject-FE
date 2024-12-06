@@ -15,11 +15,10 @@ export default function PointBtn({ link, content, onClick }: PointProps) {
     if (onClick) {
         return (
             <Button 
-                className="w-full h-16 flex justify-between items-center"
+                className="w-18 h-5 flex justify-between items-center"
                 onClick={onClick}
             >
-                <span className="text-lg">{content}</span>
-                <ArrowRight className="h-5 w-5" />
+                <span className="text-sm">{content}</span>
             </Button>
         );
     }
@@ -27,9 +26,9 @@ export default function PointBtn({ link, content, onClick }: PointProps) {
     // 기존 동작 유지
     return (
         <Link href={`/main/mypage/${link}`}>
-            <Button className="w-full h-16 flex justify-between items-center">
+            <Button className="w-25 h-10 flex justify-between items-center">
                 <span className="text-lg">{content}</span>
-                <ArrowRight className="h-5 w-5" />
+                <ArrowRight className="h-3 w-3" />
             </Button>
         </Link>
     )
