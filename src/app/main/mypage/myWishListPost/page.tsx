@@ -5,7 +5,7 @@ import React from 'react'
 export default function Page() {
     return (
         <div className='animate-fade-in flex flex-col relative pb-20'>
-            <BackHeader content='내가 찜한 글 목록' />
+            <BackHeader content='내가 찜한 산책길' />
             <MyWishListPost />
         </div>
     )

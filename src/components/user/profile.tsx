@@ -153,7 +153,7 @@ export default function Profile({
                         <p className="text-lg font-semibold text-foreground">{profileInfo.pathCount}</p>
                     </div>
                     <div className="flex flex-col items-center">
-                        <p className="text-sm text-muted-foreground">구독자 수</p>
+                        <p className="text-sm text-muted-foreground">따름이</p>
                         <p className="text-lg font-semibold text-foreground">{profileInfo.subscribeByCount}</p>
                     </div>
                 </div>

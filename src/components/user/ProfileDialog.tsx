@@ -72,13 +72,13 @@ export default function ProfileDialog({ userId, className, onOpenChange }: Profi
                 await subscribe(simpleProfile.id);
                 toast({
                     title: "구독 완료",
-                    description: "구독했습니다",
+                    description: "내 길잡이로 등록했습니다",
                 });
             } else {
                 await unsubscribe(simpleProfile.id);
                 toast({
                     title: "구독 취소",
-                    description: "구독을 취소했습니다",
+                    description: "내 길잡이를 해제합니다.",
                 });
             }
         } catch (error) {

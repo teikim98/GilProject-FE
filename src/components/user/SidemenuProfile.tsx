@@ -51,7 +51,7 @@ export default function SideProfile({
                 </div>
                 <div className="grid grid-cols-3 gap-2 text-center bg-muted/50 rounded-lg p-3">
                     <div>
-                        <p className="text-sm text-muted-foreground">내가 쓴 글</p>
+                        <p className="text-sm text-muted-foreground">산책길</p>
                         <p className="font-semibold">{profileInfo.postCount}</p>
                     </div>
                     <div>
@@ -59,7 +59,7 @@ export default function SideProfile({
                         <p className="font-semibold">{profileInfo.pathCount}</p>
                     </div>
                     <div>
-                        <p className="text-sm text-muted-foreground">구독자</p>
+                        <p className="text-sm text-muted-foreground">따름이</p>
                         <p className="font-semibold">{profileInfo.subscribeByCount}</p>
                     </div>
                 </div>

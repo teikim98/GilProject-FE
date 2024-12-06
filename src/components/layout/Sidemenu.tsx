@@ -22,9 +22,9 @@ import { useDetailProfile } from "@/hooks/queries/useUserQuery";
 
 const navigationItems = [
     { name: '마이 페이지', href: '/main/mypage' },
-    { name: '내 경로', href: '/main/mypage/myRoute' },
     { name: '알림', href: '/main/notification' },
-    { name: '산책길 목록', href: '/main/board' },
+    { name: '나의 경로 기록', href: '/main/mypage/myRoute' },
+    { name: '산책길 보기', href: '/main/board' },
 ];
 
 export default function Sidemenu() {
@@ -106,7 +106,7 @@ export default function Sidemenu() {
                             <li>
                                 <button
                                     onClick={handleLogout}
-                                    className="block w-full text-left px-4 py-2 text-lg rounded-md transition-colors hover:bg-muted text-destructive"
+                                    className="block w-full text-left px-4 py-2 text-lg rounded-md transition-colors hover:bg-muted text-destructive dark:text-red-400"
                                 >
                                     로그아웃
                                 </button>
