@@ -115,13 +115,13 @@ export default function Page() {
                             </p>
                         </div>
                         <div className="flex flex-col items-center">
-                            <p className="text-sm">따라걷기 수</p>
+                            <p className="text-sm">따라걷기</p>
                             <p className="text-lg font-semibold text-foreground">
                                 {profileInfo.pathCount}
                             </p>
                         </div>
                         <div className="flex flex-col items-center">
-                            <p className="text-sm">구독자 수</p>
+                            <p className="text-sm">따름이</p>
                             <p className="text-lg font-semibold text-foreground">
                                 {profileInfo.subscribeByCount}
                             </p>
@@ -139,11 +139,11 @@ export default function Page() {
             </Card>
             <Separator className='my-4' />
             <MypageBtn link='myRoute' content='나의 경로 기록' /> <br />
-            <MypageBtn link='myPost' content='내가 작성한 산책길 글 목록' /> <br />
-            <MypageBtn link='myWishListPost' content='내가 찜한 산책길 글 목록' /> <br />
+            <MypageBtn link='myPost' content='내가 작성한 산책길' /> <br />
+            <MypageBtn link='myWishListPost' content='내가 찜한 산책길' /> <br />
             <MypageBtn 
                 link='mySubscribers' 
-                content='내가 구독한 유저목록' 
+                content='나의 길잡이' 
                 onClick={() => setIsSubscriberOpen(true)}
             />
             <br />

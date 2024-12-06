@@ -134,83 +134,88 @@ export default function Page() {
               <UpdateprofileImg imageUrl={profileInfo!.imageUrl} isPopupOpen={isUpdateImgPopupOpen} setIsPopupOpen={setIsUpdateImgPopupOpen} callback={handleProfileImgVerified} />
             </div>
             <Separator className='my-4 border-t-2 border-muted-foreground' />
-            <div className="flex flex-row items-center gap-5">
+            <div className="flex flex-row justify-between items-center gap-2">
+            <div className="flex items-center gap-8">
               <span className="font-bold text-base">이름</span>
-              <Input className='w-[50%] text-sm bg-gray-100 border-muted'
+              <Input className='w-[60%] text-sm bg-gray-100 border-muted dark:bg-gray-900'
                 name="name"
                 value={profileInfo?.name}
                 readOnly
-              />
+              /></div>
             </div>
             <Separator className='my-4 border-t-2 border-muted-foreground' />
-            <div className="flex flex-row justify-between items-center gap-5">
-              <div className="flex items-center gap-2"><span className="font-bold text-base">닉네임</span>
-                <Input className='w-[50%] text-sm'
+            <div className="flex flex-row justify-between items-center gap-2">
+            <div className="flex items-center gap-5">
+              <span className="font-bold text-base">이메일</span>
+              <Input className='w-[70%] text-sm bg-gray-100 border-muted dark:bg-gray-900'
+                name="email"
+                value={profileInfo?.email || '이메일 미설정'}
+                readOnly
+              /></div>
+            </div>
+            <Separator className='my-4 border-t-2 border-muted-foreground' />
+            <div className="flex flex-row justify-between items-center gap-2">
+              <div className="flex items-center gap-5">
+                <span className="font-bold text-base">닉네임</span>
+                <Input className='w-[70%] text-sm dark:bg-gray-700'
                   name="nickName"
                   value={profileInfo?.nickName}
                   onChange={(e) => { setProfileInfo(prev => prev ? { ...prev, nickName: e.target.value } : prev); }}
                 /></div>
-
               <Button
                 onClick={() => { setIsNickNamePopupOpen(true) }}
-                className="px-4"
+                className="px-3"
               >변경</Button>
             </div>
             <Separator className='my-4 border-t-2 border-muted-foreground' />
-            <div className="flex flex-row items-center gap-5">
-              <span className="font-bold text-base">이메일</span>
-              <Input className='w-[50%] text-sm bg-gray-100 border-muted'
-                name="email"
-                value={profileInfo?.email || '이메일 미설정'}
-                readOnly
-              />
-            </div>
-            <Separator className='my-4 border-t-2 border-muted-foreground' />
-            <div className="flex flex-row items-center gap-5">
+            <div className="flex flex-row justify-between items-center gap-2">
+            <div className="flex items-center gap-8">
               <span className="font-bold text-base">주소</span>
-              <Input className='w-[50%] text-sm'
+              <Input className='w-[70%] text-xs dark:bg-gray-700'
                 name="address"
                 value={profileInfo?.address || '주소 미설정'}
                 readOnly
-              />
+              /></div>
               <Button
                 onClick={() => { setIsAddressPopupOpen(true) }}
-                className="w-[10%]"
+                className="px-3"
               >변경</Button>
             </div>
             <Separator className='my-4 border-t-2 border-muted-foreground' />
-            <div className="flex flex-row items-center gap-5">
+            <div className="flex flex-row justify-between items-center gap-2">
+            <div className="flex items-center gap-2">
               <span className="font-bold text-base">자기소개</span>
-              <Input className='w-[50%] text-sm'
+              <Input className='w-[70%] text-xs dark:bg-gray-700'
                 name="comment"
                 value={profileInfo?.comment || ""}
                 readOnly
                 onChange={(e) => setProfileInfo(prev => prev ? { ...prev, comment: e.target.value } : null)}
                 placeholder='자기소개가 없습니다'
-              />
+              /></div>
               <Button
                 onClick={(e) => {
                   handleCommentPopup(e);
                 }}
-                className="w-[10%]"
+                className="px-3"
               >변경</Button>
               <UpdateComment postComment={profileInfo!.comment} isPopupOpen={isUpdateCommentPopupOpen} setIsPopupOpen={setIsUpdateCommentPopupOpen} callback={handleCommentVerified} />
             </div>
             <Separator className='my-4 border-t-2 border-muted-foreground' />
-            <div className="flex flex-row items-center gap-5">
+            <div className="flex flex-row justify-between items-center gap-2">
+            <div className="flex items-center gap-2">
               <span className="font-bold text-base">가입일자</span>
-              <Input className='w-[50%] text-sm bg-gray-100 border-muted'
+              <Input className='w-[40%] text-sm bg-gray-100 border-muted dark:bg-gray-900'
                 name="comment"
                 value={profileInfo?.joinDate.split("T")[0]}
                 readOnly
-              />
+              /></div>
             </div>
             <Separator className='my-4 border-t-2 border-muted-foreground' />
-            <div className="flex flex-row items-center gap-5">
+            <div className="flex flex-row items-center gap-2">
               <span className="font-bold text-base">비밀번호</span>
               <Button
                 onClick={updatePassword}
-                className="w-[30%] bg-red-600 text-white hover:bg-red-700"
+                className="w-[40%] bg-red-600 text-white hover:bg-red-700"
               >
                 비밀번호 변경
               </Button>

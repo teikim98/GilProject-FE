@@ -44,7 +44,7 @@ const UpdateprofileImg = ({imageUrl, isPopupOpen, setIsPopupOpen, callback} :{ i
         }
 
         if (compressedImage) {
-            console.log("이미지 압축해서 왔니...?");
+            console.log("이미지 압축, 변환 완료!");
             setProfileImg(compressedImage);
             setInputImg(file);
             setUseButtonLock(false);
@@ -53,19 +53,14 @@ const UpdateprofileImg = ({imageUrl, isPopupOpen, setIsPopupOpen, callback} :{ i
 
 
     /**
-     * 닫기 Button
+     * 닫기 Button (로컬 상태 모두 초기화)
      */
     const handleClose = (e: React.MouseEvent) =>{
-        reset();
+        setProfileImg(imageUrl);
+        setInputImg(undefined);
 
     };
 
-    /**
-     * 로컬 상태 모두 초기화
-     */
-    const reset = ()=>{
-        setProfileImg(imageUrl);
-    }
     
     /**
      * 사용 Button
@@ -99,7 +94,7 @@ const UpdateprofileImg = ({imageUrl, isPopupOpen, setIsPopupOpen, callback} :{ i
                 </AlertDialogHeader>
                     <div className="grid w-full items-center gap-4">
                         <Label htmlFor="address">프로필 이미지는 20MB 이하로 등록 가능합니다.</Label>
-                                    {imageUrl ? (
+                                    {profileImg ? (
                                     <img
                                         src={profileImg}
                                         alt="Profile"
