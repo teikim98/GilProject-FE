@@ -37,6 +37,20 @@ export const deleteNotification = async (notificationId: number) => {
   }
 };
 
+export const deleteAllNotifications = async () => {
+  const token = localStorage.getItem("access");
+
+  try {
+    await api.delete(`/all`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  } catch (error) {
+    console.error("Error deleting all notifications:", error);
+    throw new Error("Failed to delete all notifications");
+  }
+};
 
 // export const markNotificationAsRead = async (notificationId: number) => {
 //   const token = localStorage.getItem("access");

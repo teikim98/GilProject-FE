@@ -16,10 +16,31 @@ import {
 } from "@/components/ui/alert-dialog"
 import BackHeader from '@/components/layout/BackHeader'
 import { NotificationCard } from '@/components/notification/NotificationCard'
+import { useToast } from '@/hooks/use-toast';
+import { deleteAllNotifications } from '@/api/notification';
 
 export default function NotificationsPage() {
     const notifications = useNotificationStore((state) => state.notifications);
     const clearNotifications = useNotificationStore((state) => state.clearNotifications);
+    const { toast } = useToast();
+
+    const handleDeleteAll = async (e: React.MouseEvent) => {
+        e.stopPropagation();
+        try {
+            // 애니메이션이 완료된 후 실제 삭제 수행
+            await new Promise(resolve => setTimeout(resolve, 500));
+            await deleteAllNotifications();
+            clearNotifications();
+
+        } catch (error) {
+            toast({
+                title: "오류",
+                description: "알림 삭제에 실패했습니다.",
+                variant: "destructive",
+            });
+        }
+    };
+
 
     console.log("NotificationsPage - 현재 notifications:", notifications);
 
@@ -46,7 +67,7 @@ export default function NotificationsPage() {
                             </AlertDialogHeader>
                             <AlertDialogFooter>
                                 <AlertDialogCancel>취소</AlertDialogCancel>
-                                <AlertDialogAction onClick={clearNotifications}>
+                                <AlertDialogAction onClick={handleDeleteAll}>
                                     삭제
                                 </AlertDialogAction>
                             </AlertDialogFooter>
