@@ -145,7 +145,7 @@ export default function Profile({
             <CardContent className="px-6 pb-3">
                 <div className="w-full flex flex-row justify-between border rounded-lg p-4 bg-muted/50">
                     <div className="flex flex-col items-center">
-                        <p className="text-sm text-muted-foreground">내가 쓴 글</p>
+                        <p className="text-sm text-muted-foreground">산책길</p>
                         <p className="text-lg font-semibold text-foreground">{profileInfo.postCount}</p>
                     </div>
                     <div className="flex flex-col items-center">
@@ -162,7 +162,7 @@ export default function Profile({
                 {isDetailView ? (
                     <Button
                         disabled={loading}
-                        onClick={() => {/* 정보 수정 페이지로 이동 */ }}
+                        onClick={() => {router.push("/main/mypage/update")}}
                         className="w-[50%]"
                     >
                         정보 수정하기

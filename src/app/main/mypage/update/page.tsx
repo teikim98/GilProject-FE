@@ -137,7 +137,7 @@ export default function Page() {
             <div className="flex flex-row justify-between items-center gap-2">
             <div className="flex items-center gap-8">
               <span className="font-bold text-base">이름</span>
-              <Input className='w-[60%] text-sm bg-gray-100 border-muted dark:bg-gray-900'
+              <Input className='w-[61%] text-sm bg-gray-100 border-muted dark:bg-gray-900'
                 name="name"
                 value={profileInfo?.name}
                 readOnly
@@ -145,9 +145,9 @@ export default function Page() {
             </div>
             <Separator className='my-4 border-t-2 border-muted-foreground' />
             <div className="flex flex-row justify-between items-center gap-2">
-            <div className="flex items-center gap-5">
+            <div className="flex items-center gap-6">
               <span className="font-bold text-base">이메일</span>
-              <Input className='w-[70%] text-sm bg-gray-100 border-muted dark:bg-gray-900'
+              <Input className='w-[60%] text-sm bg-gray-100 border-muted dark:bg-gray-900'
                 name="email"
                 value={profileInfo?.email || '이메일 미설정'}
                 readOnly
@@ -155,7 +155,7 @@ export default function Page() {
             </div>
             <Separator className='my-4 border-t-2 border-muted-foreground' />
             <div className="flex flex-row justify-between items-center gap-2">
-              <div className="flex items-center gap-5">
+              <div className="flex items-center gap-6">
                 <span className="font-bold text-base">닉네임</span>
                 <Input className='w-[70%] text-sm dark:bg-gray-700'
                   name="nickName"
@@ -169,7 +169,7 @@ export default function Page() {
             </div>
             <Separator className='my-4 border-t-2 border-muted-foreground' />
             <div className="flex flex-row justify-between items-center gap-2">
-            <div className="flex items-center gap-8">
+            <div className="flex items-center gap-9">
               <span className="font-bold text-base">주소</span>
               <Input className='w-[70%] text-xs dark:bg-gray-700'
                 name="address"
@@ -204,14 +204,14 @@ export default function Page() {
             <div className="flex flex-row justify-between items-center gap-2">
             <div className="flex items-center gap-2">
               <span className="font-bold text-base">가입일자</span>
-              <Input className='w-[40%] text-sm bg-gray-100 border-muted dark:bg-gray-900'
+              <Input className='w-[61%] text-sm bg-gray-100 border-muted dark:bg-gray-900'
                 name="comment"
                 value={profileInfo?.joinDate.split("T")[0]}
                 readOnly
               /></div>
             </div>
             <Separator className='my-4 border-t-2 border-muted-foreground' />
-            <div className="flex flex-row items-center gap-2">
+            <div className="flex flex-row items-center gap-8">
               <span className="font-bold text-base">비밀번호</span>
               <Button
                 onClick={updatePassword}

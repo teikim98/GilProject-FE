@@ -91,6 +91,7 @@ export default function ProfileDialog({ userId, className, onOpenChange }: Profi
     };
 
     const handleInteraction = (e: React.MouseEvent | React.TouchEvent) => {
+        console.log("clicked")
         e.stopPropagation();
         e.preventDefault();
 
