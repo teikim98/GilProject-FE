@@ -43,7 +43,7 @@ const HomePage = () => {
   };
 
   useEffect(() => {
-    // tokenClean();
+    tokenClean();
   }, []);
 
   return (
