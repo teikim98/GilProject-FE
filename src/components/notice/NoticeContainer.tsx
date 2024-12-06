@@ -25,7 +25,7 @@ export function NoticeContainer() {
   }, []);
 
   return (
-    <div className="max-w-screen-md w-full">
+    <div className="max-w-screen-md w-full mb-4">
       <Carousel
         plugins={[plugin.current]}
         opts={{
@@ -34,7 +34,7 @@ export function NoticeContainer() {
         }}
         orientation="vertical"
       >
-        <CarouselContent className="-mt-1 h-[50px]">
+        <CarouselContent className="-mt-1 h-14">
           {/* 받아온 공지사항 데이터를 CarouselItem으로 맵핑 */}
           {notices.map((notice, index) => (
             <CarouselItem key={index} className="pt-1 md:basis-1/2">

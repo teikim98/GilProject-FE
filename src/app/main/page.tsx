@@ -2,8 +2,7 @@
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Footprints, PlusSquare, Share } from "lucide-react";
-import PWAInstallButton from "@/components/layout/PwaInstallBtn";
+import { Download, Footprints, PlusSquare, Share } from "lucide-react";
 import Sidemenu from "@/components/layout/Sidemenu";
 import Link from "next/link";
 import { DarkModeToggle } from "@/components/layout/DarkModeToggle";
@@ -15,25 +14,37 @@ import AddressChangePopup from "@/components/auth/AddressChangePopup";
 import { getDetailProfile } from "@/api/user";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import NoticeContainer from "@/components/notice/NoticeContainer";
+import { usePWAStore } from "@/store/usePwaStore";
 
 export default function Page() {
   const [addressPopupOpen, setAddressPopUpOpen] = useState(false);
   const [showIOSModal, setShowIOSModal] = useState(false);
+  const [showPWAModal, setShowPWAModal] = useState(false);
 
   useEffect(() => {
-
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
       (window.navigator as any).standalone;
 
-    const checkIOSDevice = () => {
-      const isIOS = /iPad|iPhone|iPod/.test(navigator.platform) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-      const hasShownIOSGuide = localStorage.getItem('ios-pwa-guide-shown');
+    // iOS 기기 체크
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.platform) ||
+      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
-      if (isIOS && !isStandalone && !hasShownIOSGuide) {
+    // PWA 모달 표시 여부 체크
+    const isPWAModalHidden = localStorage.getItem('pwa-install-modal-hidden') === 'true';
+    const hasShownIOSGuide = localStorage.getItem('ios-pwa-guide-shown');
+
+    // 설치 모달 표시 로직
+    if (!isStandalone) {
+      if (isIOS && !hasShownIOSGuide) {
         setShowIOSModal(true);
         localStorage.setItem('ios-pwa-guide-shown', 'true');
+      } else if (!isIOS && !isPWAModalHidden) {
+        setShowPWAModal(true);
       }
-    };
+    }
 
     /**
      * access, refresh 토큰 저장
@@ -92,9 +103,6 @@ export default function Page() {
     if (localStorage.getItem("access") === null) {
       fetchData();
     }
-
-    checkIOSDevice();
-
   }, []);
 
   return (
@@ -119,19 +127,33 @@ export default function Page() {
 
       <Separator className="my-4 dark:bg-gray-700" />
 
-      <PWAInstallButton />
+      <NoticeContainer />
+
       <IOSInstallGuideModal
         isOpen={showIOSModal}
         setIsOpen={setShowIOSModal}
       />
 
+      <PWAInstallModal
+        open={showPWAModal}
+        onOpenChange={setShowPWAModal}
+      />
 
-      <AddressChangePopup props={{ isPopupOpen: addressPopupOpen, setIsPopupOpen: setAddressPopUpOpen, callback: () => { } }} isMypage={false} />
+      <AddressChangePopup
+        props={{
+          isPopupOpen: addressPopupOpen,
+          setIsPopupOpen: setAddressPopUpOpen,
+          callback: () => { }
+        }}
+        isMypage={false}
+      />
+
       <AnimatedCards />
     </div>
   );
 }
 
+// iOS 설치 가이드 모달
 const IOSInstallGuideModal = ({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (open: boolean) => void }) => {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -158,6 +180,65 @@ const IOSInstallGuideModal = ({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpe
               다음에 하기
             </Button>
           </DialogClose>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+// PWA 설치 모달 (non-iOS)
+const PWAInstallModal = ({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) => {
+  const [dontShowAgain, setDontShowAgain] = useState(false);
+  const { deferredPrompt, isInstallable, resetPrompt } = usePWAStore();
+
+  const handleInstall = async () => {
+    if (!deferredPrompt) return;
+
+    try {
+      await deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+
+      if (outcome === 'accepted') {
+        resetPrompt();
+        onOpenChange(false);
+      }
+    } catch (error) {
+      console.error('PWA 설치 중 오류 발생:', error);
+    }
+  };
+
+  const handleClose = () => {
+    if (dontShowAgain) {
+      localStorage.setItem('pwa-install-modal-hidden', 'true');
+    }
+    onOpenChange(false);
+  };
+
+  return (
+    <Dialog open={open && isInstallable} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>앱 설치하기</DialogTitle>
+          <DialogDescription>
+            더 나은 사용자 경험을 위해 길따라 앱을 설치해보세요!
+          </DialogDescription>
+        </DialogHeader>
+        <div className="flex items-center space-x-2 py-4">
+          <Checkbox
+            id="dont-show"
+            checked={dontShowAgain}
+            onCheckedChange={(checked) => setDontShowAgain(checked as boolean)}
+          />
+          <Label htmlFor="dont-show">다시 보지 않기</Label>
+        </div>
+        <DialogFooter>
+          <Button variant="outline" onClick={handleClose}>
+            다음에 하기
+          </Button>
+          <Button onClick={handleInstall} className="gap-2">
+            <Download className="h-4 w-4" />
+            지금 설치하기
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

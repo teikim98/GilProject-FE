@@ -5,6 +5,7 @@ import { Suspense } from "react";
 import "./globals.css";
 import Provider from "./Provider";
 import { GoogleAnalytics } from '../../node_modules/@next/third-parties/dist/google/ga';
+import { PWAEventHandler } from "@/components/layout/PwaEventHandler";
 
 
 export const metadata: Metadata = {
@@ -33,7 +34,7 @@ export default function RootLayout({
           src={`//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_MAP_API_KEY}&autoload=false&libraries=services`}
           strategy="beforeInteractive"
         />
-        <GoogleAnalytics gaId={`${process.env.NEXT_PUBLIC_GA_ID}`}/>
+        <GoogleAnalytics gaId={`${process.env.NEXT_PUBLIC_GA_ID}`} />
 
         <link rel="apple-touch-icon" href="/icons/icon-192x192.j" />
 
@@ -44,7 +45,7 @@ export default function RootLayout({
             <div className="animate-fade-in min-h-screen " />
           }
         >
-
+          <PWAEventHandler />
           <Provider>
             {children}
             <Toaster />

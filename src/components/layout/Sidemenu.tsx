@@ -18,6 +18,7 @@ import { useNotificationStore } from "@/store/useNotificationStore";
 import { Button } from "../ui/button";
 import SideProfile from "../user/SidemenuProfile";
 import { useDetailProfile } from "@/hooks/queries/useUserQuery";
+import PWAInstallButton from "./PwaInstallBtn";
 
 
 const navigationItems = [
@@ -103,6 +104,9 @@ export default function Sidemenu() {
                                     </Link>
                                 </li>
                             ))}
+                            <li>
+                                <PWAInstallButton />
+                            </li>
                             <li>
                                 <button
                                     onClick={handleLogout}
