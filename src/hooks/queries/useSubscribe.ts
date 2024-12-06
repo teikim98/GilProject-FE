@@ -4,10 +4,12 @@ import { subscribeUser, unsubscribeUser } from "@/api/subscribe";
 export const useSubscribe = () => {
   const queryClient = useQueryClient();
 
-  return useMutation({
-    mutationFn: (userId: number) => subscribeUser(userId),
+  return useMutation<number, Error, number>({
+    mutationFn: async (userId: number) => {
+      const result = await subscribeUser(userId);
+      return result;
+    },
     onSuccess: (_, userId) => {
-      // simpleProfile 쿼리 무효화
       queryClient.invalidateQueries({
         queryKey: ["simpleProfile", userId],
       });
@@ -18,10 +20,11 @@ export const useSubscribe = () => {
 export const useUnsubscribe = () => {
   const queryClient = useQueryClient();
 
-  return useMutation({
-    mutationFn: (userId: number) => unsubscribeUser(userId),
+  return useMutation<void, Error, number>({
+    mutationFn: async (userId: number) => {
+      await unsubscribeUser(userId);
+    },
     onSuccess: (_, userId) => {
-      // simpleProfile 쿼리 무효화
       queryClient.invalidateQueries({
         queryKey: ["simpleProfile", userId],
       });

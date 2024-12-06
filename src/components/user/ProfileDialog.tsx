@@ -34,8 +34,9 @@ export default function ProfileDialog({ userId, className, onOpenChange }: Profi
         error: detailError
     } = useDetailProfile();
 
-    const { mutate: subscribe, isPending: isSubscribing } = useSubscribe();
-    const { mutate: unsubscribe, isPending: isUnsubscribing } = useUnsubscribe();
+    const { mutateAsync: subscribe, isPending: isSubscribing } = useSubscribe();
+    const { mutateAsync: unsubscribe, isPending: isUnsubscribing } = useUnsubscribe();
+
 
     useEffect(() => {
         if (!open) return;
@@ -49,50 +50,30 @@ export default function ProfileDialog({ userId, className, onOpenChange }: Profi
         setIsDetailView(decoded.id === userId);
     }, [userId, open]);
 
-    const handleSubscribeToggle = () => {
-        if (!simpleProfile || isSubscribing || isUnsubscribing) {
-            return Promise.resolve();
-        }
+    const handleSubscribeToggle = async () => {
+        if (!simpleProfile || isSubscribing || isUnsubscribing) return;
 
-        return new Promise<void>((resolve, reject) => {
+        try {
             if (simpleProfile.isSubscribed === 0) {
-                subscribe(simpleProfile.id, {
-                    onSuccess: () => {
-                        toast({
-                            title: "구독 완료",
-                            description: "내 길잡이로 등록했습니다",
-                        });
-                        resolve();
-                    },
-                    onError: (error) => {
-                        toast({
-                            variant: "destructive",
-                            title: "오류 발생",
-                            description: "구독 상태 변경에 실패했습니다",
-                        });
-                        reject(error);
-                    }
+                await subscribe(simpleProfile.id);
+                toast({
+                    title: "구독 완료",
+                    description: "내 길잡이로 등록했습니다",
                 });
             } else {
-                unsubscribe(simpleProfile.id, {
-                    onSuccess: () => {
-                        toast({
-                            title: "구독 취소",
-                            description: "내 길잡이를 해제합니다.",
-                        });
-                        resolve();
-                    },
-                    onError: (error) => {
-                        toast({
-                            variant: "destructive",
-                            title: "오류 발생",
-                            description: "구독 상태 변경에 실패했습니다",
-                        });
-                        reject(error);
-                    }
+                await unsubscribe(simpleProfile.id);
+                toast({
+                    title: "구독 취소",
+                    description: "내 길잡이를 해제합니다.",
                 });
             }
-        });
+        } catch (error) {
+            toast({
+                variant: "destructive",
+                title: "오류 발생",
+                description: "구독 상태 변경에 실패했습니다",
+            });
+        }
     };
 
 
