@@ -49,31 +49,52 @@ export default function ProfileDialog({ userId, className, onOpenChange }: Profi
         setIsDetailView(decoded.id === userId);
     }, [userId, open]);
 
-    const handleSubscribeToggle = async () => {
-        if (!simpleProfile || isSubscribing || isUnsubscribing) return;
+    const handleSubscribeToggle = () => {
+        if (!simpleProfile || isSubscribing || isUnsubscribing) {
+            return Promise.resolve();
+        }
 
-        try {
+        return new Promise<void>((resolve, reject) => {
             if (simpleProfile.isSubscribed === 0) {
-                await subscribe(simpleProfile.id);
-                toast({
-                    title: "구독 완료",
-                    description: "내 길잡이로 등록했습니다",
+                subscribe(simpleProfile.id, {
+                    onSuccess: () => {
+                        toast({
+                            title: "구독 완료",
+                            description: "내 길잡이로 등록했습니다",
+                        });
+                        resolve();
+                    },
+                    onError: (error) => {
+                        toast({
+                            variant: "destructive",
+                            title: "오류 발생",
+                            description: "구독 상태 변경에 실패했습니다",
+                        });
+                        reject(error);
+                    }
                 });
             } else {
-                await unsubscribe(simpleProfile.id);
-                toast({
-                    title: "구독 취소",
-                    description: "내 길잡이를 해제합니다.",
+                unsubscribe(simpleProfile.id, {
+                    onSuccess: () => {
+                        toast({
+                            title: "구독 취소",
+                            description: "내 길잡이를 해제합니다.",
+                        });
+                        resolve();
+                    },
+                    onError: (error) => {
+                        toast({
+                            variant: "destructive",
+                            title: "오류 발생",
+                            description: "구독 상태 변경에 실패했습니다",
+                        });
+                        reject(error);
+                    }
                 });
             }
-        } catch (error) {
-            toast({
-                variant: "destructive",
-                title: "오류 발생",
-                description: "구독 상태 변경에 실패했습니다",
-            });
-        }
+        });
     };
+
 
     const handleOpenChange = (newOpen: boolean) => {
         setOpen(newOpen);
