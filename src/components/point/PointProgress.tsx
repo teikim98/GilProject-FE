@@ -44,7 +44,7 @@ const PointProgress = ({ currentPoints }: PointProgressProps) => {
     return (
         <Card className="w-full max-w-md">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-2xl font-bold">내 포인트</CardTitle>
+                <CardTitle className="text-2xl font-bold">내 발자국</CardTitle>
                 <Trophy className="w-6 h-6 text-yellow-500" />
             </CardHeader>
             <CardContent>
@@ -69,9 +69,9 @@ const PointProgress = ({ currentPoints }: PointProgressProps) => {
                     </div>
 
                     <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-                        <h4 className="font-semibold mb-2">포인트 획득 방법</h4>
+                        <h4 className="font-semibold mb-2">발자국 획득 방법</h4>
                         <p className="text-sm text-gray-600">
-                            • 100m 걸을 때마다 10포인트 획득<br/>
+                            • 100m 걸을 때마다 10발자국 획득<br/>
                         </p>
                     </div>
                 </div>

@@ -139,27 +139,6 @@ export default function FollowPage({ params }: PostPageProps) {
         }
     };
 
-    // testHandleFollowToggle 함수를 수정하고, 버튼을 추가합니다.
-const testHandleFollowToggle = async () => {
-    if (!isFollowing) {
-        startFollowing();
-        // 즉시 완료 처리
-        setTimeout(async () => {
-            stopFollowing();
-            if (route) {
-                try {
-                    await updateUserPoints(route.id);
-                    setPointsUpdated(true);
-                    setShowCompletionDialog(true);
-                } catch (error) {
-                    console.error('포인트 업데이트 실패:', error);
-                    setError('포인트 지급 중 오류가 발생했습니다.');
-                }
-            }
-        }, 100);  // 약간의 지연을 줘서 상태 업데이트가 확실히 되도록 함
-    }
- };
-
 
 
     const formatTime = (seconds: number): string => {
@@ -212,13 +191,6 @@ const testHandleFollowToggle = async () => {
                 >
                     <Navigation className="w-5 h-5 mr-2" />
                     {isFollowing ? '따라걷기 중지하기' : '따라걷기 시작하기'}
-                </Button>
-
-                <Button
-                    className="w-full bg-purple-500 hover:bg-purple-600 mt-2"
-                    onClick={testHandleFollowToggle}
-                >
-                    테스트용 즉시 완료
                 </Button>
 
 
