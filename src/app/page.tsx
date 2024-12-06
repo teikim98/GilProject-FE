@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 
 const Home = () => {
   const router = useRouter();
-
   useEffect(() => {
     const token = localStorage.getItem('access');
     if (token) {

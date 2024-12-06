@@ -4,7 +4,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import Profile from "./profile"
 import { useState, useEffect } from "react"
 import { jwtDecode } from 'jwt-decode'
-import { subscribeUser, unsubscribeUser } from '@/api/subscribe'
 import { toast } from "@/hooks/use-toast"
 import { useDetailProfile, useSimpleProfile } from '@/hooks/queries/useUserQuery'
 import { useSubscribe, useUnsubscribe } from "@/hooks/queries/useSubscribe"
@@ -13,19 +12,6 @@ interface ProfileDialogProps {
     userId: number;
     className?: string;
     onOpenChange?: (open: boolean) => void;
-}
-
-interface ProfileInfo {
-    id: number;
-    nickName: string;
-    imageUrl: string;
-    comment: string | null;
-    address: string | null;
-    postCount: number;
-    subscribeByCount: number;
-    pathCount: number;
-    isSubscribed?: boolean;
-    point: number;
 }
 
 interface JWTPayload {
@@ -51,7 +37,6 @@ export default function ProfileDialog({ userId, className, onOpenChange }: Profi
     const { mutate: subscribe, isPending: isSubscribing } = useSubscribe();
     const { mutate: unsubscribe, isPending: isUnsubscribing } = useUnsubscribe();
 
-
     useEffect(() => {
         if (!open) return;
 
@@ -65,7 +50,7 @@ export default function ProfileDialog({ userId, className, onOpenChange }: Profi
     }, [userId, open]);
 
     const handleSubscribeToggle = async () => {
-        if (!simpleProfile) return;
+        if (!simpleProfile || isSubscribing || isUnsubscribing) return;
 
         try {
             if (simpleProfile.isSubscribed === 0) {
@@ -90,15 +75,6 @@ export default function ProfileDialog({ userId, className, onOpenChange }: Profi
         }
     };
 
-    const handleInteraction = (e: React.MouseEvent | React.TouchEvent) => {
-        e.stopPropagation();
-        e.preventDefault();
-
-        if (!open) {
-            setOpen(true);
-        }
-    };
-
     const handleOpenChange = (newOpen: boolean) => {
         setOpen(newOpen);
         onOpenChange?.(newOpen);
@@ -109,12 +85,11 @@ export default function ProfileDialog({ userId, className, onOpenChange }: Profi
             <DialogTrigger asChild>
                 <div
                     className="inline-block"
-                    onClick={handleInteraction}
-                    onMouseDown={handleInteraction}
-                    onTouchStart={handleInteraction}
-                    onPointerDown={(e) => {
+                    onClick={(e) => {
                         e.stopPropagation();
-                        e.preventDefault();
+                        if (!open) {
+                            setOpen(true);
+                        }
                     }}
                 >
                     <Avatar className={`cursor-pointer hover:opacity-80 transition-opacity ${className}`}>
@@ -127,15 +102,8 @@ export default function ProfileDialog({ userId, className, onOpenChange }: Profi
                 className="p-0 sm:max-w-[425px] flex flex-col min-h-[200px]"
                 onPointerDownOutside={(e) => {
                     e.preventDefault();
-                    e.stopPropagation();
-                    handleOpenChange(false);
                 }}
                 onInteractOutside={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                }}
-                onClick={(e) => {
-                    e.stopPropagation();
                     e.preventDefault();
                 }}
             >
