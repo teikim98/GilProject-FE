@@ -56,7 +56,9 @@ export default function Page() {
         const accessToken = response.headers["oauth2access"].split("Bearer ")[1];
 
         localStorage.setItem("access", accessToken);
+        console.log(accessToken + " access토큰 localstorage에 저장");
         window.location.reload();
+        console.log("새로고침");
       } catch (error) {
         console.error("Error fetching data:", error);
         console.log("access 토큰의 재발급을 실패했습니다");
