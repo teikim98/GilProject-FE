@@ -21,7 +21,7 @@ export function middleware(request: NextRequest) {
 
 
   // 로그인 된 상태 + 로그인 페이지로 진입
-  if (auth && url.pathname.startsWith(LOGIN_PAGE)) {
+  if (auth && url.pathname.startsWith(AUTH_PATH)) {
     console.log("로그인된 상태입니다 메인페이지로 갑니다");
     return NextResponse.redirect(new URL(MAIN_PAGE, request.url));
   }
@@ -73,7 +73,7 @@ export function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     // '/((?!_next/static|_next/image|favicon.ico|Resources|icons|manifest|\\.jpg$|\\.png$|\\.css$|\\.js$|\\.svg$|\\.webp$).*)',
-    // "/auth/:path*",
+    "/auth/:path*",
     "/follow/:path*",
     "/main/:path*",
     "/record/:path*",
