@@ -16,7 +16,7 @@ export function middleware(request: NextRequest) {
   // return NextResponse.redirect(url);
 
   const auth = request.cookies.has(AUTH_STATUS_COOKIE);
-  // console.log(auth);
+  console.log("auth = " + auth);
   // const auth = false;
 
   // 로그인 된 상태 + 로그인 페이지로 진입
