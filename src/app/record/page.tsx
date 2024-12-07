@@ -13,7 +13,7 @@ export default function RecordPage() {
     const router = useRouter();
     const { isRecording, startRecording, stopRecording } = useRecordStore();
     const [isTransitioning, setIsTransitioning] = useState(false);
-    PreventRefreshAndBack(); //새로고침, 뒤로가기 방지
+    // PreventRefreshAndBack(); //새로고침, 뒤로가기 방지
 
     const handleRecording = async () => {
         if (isRecording) {
