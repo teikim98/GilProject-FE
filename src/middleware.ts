@@ -73,7 +73,7 @@ export function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     // '/((?!_next/static|_next/image|favicon.ico|Resources|icons|manifest|\\.jpg$|\\.png$|\\.css$|\\.js$|\\.svg$|\\.webp$).*)',
-    "/auth/:path*",
+    // "/auth/:path*",
     "/follow/:path*",
     "/main/:path*",
     "/record/:path*",
