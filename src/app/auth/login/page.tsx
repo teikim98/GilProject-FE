@@ -107,7 +107,8 @@ const HomePage = () => {
                   {/* Social Login Buttons */}
                   <div className="flex flex-row justify-center items-center gap-4 w-full">
                     <div className="flex-1 flex justify-center">
-                    <Link href={`/login/oauth2/code/google`} passHref>
+                    <Link href={`${process.env.NEXT_PUBLIC_API_URL}/oauth2/authorization/google`} passHref>
+                    {/* <Link href={`/login/oauth2/authorization/google`} passHref> */}
                         <Avatar className="cursor-pointer">
                           <AvatarImage src="/Resources/Google/web_neutral_sq_na@4x.png" />
                         </Avatar>
@@ -115,8 +116,8 @@ const HomePage = () => {
                     </div>
 
                     <div className="flex-1 flex justify-center">
-                      {/* <Link href={`${process.env.NEXT_PUBLIC_API_URL}/oauth2/authorization/naver`} passHref> */}
-                      <Link href={`/login/oauth2/code/naver`} passHref>
+                      <Link href={`${process.env.NEXT_PUBLIC_API_URL}/oauth2/authorization/naver`} passHref>
+                      {/* <Link href={`/login/oauth2/code/naver`} passHref> */}
                         <Avatar className="cursor-pointer">
                           <AvatarImage src="/Resources/Naver/btnG_아이콘사각.png" />
                         </Avatar>
@@ -124,7 +125,8 @@ const HomePage = () => {
                     </div>
 
                     <div className="flex-1 flex justify-center">
-                      <Link href={`/login/oauth2/code/kakao`} passHref>
+                      {/* <Link href={`/login/oauth2/code/kakao`} passHref> */}
+                      <Link href={`${process.env.NEXT_PUBLIC_API_URL}/oauth2/authorization/kakao`} passHref>
                         <Avatar className="cursor-pointer">
                           <AvatarImage src="/Resources/Kakao/카카오톡.png" />
                         </Avatar>
