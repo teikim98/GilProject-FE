@@ -19,17 +19,20 @@ export function middleware(request: NextRequest) {
   console.log("auth = " + auth);
   // const auth = false;
 
-  // 로그인 된 상태 + 로그인 페이지로 진입
-  if (auth && url.pathname.startsWith(LOGIN_PAGE)) {
-    console.log("로그인된 상태입니다 메인페이지로 갑니다");
-    return NextResponse.redirect(new URL(MAIN_PAGE, request.url));
-  }
+  return NextResponse.redirect(new URL(MAIN_PAGE, request.url));
 
-  // 로그인 안된 상태 + 로그인 페이지를 제외한 곳으로 진입
-  if (!auth && !url.pathname.startsWith(AUTH_PATH)) {
-    console.log("로그아웃된 상태입니다 로그인페이지로 진입합니다");
-    return NextResponse.redirect(new URL(LOGIN_PAGE, request.url));
-  }
+
+  // // 로그인 된 상태 + 로그인 페이지로 진입
+  // if (auth && url.pathname.startsWith(LOGIN_PAGE)) {
+  //   console.log("로그인된 상태입니다 메인페이지로 갑니다");
+  //   return NextResponse.redirect(new URL(MAIN_PAGE, request.url));
+  // }
+
+  // // 로그인 안된 상태 + 로그인 페이지를 제외한 곳으로 진입
+  // if (!auth && !url.pathname.startsWith(AUTH_PATH)) {
+  //   console.log("로그아웃된 상태입니다 로그인페이지로 진입합니다");
+  //   return NextResponse.redirect(new URL(LOGIN_PAGE, request.url));
+  // }
 
   //테스트용
   // if (pathname === "/") {
