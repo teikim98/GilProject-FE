@@ -9,7 +9,7 @@ interface Level {
 }
 
 const levels: Level[] = [
-    { name: "No Medal", requiredPoints: 100},
+    { name: "No Medal", requiredPoints: 100 },
     { name: "Bronze", requiredPoints: 300 },
     { name: "Silver", requiredPoints: 500 },
     { name: "Gold", requiredPoints: 10000 }
@@ -31,10 +31,10 @@ const PointProgress = ({ currentPoints }: PointProgressProps) => {
 
     const getNextLevelProgress = () => {
         const currentLevel = getCurrentLevel();
-        if (currentLevel+1 === levels.length) {
+        if (currentLevel + 1 === levels.length) {
             return 100;
         }
-        
+
         const currentLevelPoints = currentLevel > 0 ? levels[currentLevel - 1].requiredPoints : 0;
         const nextLevelPoints = levels[currentLevel].requiredPoints;
         const progress = ((currentPoints - currentLevelPoints) / (nextLevelPoints - currentLevelPoints)) * 100;
@@ -52,16 +52,16 @@ const PointProgress = ({ currentPoints }: PointProgressProps) => {
                     <div className="flex justify-between items-center">
                         <span className="text-3xl font-bold">{currentPoints.toLocaleString()}</span>
                         <span className="text-sm text-gray-500">
-                            Level {getCurrentLevel()+1} - {levels[getCurrentLevel()]?.name || "GOLD"}
+                            Level {getCurrentLevel() + 1} - {levels[getCurrentLevel()]?.name || "GOLD"}
                         </span>
                     </div>
 
                     <div className="space-y-2">
-                        <Progress value= {getNextLevelProgress()} className="h-2" />
-                        
+                        <Progress value={getNextLevelProgress()} className="h-2" />
+
                         <div className="flex justify-between text-sm text-gray-500">
                             <span>
-                                {getCurrentLevel() < levels.length -1
+                                {getCurrentLevel() < levels.length - 1
                                     ? `다음 레벨까지: ${(levels[getCurrentLevel()].requiredPoints - currentPoints).toLocaleString()} 포인트`
                                     : '최고 레벨 달성!'}
                             </span>
@@ -69,9 +69,9 @@ const PointProgress = ({ currentPoints }: PointProgressProps) => {
                     </div>
 
                     <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-                        <h4 className="font-semibold mb-2">포인트 획득 방법</h4>
+                        <h4 className="font-semibold mb-2">발걸음 획득 방법</h4>
                         <p className="text-sm text-gray-600">
-                            • 100m 걸을 때마다 10포인트 획득<br/>
+                            • 100m 걸을 때마다 10발걸음 획득<br />
                         </p>
                     </div>
                 </div>

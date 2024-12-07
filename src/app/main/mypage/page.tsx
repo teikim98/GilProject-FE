@@ -105,7 +105,7 @@ export default function Page() {
                         <div className="pl-10 pb-7">
                             <PointBtn
                                 link='point'
-                                content={`포인트`}
+                                content={`발걸음`}
                                 onClick={() => setIsPointOpen(true)}
                             />
                         </div>
