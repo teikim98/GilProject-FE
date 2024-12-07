@@ -49,13 +49,14 @@ export default function ProfileDialog({ userId, className, onOpenChange }: Profi
 
         setIsLoading(true);
         try {
-            if (simpleProfile.isSubscribed === 0) {
+            if (!simpleProfile.isSubscribed) {
                 await subscribeUser(simpleProfile.id);
                 await refetch();
                 toast({
                     title: "구독 완료",
                     description: "내 길잡이로 등록했습니다",
                 });
+                // 1이면 구독된 상태로 처리
             } else if (simpleProfile.isSubscribed === 1) {
                 await unsubscribeUser(simpleProfile.id);
                 await refetch();
@@ -65,6 +66,7 @@ export default function ProfileDialog({ userId, className, onOpenChange }: Profi
                 });
             }
         } catch (error) {
+            console.error("Subscribe error:", error);
             toast({
                 variant: "destructive",
                 title: "오류 발생",
@@ -74,6 +76,8 @@ export default function ProfileDialog({ userId, className, onOpenChange }: Profi
             setIsLoading(false);
         }
     };
+
+
 
 
     const handleOpenChange = (newOpen: boolean) => {
