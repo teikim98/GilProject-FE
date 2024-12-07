@@ -4,7 +4,6 @@ import { useNotificationStore } from '@/store/useNotificationStore';
 import { useToast } from "@/hooks/use-toast";
 
 export function NotificationInitializer() {
-    console.log("NotificationInitializer 컴포넌트 렌더링"); // 컴포넌트 자체의 렌더링 확인
 
     const initializeSSE = useNotificationStore((state) => state.initializeSSE);
     const { toast } = useToast();

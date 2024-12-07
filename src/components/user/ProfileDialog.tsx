@@ -5,8 +5,8 @@ import Profile from "./profile"
 import { useState, useEffect } from "react"
 import { jwtDecode } from 'jwt-decode'
 import { toast } from "@/hooks/use-toast"
-import { useDetailProfile, useSimpleProfile } from '@/hooks/queries/useUserQuery'
-import { useSubscribe, useUnsubscribe } from "@/hooks/queries/useSubscribe"
+import { useSimpleProfile } from '@/hooks/queries/useUserQuery'
+import { subscribeUser, unsubscribeUser } from "@/api/subscribe"
 
 interface ProfileDialogProps {
     userId: number;
@@ -21,21 +21,15 @@ interface JWTPayload {
 export default function ProfileDialog({ userId, className, onOpenChange }: ProfileDialogProps) {
     const [open, setOpen] = useState(false);
     const [isDetailView, setIsDetailView] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     const {
         data: simpleProfile,
-        isLoading: simpleLoading,
-        error: simpleError
+        isLoading: profileLoading,
+        error: profileError,
+        refetch
     } = useSimpleProfile(userId);
 
-    const {
-        data: detailProfile,
-        isLoading: detailLoading,
-        error: detailError
-    } = useDetailProfile();
-
-    const { mutateAsync: subscribe, isPending: isSubscribing } = useSubscribe();
-    const { mutateAsync: unsubscribe, isPending: isUnsubscribing } = useUnsubscribe();
 
 
     useEffect(() => {
@@ -51,17 +45,20 @@ export default function ProfileDialog({ userId, className, onOpenChange }: Profi
     }, [userId, open]);
 
     const handleSubscribeToggle = async () => {
-        if (!simpleProfile || isSubscribing || isUnsubscribing) return;
+        if (!simpleProfile || isLoading) return;
 
+        setIsLoading(true);
         try {
             if (simpleProfile.isSubscribed === 0) {
-                await subscribe(simpleProfile.id);
+                await subscribeUser(simpleProfile.id);
+                await refetch();
                 toast({
                     title: "구독 완료",
                     description: "내 길잡이로 등록했습니다",
                 });
-            } else {
-                await unsubscribe(simpleProfile.id);
+            } else if (simpleProfile.isSubscribed === 1) {
+                await unsubscribeUser(simpleProfile.id);
+                await refetch();
                 toast({
                     title: "구독 취소",
                     description: "내 길잡이를 해제합니다.",
@@ -73,6 +70,8 @@ export default function ProfileDialog({ userId, className, onOpenChange }: Profi
                 title: "오류 발생",
                 description: "구독 상태 변경에 실패했습니다",
             });
+        } finally {
+            setIsLoading(false);
         }
     };
 
