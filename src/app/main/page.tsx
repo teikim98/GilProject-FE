@@ -20,6 +20,8 @@ import NoticeContainer from "@/components/notice/NoticeContainer";
 import { usePWAStore } from "@/store/usePwaStore";
 
 export default function Page() {
+
+  console.log("MAIN 페이지!!!!!!!!!!!!!!!!!");
   const [addressPopupOpen, setAddressPopUpOpen] = useState(false);
   const [showIOSModal, setShowIOSModal] = useState(false);
   const [showPWAModal, setShowPWAModal] = useState(false);
