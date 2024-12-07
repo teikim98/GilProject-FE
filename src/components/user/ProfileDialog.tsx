@@ -49,6 +49,7 @@ export default function ProfileDialog({ userId, className, onOpenChange }: Profi
 
         setIsLoading(true);
         try {
+            // null이나 0이면 구독되지 않은 상태로 처리
             if (!simpleProfile.isSubscribed) {
                 await subscribeUser(simpleProfile.id);
                 await refetch();

@@ -300,13 +300,13 @@ const AnimatedCards: React.FC = () => {
             <div className="flex flex-row justify-between" style={{ height: '20vh' }}>
                 <AnimatedCard
                     href="/main/board"
-                    title="내 주변 산책길 보러가기"
+                    title={<span className="whitespace-pre-line">내 주변 산책길{'\n'}보러가기</span>}
                     Background={WalkingPathBackground}
                     className="w-[48%] block"
                 />
                 <AnimatedCard
                     href="/main/mypage/myRoute"
-                    title={<span className="whitespace-pre-line">내가 기록한{'\n'}산책길 보러가기</span>}
+                    title={<span className="whitespace-pre-line">내가 기록한{'\n'}산책길 {'\n'}보러가기</span>}
                     Background={MyRouteBackground}
                     className="w-[48%] block"
                 />
