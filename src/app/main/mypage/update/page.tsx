@@ -218,6 +218,9 @@ export default function Page() {
                 /></div>
             </div>
             <Separator className='my-4 border-t-2 border-muted-foreground' />
+            {
+              (profileInfo?.platform === 0) && 
+              <>
             <div className="flex flex-row items-center gap-2">
               <span className="font-bold text-base">비밀번호</span>
               <Button
@@ -228,9 +231,11 @@ export default function Page() {
               </Button>
             </div>
             <Separator className='my-4 border-t-2 border-muted-foreground' />
-            <div className="flex flex-col items-center justify-center space-y-4">
+              </>
+            }
+            {/* <div className="flex flex-col items-center justify-center space-y-4">
 
-            </div>
+            </div> */}
           </div>
         </CardContent>
         <CardFooter className="px-6 pt-0 flex justify-center">
