@@ -19,7 +19,9 @@ export function middleware(request: NextRequest) {
   console.log("auth = " + auth);
   // const auth = false;
 
+if(auth){
   return NextResponse.redirect(new URL(MAIN_PAGE, request.url));
+}
 
 
   // // 로그인 된 상태 + 로그인 페이지로 진입
