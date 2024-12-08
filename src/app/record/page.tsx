@@ -7,7 +7,6 @@ import { RecordingMap } from '@/components/map/RecordingMap';
 import { CurrentLocationMap } from '@/components/map/CurrentLocationMap';
 import BackHeader from '@/components/layout/BackHeader';
 import { useState } from 'react';
-import { PreventRefreshAndBack } from '@/util/preventRefreshAndBack';
 
 export default function RecordPage() {
     const router = useRouter();
