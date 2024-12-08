@@ -18,11 +18,11 @@ export function middleware(request: NextRequest) {
   const auth = request.cookies.has(AUTH_STATUS_COOKIE);
   console.log("auth = " + auth);
   // const auth = false;
-  // document.cookie = `${AUTH_STATUS_COOKIE}`
+  document.cookie = `${AUTH_STATUS_COOKIE}`
 
   const response = NextResponse.next();
   // 쿠키 생성
-  response.cookies.set(AUTH_STATUS_COOKIE, "", {
+  response.cookies.set(AUTH_STATUS_COOKIE, "true", {
     path: "/", // 모든 경로에서 유효
     // maxAge: 60 * 60 * 24, // 1일 (초 단위)
     httpOnly: false, // 클라이언트에서 접근 가능
