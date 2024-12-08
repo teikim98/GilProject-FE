@@ -1,9 +1,9 @@
-import { loginCheckerTokenGenerator } from "@/util/loginChecker";
 import axios, {
   AxiosError,
   AxiosInstance,
   InternalAxiosRequestConfig,
 } from "axios";
+import { logout } from "./user";
 
 const getAuthToken = (): string | null => {
   return localStorage.getItem("access");
@@ -84,10 +84,11 @@ const responseInterceptor = (api: AxiosInstance) => {
           }
         } catch (reissueError) {
           console.error("Token reissue failed:", reissueError);
-          localStorage.removeItem("access");
-          localStorage.removeItem("address-popup");
+          // localStorage.removeItem("access");
+          // localStorage.removeItem("address-popup");
           alert("로그인 정보가 만료되었습니다. 다시 로그인 해주세요");
-          window.location.href = "/auth/login";
+          logout();
+          // window.location.href = "/auth/login";
         }
       }
 
