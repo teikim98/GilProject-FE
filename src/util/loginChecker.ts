@@ -16,5 +16,8 @@ export const loginCheckerTokenGenerator = () => {
  */
 export const removeLoginChecker = ()=>{
   document.cookie = `${AUTH_STATUS_COOKIE}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
+  document.cookie = `${AUTH_STATUS_COOKIE}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/ domain=gil-project.kro.kr;`;
+  document.cookie = `${AUTH_STATUS_COOKIE}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/ domain=.gil-project.kro.kr;`;
+  document.cookie = `${AUTH_STATUS_COOKIE}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/ domain=.kro.kr;`;
   // document.cookie = `${AUTH_STATUS_COOKIE}=; path=/; domain=gil-project.kro.kr; expires=Thu, 01 Jan 1970 00:00:00 GMT;`;
 }
