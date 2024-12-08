@@ -1,28 +1,45 @@
 import React from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogHeader, AlertDialogTitle } from "../ui/alert-dialog";
 import { Notice } from "@/types/types_JHW";
 
-const NoticeDetail = ({ notice, onClose }: { notice: Notice; onClose: () => void }) => {
-
+const NoticeDetail = ({
+  isDialogOpen,
+  setIsDialogOpen,
+  notice,
+}: {
+  isDialogOpen: boolean;
+  setIsDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  notice: Notice;
+}) => {
   const formatDate = (dateString: string) => {
-    const date = dateString.split('T')[0]; // 'T'를 기준으로 날짜 부분만 추출
-    const [year, month, day] = date.split('-'); // 년-월-일로 나누기
-    return `${year}-${month}-${day}`; // 년-월-일 형식으로 반환
+    const date = dateString.split("T")[0]; // 'T'를 기준으로 날짜 부분만 추출
+    const [year, month, day] = date.split("-");
+    return `${year}-${month}-${day}`;
   };
 
+  const handleClose = () => {
+    console.log("닫기 클릭");
+    setIsDialogOpen(false);
+  };
 
   return (
-    <Dialog open={true} onOpenChange={onClose}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>{notice.title}</DialogTitle>
-        </DialogHeader>
-        <hr/>
+    <AlertDialog
+      open={isDialogOpen} // 상태 관리
+      onOpenChange={(isOpen) => {
+        setIsDialogOpen(isOpen); // 이벤트 처리
+      }}
+    >
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>{notice.title}</AlertDialogTitle>
+        </AlertDialogHeader>
+        <hr />
         <p>{notice.content}</p>
-        <hr/>
+        <hr />
         <p>{`작성일: ${formatDate(notice.writeDate)}`}</p>
-      </DialogContent>
-    </Dialog>
+        <AlertDialogAction onClick={handleClose}>닫기</AlertDialogAction>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 };
 
