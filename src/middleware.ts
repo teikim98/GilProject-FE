@@ -20,15 +20,15 @@ export function middleware(request: NextRequest) {
   // const auth = false;
   // document.cookie = `${AUTH_STATUS_COOKIE}`
 
-  // const response = NextResponse.next();
-  // // 쿠키 생성
-  // response.cookies.set(AUTH_STATUS_COOKIE, "true", {
-  //   path: "/", // 모든 경로에서 유효
-  //   // maxAge: 60 * 60 * 24, // 1일 (초 단위)
-  //   httpOnly: false, // 클라이언트에서 접근 가능
-  //   secure: true, // HTTPS만 필요한 경우 true로 설정
-  //   sameSite: "none", // SameSite 설정
-  // });
+  const response = NextResponse.next();
+  // 쿠키 생성
+  response.cookies.set(AUTH_STATUS_COOKIE, "true", {
+    path: "/", // 모든 경로에서 유효
+    // maxAge: 60 * 60 * 24, // 1일 (초 단위)
+    httpOnly: false, // 클라이언트에서 접근 가능
+    secure: true, // HTTPS만 필요한 경우 true로 설정
+    sameSite: "none", // SameSite 설정
+  });
 
   // 로그인 된 상태 + 로그인 페이지로 진입
   if (auth && url.pathname.startsWith(AUTH_PATH)) {
