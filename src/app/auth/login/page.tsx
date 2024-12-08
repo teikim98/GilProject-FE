@@ -43,6 +43,10 @@ const HomePage = () => {
   };
 
   useEffect(() => {
+    if(localStorage.getItem("access") !== null){
+      window.location.href="/main";
+    }
+
     // tokenClean();
   }, []);
 

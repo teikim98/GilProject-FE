@@ -4,7 +4,6 @@ import axios from "axios";
 //회원가입, 로그인 관련 API///////////////
 import { getDetailProfile } from "./user";
 import { customInterceptors } from "./interceptors";
-import { loginCheckerTokenGenerator } from "@/util/loginChecker";
 
 const api = axios.create({
   baseURL: `${process.env.NEXT_PUBLIC_API_URL}/auth`,

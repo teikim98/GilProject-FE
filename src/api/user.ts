@@ -3,7 +3,6 @@ import axios from "axios";
 import { cookies } from "next/headers";
 import { GetUserPostsResponse } from "@/types/types";
 import { customInterceptors } from "./interceptors";
-import { removeLoginChecker } from "@/util/loginChecker";
 
 //유저(마이페이지) 관련 API///////////////
 
