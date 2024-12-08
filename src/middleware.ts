@@ -8,16 +8,16 @@ const LOGIN_PAGE = "/auth/login";
 const MAIN_PAGE = "/main";
 
 export function middleware(request: NextRequest) {
-  const authHeader = request.headers.get('Authorization');
-  const url = request.nextUrl.clone();
+  // const authHeader = request.headers.get('Authorization');
+  // const url = request.nextUrl.clone();
 
-  if (authHeader && url.pathname.startsWith(AUTH_PATH)) {
-    return NextResponse.redirect(new URL(MAIN_PAGE, request.url));
-  } else if(!authHeader) {
-    return NextResponse.redirect(new URL(LOGIN_PAGE, request.url));
-  }
+  // if (authHeader && url.pathname.startsWith(AUTH_PATH)) {
+  //   return NextResponse.redirect(new URL(MAIN_PAGE, request.url));
+  // } else if(!authHeader) {
+  //   return NextResponse.redirect(new URL(LOGIN_PAGE, request.url));
+  // }
 
-  return NextResponse.next();
+  // return NextResponse.next();
 
   // const { pathname } = request.nextUrl;
 
