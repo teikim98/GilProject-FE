@@ -7,7 +7,7 @@ export const loginCheckerTokenGenerator = () => {
   // const futureDate = new Date();
   // futureDate.setFullYear(futureDate.getFullYear() + 100); // 100년 후로 설정
   // document.cookie = `loginchecker=; path=/; expires=${futureDate.toUTCString()}`;
-  document.cookie = `${AUTH_STATUS_COOKIE}=; domain=.gil-project.kro.kr; path=/;}`;
+  document.cookie = `${AUTH_STATUS_COOKIE}=; path=/;}`;
 
 };
 
