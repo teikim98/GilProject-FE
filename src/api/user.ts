@@ -119,7 +119,7 @@ export const logout = async () => {
     );
     localStorage.removeItem("access");
     localStorage.removeItem("address-popup");
-    removeLoginChecker();
+    // removeLoginChecker();
   } catch (error) {
     console.error("로그아웃 실패:", error);
   }

@@ -43,7 +43,7 @@ export const emailLogin = async (email: string, password: string) => {
       localStorage.setItem("access", accessToken);
 
       //페이지 처리용 쿠키 생성
-      loginCheckerTokenGenerator();
+      // loginCheckerTokenGenerator();
 
       // 전체 유저 정보를 가져옴
       const userResponse = await getDetailProfile();

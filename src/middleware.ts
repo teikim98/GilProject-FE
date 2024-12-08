@@ -10,13 +10,13 @@ const MAIN_PAGE = "/main";
 export function middleware(request: NextRequest) {
   // const { pathname } = request.nextUrl;
 
-  const url = request.nextUrl.clone();
-  console.log(url.pathname);
-  // url.pathname = "/signin";
-  // return NextResponse.redirect(url);
+  // const url = request.nextUrl.clone();
+  // console.log(url.pathname);
+  // // url.pathname = "/signin";
+  // // return NextResponse.redirect(url);
 
-  const auth = request.cookies.has(AUTH_STATUS_COOKIE);
-  console.log("auth = " + auth);
+  // const auth = request.cookies.has(AUTH_STATUS_COOKIE);
+  // console.log("auth = " + auth);
   // const auth = false;
   // document.cookie = `${AUTH_STATUS_COOKIE}`
 
