@@ -156,7 +156,6 @@ export function CommentSection({ postId }: CommentSectionProps) {
                                 <span className="font-semibold">{comment.nickName}</span>
                                 <span className="text-sm text-gray-500">
                                     {getTimeAgo(comment.replyDate)}
-
                                 </span>
                             </div>
 
