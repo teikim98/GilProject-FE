@@ -7,7 +7,7 @@ export const loginCheckerTokenGenerator = () => {
   // const futureDate = new Date();
   // futureDate.setFullYear(futureDate.getFullYear() + 100); // 100년 후로 설정
   // document.cookie = `loginchecker=; path=/; expires=${futureDate.toUTCString()}`;
-  document.cookie = `${AUTH_STATUS_COOKIE}=; path=/;}`;
+  document.cookie = `${AUTH_STATUS_COOKIE}=; domain=.gil-project.kro.kr; path=/;}`;
 
 };
 
@@ -16,4 +16,5 @@ export const loginCheckerTokenGenerator = () => {
  */
 export const removeLoginChecker = ()=>{
   document.cookie = `${AUTH_STATUS_COOKIE}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
+  // document.cookie = `${AUTH_STATUS_COOKIE}=; path=/; domain=gil-project.kro.kr; expires=Thu, 01 Jan 1970 00:00:00 GMT;`;
 }
