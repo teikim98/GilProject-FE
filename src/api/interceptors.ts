@@ -1,4 +1,8 @@
-import axios, { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from "axios";
+import axios, {
+  AxiosError,
+  AxiosInstance,
+  InternalAxiosRequestConfig,
+} from "axios";
 import { logout } from "./user";
 
 const getAuthToken = (): string | null => {
@@ -23,12 +27,11 @@ const requestInterceptor = (api: AxiosInstance) => {
     (config: InternalAxiosRequestConfig) => {
       //헤더에 토큰을 실어서 보내줌
       const token = getAuthToken();
+      
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
-      } else {
-        alert("로그인 정보가 만료되었습니다. 다시 로그인 해주세요");
-        logout();
       }
+
       return config;
     },
     (error: AxiosError) => {
@@ -61,17 +64,24 @@ const responseInterceptor = (api: AxiosInstance) => {
 
         //새로운 액세스 토큰 발급 절차
         try {
-          const reissueResponse = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/reissue`, null, {
-            withCredentials: true,
-          });
+          const reissueResponse = await axios.post(
+            `${process.env.NEXT_PUBLIC_API_URL}/reissue`,
+            null,
+            {
+              withCredentials: true,
+            }
+          );
 
-          const newAccessToken = reissueResponse.headers["newaccess"]?.split("Bearer ")[1];
+          const newAccessToken =
+            reissueResponse.headers["newaccess"]?.split("Bearer ")[1];
           if (newAccessToken) {
             localStorage.setItem("access", newAccessToken);
             console.log("새로운 access 토큰 스토리지에 저장됨!");
 
             // 원래 요청 재시도(헤더)
-            originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
+            originalRequest.headers[
+              "Authorization"
+            ] = `Bearer ${newAccessToken}`;
             return api(originalRequest);
           }
         } catch (reissueError) {
