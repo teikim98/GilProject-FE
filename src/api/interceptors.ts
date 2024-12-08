@@ -27,7 +27,7 @@ const requestInterceptor = (api: AxiosInstance) => {
     (config: InternalAxiosRequestConfig) => {
       //헤더에 토큰을 실어서 보내줌
       const token = getAuthToken();
-      
+
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
@@ -58,9 +58,9 @@ const responseInterceptor = (api: AxiosInstance) => {
 
       // 900에러 처리
       if (error.response && error.response.status === 900) {
-        console.log("access 토큰이 만료되거나 정상이 아님");
+        // console.log("access 토큰이 만료되거나 정상이 아님");
         const errorMessage = error.response.data;
-        console.log("백엔드에서 온 에러 메세지 : " + errorMessage);
+        // console.log("백엔드에서 온 에러 메세지 : " + errorMessage);
 
         //새로운 액세스 토큰 발급 절차
         try {
@@ -76,7 +76,7 @@ const responseInterceptor = (api: AxiosInstance) => {
             reissueResponse.headers["newaccess"]?.split("Bearer ")[1];
           if (newAccessToken) {
             localStorage.setItem("access", newAccessToken);
-            console.log("새로운 access 토큰 스토리지에 저장됨!");
+            // console.log("새로운 access 토큰 스토리지에 저장됨!");
 
             // 원래 요청 재시도(헤더)
             originalRequest.headers[
