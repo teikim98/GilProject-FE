@@ -8,6 +8,20 @@ const LOGIN_PAGE = "/auth/login";
 const MAIN_PAGE = "/main";
 
 export function middleware(request: NextRequest) {
+  const authHeader = request.headers.get('Authorization');
+
+  if (authHeader) {
+    // const token = authHeader.split(' ')[1];  // 'Bearer <token>'에서 <token> 추출
+    // console.log('Token:', token);
+
+    // // 여기서 토큰 검증 로직 추가 (예: JWT 토큰 검증 등)
+    
+    // // 토큰이 유효한 경우 요청을 계속 처리
+    return NextResponse.next();
+  } else {
+    return NextResponse.redirect(new URL(LOGIN_PAGE, request.url));
+  }
+
   // const { pathname } = request.nextUrl;
 
   // const url = request.nextUrl.clone();
@@ -77,7 +91,7 @@ export function middleware(request: NextRequest) {
   //   }
   // }
 
-  return NextResponse.next();
+  // return NextResponse.next();
 }
 
 export const config = {
