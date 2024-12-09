@@ -26,7 +26,7 @@ export function MarkerOverlay({ content, imageUrl, pinId, position, visible, onC
                 clickable={true}
             >
                 <div
-                    className="marker-overlay relative bottom-12 -left-2 bg-white dark:bg-gray-800 rounded-lg shadow-lg min-w-[200px] max-w-[300px]"
+                    className="marker-overlay relative bottom-6 -left-2 bg-white dark:bg-gray-800 rounded-lg shadow-lg min-w-[200px] max-w-[300px]"
                     onClick={(e) => {
                         e.stopPropagation();
                     }}
