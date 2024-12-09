@@ -37,7 +37,7 @@ export default function RootLayout({
         <GoogleAnalytics gaId={`${process.env.NEXT_PUBLIC_GA_ID}`} />
 
         <link rel="apple-touch-icon" href="/icons/icon-192x192.j" />
-
+        <title>길따라</title>
       </head>
       <body className="font-pretendard">
         <Suspense
