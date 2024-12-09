@@ -9,7 +9,8 @@ import { PopupData } from "@/types/types_JHW";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "../ui/alert-dialog";
 import { ChangePopupData } from '../../types/types_JHW';
 import CustomDialoguePopup from "./CustomDialoguePopup";
-import { changePassword, logout } from "@/api/user";
+import { changePassword } from "@/api/user";
+import { handleLogout } from "@/api/interceptors";
 
 const PasswordChangePopup = (props: ChangePopupData) => {
   const [password, setPassword] = useState("");
@@ -80,7 +81,7 @@ const PasswordChangePopup = (props: ChangePopupData) => {
           onConfirm: () => {
             setIsCustomPopupOpen(false);
             props.setIsPopupOpen(false);
-            logout();
+            handleLogout();
           }
         });
         // setIsPopupOpen(true);

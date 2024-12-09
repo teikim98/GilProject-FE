@@ -1,4 +1,3 @@
-// CommentSection.tsx
 'use client'
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -10,26 +9,48 @@ import { getComments, createComment, deleteComment, toggleCommentLike } from "@/
 import { toast } from "@/hooks/use-toast";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import ProfileDialog from "../user/ProfileDialog";
+import { jwtDecode } from "jwt-decode";
 
 interface CommentSectionProps {
     postId: number;
 }
 
-// ReplyDTO 타입 정의
 interface Reply {
-    replyId: number;      // id → replyId
+    replyId: number;
     replyUserId: number;
     content: string;
-    replyDate: string;    // writeDate → replyDate
+    replyDate: string;
     nickName: string;
     likesCount: number;
-    isLiked: boolean;     // liked → isLiked
+    isLiked: boolean;
+}
+
+interface JWTPayload {
+    id: number;
 }
 
 export function CommentSection({ postId }: CommentSectionProps) {
     const [comments, setComments] = useState<Reply[]>([]);
     const [newComment, setNewComment] = useState("");
     const [isLoading, setIsLoading] = useState(false);
+    const [userId, setUserId] = useState<number | null>(null);
+    const [token, setToken] = useState<string | null>(null);
+    const [isMounted, setIsMounted] = useState(false);
+
+    useEffect(() => {
+        setIsMounted(true);
+        const storedToken = localStorage.getItem("access");
+        setToken(storedToken);
+
+        if (storedToken) {
+            try {
+                const decoded = jwtDecode<JWTPayload>(storedToken);
+                setUserId(decoded.id);
+            } catch (error) {
+                console.error("Token decode error:", error);
+            }
+        }
+    }, []);
 
     const getTimeAgo = (isoDate: string): string => {
         const now = new Date();
@@ -39,23 +60,11 @@ export function CommentSection({ postId }: CommentSectionProps) {
         const diffInHours = Math.floor(diffInMinutes / 60);
         const diffInDays = Math.floor(diffInHours / 24);
 
-        // 1분 미만
-        if (diffInSeconds < 60) {
-            return '방금 전';
-        }
-        // 1시간 미만
-        if (diffInMinutes < 60) {
-            return `${diffInMinutes}분 전`;
-        }
-        // 24시간 미만
-        if (diffInHours < 24) {
-            return `${diffInHours}시간 전`;
-        }
-        // 7일 미만
-        if (diffInDays < 7) {
-            return `${diffInDays}일 전`;
-        }
-        // 7일 이상
+        if (diffInSeconds < 60) return '방금 전';
+        if (diffInMinutes < 60) return `${diffInMinutes}분 전`;
+        if (diffInHours < 24) return `${diffInHours}시간 전`;
+        if (diffInDays < 7) return `${diffInDays}일 전`;
+
         return past.toLocaleDateString('ko-KR', {
             year: 'numeric',
             month: 'long',
@@ -65,12 +74,11 @@ export function CommentSection({ postId }: CommentSectionProps) {
         });
     };
 
-
-    // 댓글 목록 조회
     const fetchComments = async () => {
+        if (!isMounted) return;
+
         try {
             const data = await getComments(postId);
-            console.log(data)
             setComments(data);
         } catch (error) {
             toast({
@@ -82,18 +90,19 @@ export function CommentSection({ postId }: CommentSectionProps) {
     };
 
     useEffect(() => {
-        fetchComments();
-    }, [postId]);
+        if (isMounted) {
+            fetchComments();
+        }
+    }, [postId, isMounted]);
 
-    // 댓글 작성
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!newComment.trim()) return;
+        if (!newComment.trim() || !token) return;
 
         setIsLoading(true);
         try {
             await createComment(postId, newComment);
-            await fetchComments(); // 댓글 목록 새로고침
+            await fetchComments();
             setNewComment("");
             toast({
                 description: "댓글이 작성되었습니다.",
@@ -109,12 +118,9 @@ export function CommentSection({ postId }: CommentSectionProps) {
         }
     };
 
-    // 댓글 삭제
     const handleDelete = async (replyId: number) => {
-        if (!replyId) {
-            console.error("Reply ID is missing");
-            return;
-        }
+        if (!replyId || !token) return;
+
         try {
             await deleteComment(postId, replyId);
             await fetchComments();
@@ -128,12 +134,9 @@ export function CommentSection({ postId }: CommentSectionProps) {
         }
     };
 
-    //좋아요 토글
     const handleLikeToggle = async (replyId: number) => {
-        if (!replyId) {
-            console.error("Reply ID is missing");
-            return;
-        }
+        if (!replyId || !token) return;
+
         try {
             await toggleCommentLike(postId, replyId);
             await fetchComments();
@@ -143,6 +146,8 @@ export function CommentSection({ postId }: CommentSectionProps) {
             });
         }
     };
+
+    if (!isMounted) return null;
 
     return (
         <div className="space-y-4 mb-16">
@@ -156,7 +161,6 @@ export function CommentSection({ postId }: CommentSectionProps) {
                                 <span className="font-semibold">{comment.nickName}</span>
                                 <span className="text-sm text-gray-500">
                                     {getTimeAgo(comment.replyDate)}
-
                                 </span>
                             </div>
 
@@ -178,35 +182,37 @@ export function CommentSection({ postId }: CommentSectionProps) {
                                         {comment.likesCount}
                                     </span>
                                 </Button>
-                                <AlertDialog>
-                                    <AlertDialogTrigger asChild>
-                                        <Button
-                                            variant="ghost"
-                                            size="sm"
-                                            className="h-8 px-2"
-                                        >
-                                            <Trash2 className="w-4 h-4" />
-                                        </Button>
-                                    </AlertDialogTrigger>
-                                    <AlertDialogContent>
-                                        <AlertDialogHeader>
-                                            <AlertDialogTitle>댓글 삭제</AlertDialogTitle>
-                                            <AlertDialogDescription>
-                                                정말로 이 댓글을 삭제하시겠습니까?
-                                                이 작업은 되돌릴 수 없습니다.
-                                            </AlertDialogDescription>
-                                        </AlertDialogHeader>
-                                        <AlertDialogFooter>
-                                            <AlertDialogCancel>취소</AlertDialogCancel>
-                                            <AlertDialogAction
-                                                onClick={() => handleDelete(comment.replyId)}
-                                                className="bg-red-500 hover:bg-red-600"
+                                {userId === comment.replyUserId && (
+                                    <AlertDialog>
+                                        <AlertDialogTrigger asChild>
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                className="h-8 px-2"
                                             >
-                                                삭제
-                                            </AlertDialogAction>
-                                        </AlertDialogFooter>
-                                    </AlertDialogContent>
-                                </AlertDialog>
+                                                <Trash2 className="w-4 h-4" />
+                                            </Button>
+                                        </AlertDialogTrigger>
+                                        <AlertDialogContent>
+                                            <AlertDialogHeader>
+                                                <AlertDialogTitle>댓글 삭제</AlertDialogTitle>
+                                                <AlertDialogDescription>
+                                                    정말로 이 댓글을 삭제하시겠습니까?
+                                                    이 작업은 되돌릴 수 없습니다.
+                                                </AlertDialogDescription>
+                                            </AlertDialogHeader>
+                                            <AlertDialogFooter>
+                                                <AlertDialogCancel>취소</AlertDialogCancel>
+                                                <AlertDialogAction
+                                                    onClick={() => handleDelete(comment.replyId)}
+                                                    className="bg-red-500 hover:bg-red-600"
+                                                >
+                                                    삭제
+                                                </AlertDialogAction>
+                                            </AlertDialogFooter>
+                                        </AlertDialogContent>
+                                    </AlertDialog>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -219,19 +225,18 @@ export function CommentSection({ postId }: CommentSectionProps) {
                             onChange={(e) => setNewComment(e.target.value)}
                             placeholder="댓글을 입력하세요..."
                             className="resize-none min-h-[40px] py-2 px-3 leading-[20px]"
-                            disabled={isLoading}
+                            disabled={isLoading || !token}
                         />
                     </div>
                     <Button
                         type="submit"
                         size="sm"
                         className="flex-shrink-0 h-[40px] w-[40px] p-0"
-                        disabled={!newComment.trim() || isLoading}
+                        disabled={!newComment.trim() || isLoading || !token}
                     >
                         <Send className="h-4 w-4" />
                     </Button>
                 </form>
-
             </div>
         </div>
     );

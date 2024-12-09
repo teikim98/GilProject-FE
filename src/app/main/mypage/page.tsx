@@ -71,7 +71,7 @@ export default function Page() {
         <div className='animate-fade-in flex flex-col pb-20'>
             <BackHeader content='마이 페이지' />
             <Card className="w-full border-0 shadow-none">
-                <CardHeader className="pt-0 px-6 pb-3">
+                <CardHeader className="pt-3 px-6 pb-3">
                     <div className="flex flex-row gap-2 justify-between items-center">
                         <div className="flex flex-row items-center">
                             <div className="relative">

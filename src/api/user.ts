@@ -105,28 +105,6 @@ export const updateUserPoints = async (pathId: number) => {
     throw error;
   }
 };
-
-export const logout = async () => {
-  // 2. 서버 측 로그아웃 요청 (Refresh 토큰 전송)
-  try {
-    await axios.post(
-      `${process.env.NEXT_PUBLIC_API_URL}/logout`,
-      {}, // 요청 바디는 비워둠
-      {
-        withCredentials: true, // 쿠키 포함
-      }
-    );
-    localStorage.removeItem("access");
-    localStorage.removeItem("address-popup");
-    // removeLoginChecker();
-  } catch (error) {
-    console.error("로그아웃 실패:", error);
-  }
-
-  window.location.href = "/auth/login";
-  console.log("로그아웃 성공");
-};
-
 //현재 로그인한 사용자가 작성한 산책길 가져오기
 export const getUserPosts = async (
   page = 0,
