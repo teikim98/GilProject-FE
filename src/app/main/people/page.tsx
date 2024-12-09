@@ -26,7 +26,7 @@ const teamMembers = [
     {
         name: "한은미",
         role: "백엔드 개발 및 SSE 알림 처리",
-        description: "진심을 다해 고민하고 개발했습니다. 많이 많이 사용해주세요!날씨요정 한은미입니다. >_<",
+        description: "진심을 다해 고민하고 개발했습니다. 꾸준히 성장하는 개발자 한은미입니다.",
         imageUrl: "/한은미.jpeg",
         github: "https://github.com/Eunmi-Han",
         email: "leahan0302@gmail.com"
@@ -41,7 +41,7 @@ const teamMembers = [
     },
     {
         name: "염진",
-        role: "검색엔진 및 백엔드 개발",
+        role: "백엔드 개발 및 검색엔진",
         description: "사용자의 편에 서서 생각하고 고민하고 개발하는 염진입니다.",
         imageUrl: "/염진.jpeg",
         github: "https://github.com/jinyerom1998",
