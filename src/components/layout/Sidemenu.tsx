@@ -32,7 +32,7 @@ export default function Sidemenu() {
     const pathname = usePathname();
     const router = useRouter();
     const notifications = useNotificationStore((state) => state.notifications);
-    const unreadCount = notifications.length;
+    const unreadCount = notifications.filter(notification => notification.state === 0).length;
     const { data: profileInfo, isLoading, error } = useDetailProfile();
 
 
