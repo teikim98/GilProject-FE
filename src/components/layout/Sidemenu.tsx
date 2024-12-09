@@ -26,6 +26,8 @@ const navigationItems = [
     { name: '알림', href: '/main/notification' },
     { name: '나의 경로 기록', href: '/main/mypage/myRoute' },
     { name: '산책길 보기', href: '/main/board' },
+    { name: '😸 만든 사람들 😸', href: '/main/people' },
+
 ];
 
 export default function Sidemenu() {
