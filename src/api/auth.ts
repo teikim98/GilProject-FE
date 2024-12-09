@@ -62,7 +62,12 @@ export const emailLogin = async (email: string, password: string) => {
  * 이메일 회원가입
  * @returns
  */
-export const emailJoin = async ({ name, nickName, email, password }: emailFormProperty) => {
+export const emailJoin = async ({
+  name,
+  nickName,
+  email,
+  password,
+}: emailFormProperty) => {
   try {
     const formData = new FormData();
     formData.append("name", name);

@@ -12,13 +12,13 @@ import { cn } from "@/lib/utils";
 import { HamburgerMenuIcon } from '@radix-ui/react-icons'
 import { Bell } from 'lucide-react'
 import Profile from "../user/profile";
-import { logout } from "@/api/user";
 import { useRouter } from 'next/navigation';
 import { useNotificationStore } from "@/store/useNotificationStore";
 import { Button } from "../ui/button";
 import SideProfile from "../user/SidemenuProfile";
 import { useDetailProfile } from "@/hooks/queries/useUserQuery";
 import PWAInstallButton from "./PwaInstallBtn";
+import { handleLogout } from "@/api/interceptors";
 
 
 const navigationItems = [
@@ -36,9 +36,8 @@ export default function Sidemenu() {
     const { data: profileInfo, isLoading, error } = useDetailProfile();
 
 
-    const handleLogout = () => {
-        logout();
-        // router.push('/'); // 로그아웃 후 홈페이지로 이동
+    const handleLogoutClick = () => {
+        handleLogout();
     };
 
     return (
@@ -109,7 +108,7 @@ export default function Sidemenu() {
                             </li>
                             <li>
                                 <button
-                                    onClick={handleLogout}
+                                    onClick={handleLogoutClick}
                                     className="block w-full text-left px-4 py-2 text-lg rounded-md transition-colors hover:bg-muted text-destructive dark:text-red-400"
                                 >
                                     로그아웃
