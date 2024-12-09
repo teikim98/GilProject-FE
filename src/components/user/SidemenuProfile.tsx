@@ -27,7 +27,7 @@ export default function SideProfile({
 
     return (
         <Card className="border-0 shadow-none mb-4">
-            <CardContent className="p-4">
+            <CardContent className="p-0 pt-2">
                 <div className="flex items-center gap-4 mb-4">
                     <div className="relative">
                         <div className={`medal w-20 h-20 rounded-full ${profileInfo.point >= 500 ? 'bg-[url(/medal/gold.png)]' : profileInfo.point >= 300 ? 'bg-[url(/medal/silver.png)]' : profileInfo.point >= 100 ? 'bg-[url(/medal/bronze.png)]' : null} bg-cover bg-center`}>
@@ -40,7 +40,7 @@ export default function SideProfile({
                                         style={{ position: "absolute", transform: "translate(-50%, -50%)", top: "60%", left: "50%" }}
                                     />
                                 ) : (
-                                    <Camera className="w-12 h-12 p-2 bg-muted rounded-full"  style={{ position: "absolute", transform: "translate(-50%, -50%)", top: "60%", left: "50%" }}/>
+                                    <Camera className="w-12 h-12 p-2 bg-muted rounded-full" style={{ position: "absolute", transform: "translate(-50%, -50%)", top: "60%", left: "50%" }} />
                                 )}
                             </div>
                         </div>

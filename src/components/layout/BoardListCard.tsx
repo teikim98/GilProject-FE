@@ -22,34 +22,24 @@ export default function BoardCard({ post }: BoardCardProps) {
     const router = useRouter();
     const queryClient = useQueryClient();
     const [isDialogOpen, setIsDialogOpen] = useState(false);
-    const [preventNavigation, setPreventNavigation] = useState(false);
     const setSelectedLocation = useLocationStore(state => state.setSelectedLocation);
     const setQuery = useSearchStore(state => state.setQuery);
 
-    // 마우스 호버 시 데이터 미리 불러오기
     const prefetchPost = () => {
         queryClient.prefetchQuery({
             queryKey: ['post', post.postId],
             queryFn: () => getPost(post.postId),
-            staleTime: 1000 * 60 * 5 // 5분간 캐시 유지
+            staleTime: 1000 * 60 * 5
         });
     };
 
-    const handleClick = (e: React.MouseEvent) => {
-        if (isDialogOpen || preventNavigation) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            if (preventNavigation) {
-                setTimeout(() => {
-                    setPreventNavigation(false);
-                }, 100);
-            }
+    const handlePostClick = () => {
+        if (!isDialogOpen) {
+            router.push(`/main/board/${post.postId}`);
         }
     };
 
     const handleTagClick = (e: React.MouseEvent, tag: string) => {
-        e.preventDefault();
         e.stopPropagation();
         setSelectedLocation('검색결과');
         setQuery('');
@@ -57,73 +47,71 @@ export default function BoardCard({ post }: BoardCardProps) {
     };
 
     return (
-        <Card className="p-4 hover:shadow-lg transition-shadow" onMouseEnter={prefetchPost}>
-            <Link href={`/main/board/${post.postId}`} onClick={handleClick}>
-                <div className="flex items-start justify-between gap-3 mb-3">
-                    <div className='flex gap-3'>
+        <Card
+            className="p-4 hover:shadow-lg transition-shadow cursor-pointer"
+            onMouseEnter={prefetchPost}
+            onClick={handlePostClick}
+        >
+            <div className="flex items-start justify-between gap-3 mb-3">
+                <div className='flex gap-3'>
+                    <div onClick={e => e.stopPropagation()}>
                         <ProfileDialog
                             userId={post.postUserId}
-                            onOpenChange={(open) => {
-                                setIsDialogOpen(open);
-                                if (!open) {
-                                    setPreventNavigation(true);
-                                }
-                            }}
+                            onOpenChange={setIsDialogOpen}
                         />
-
-                        <div>
-                            <h3 className="font-medium">{post.nickName}</h3>
-                            <p className="text-sm text-gray-500 dark:text-gray-400">
-                                {getTimeAgo(post.writeDate)}
-                            </p>
-                        </div>
                     </div>
 
-                    <p className='text-sm text-gray-500 dark:text-gray-400'>조회수 {post.readNum}</p>
+                    <div>
+                        <h3 className="font-medium">{post.nickName}</h3>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                            {getTimeAgo(post.writeDate)}
+                        </p>
+                    </div>
                 </div>
 
-                <h2 className="text-xl font-bold mb-2">{post.title}</h2>
+                <p className='text-sm text-gray-500 dark:text-gray-400'>조회수 {post.readNum}</p>
+            </div>
+
+            <h2 className="text-xl font-bold mb-2">{post.title}</h2>
+
+            {post.pathResDTO && (
+                <div className="h-48 mb-3">
+                    <ViewingMap
+                        route={{
+                            routeCoordinates: post.pathResDTO.routeCoordinates,
+                            pins: post.pathResDTO.pins
+                        }}
+                        width="w-full"
+                        height="h-full"
+                    />
+                </div>
+            )}
+
+            <div className="flex justify-between items-center">
+                <div className="flex gap-4">
+                    <div className="flex items-center gap-1 text-gray-600 dark:text-gray-400">
+                        <Heart size={18} className={post.liked === true ? 'fill-red-500 text-red-500' : ''} />
+                        <span>{post.likesCount}</span>
+                    </div>
+                    <div className="flex items-center gap-1 text-gray-600 dark:text-gray-400">
+                        <MessageCircle size={18} />
+                        <span>{post.repliesCount}</span>
+                    </div>
+                </div>
 
                 {post.pathResDTO && (
-                    <div className="h-48 mb-3">
-                        <ViewingMap
-                            route={{
-                                routeCoordinates: post.pathResDTO.routeCoordinates,
-                                pins: post.pathResDTO.pins
-                            }}
-                            width="w-full"
-                            height="h-full"
-                        />
+                    <div className="flex gap-3 text-sm text-gray-500 dark:text-gray-400">
+                        <span>{post.pathResDTO.distance}km</span>
+                        <span>{post.pathResDTO.time}분</span>
+                        <button
+                            onClick={(e) => handleTagClick(e, post.tag)}
+                            className="text-xs bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                        >
+                            {post.tag}
+                        </button>
                     </div>
                 )}
-
-                <div className="flex justify-between items-center">
-                    <div className="flex gap-4">
-                        <div className="flex items-center gap-1 text-gray-600 dark:text-gray-400">
-                            <Heart size={18} className={post.liked === true ? 'fill-red-500 text-red-500' : ''} />
-                            <span>{post.likesCount}</span>
-                        </div>
-                        <div className="flex items-center gap-1 text-gray-600 dark:text-gray-400">
-                            <MessageCircle size={18} />
-                            <span>{post.repliesCount}</span>
-                        </div>
-                    </div>
-
-                    {post.pathResDTO && (
-                        <div className="flex gap-3 text-sm text-gray-500 dark:text-gray-400">
-                            <span>{post.pathResDTO.distance}km</span>
-                            <span>{post.pathResDTO.time}분</span>
-                            <button
-                                onClick={(e) => handleTagClick(e, post.tag)}
-                                className="text-xs bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
-                            >
-                                {post.tag}
-                            </button>
-                        </div>
-                    )}
-                </div>
-            </Link>
+            </div>
         </Card>
     );
 }
-

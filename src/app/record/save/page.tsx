@@ -23,7 +23,6 @@ export default function SaveRoutePage() {
     // store에서 경로와 마커 데이터 가져오기
     const { pathPositions, pins, recordStartTime, resetRecord } = useRecordStore();
 
-    // const isFormModified = title.trim() !== '' || description.trim() !== '';
 
     useEffect(() => {
         setIsSaving(true);

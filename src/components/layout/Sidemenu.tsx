@@ -18,6 +18,7 @@ import { useNotificationStore } from "@/store/useNotificationStore";
 import { Button } from "../ui/button";
 import SideProfile from "../user/SidemenuProfile";
 import { useDetailProfile } from "@/hooks/queries/useUserQuery";
+import PWAInstallButton from "./PwaInstallBtn";
 
 
 const navigationItems = [
@@ -65,7 +66,7 @@ export default function Sidemenu() {
                     <HamburgerMenuIcon className="w-5 h-5 text-purple-900 dark:text-purple-100" />
                 </SheetTrigger>
 
-                <SheetContent side="right" className="w-[350px]">
+                <SheetContent side="right" className="w-[70%]">
                     <SheetHeader>
                         <SheetTitle className="text-left">메뉴</SheetTitle>
                     </SheetHeader>
@@ -103,6 +104,9 @@ export default function Sidemenu() {
                                     </Link>
                                 </li>
                             ))}
+                            <li>
+                                <PWAInstallButton />
+                            </li>
                             <li>
                                 <button
                                     onClick={handleLogout}

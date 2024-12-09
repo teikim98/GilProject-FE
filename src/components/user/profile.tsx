@@ -176,7 +176,11 @@ export default function Profile({
                             className={`flex-1 flex items-center justify-center gap-2 ${profileInfo.isSubscribed === 1 ? 'bg-blue-500 text-white hover:bg-blue-600' : ''
                                 }`}
                         >
-                            <Users className="w-4 h-4" />
+                            {loading ? (
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                            ) : (
+                                <Users className="w-4 h-4" />
+                            )}
                             {profileInfo.isSubscribed === 1 ? '구독중' : '구독하기'}
                         </Button>
                         <Button

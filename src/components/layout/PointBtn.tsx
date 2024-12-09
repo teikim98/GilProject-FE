@@ -14,11 +14,11 @@ export default function PointBtn({ link, content, onClick }: PointProps) {
     // onClick이 있으면 Button만 반환
     if (onClick) {
         return (
-            <Button 
-                className="w-18 h-5 flex justify-between items-center"
+            <Button
+                className="w-15 h-6 flex justify-between items-center rounded-sm"
                 onClick={onClick}
             >
-                <span className="text-sm">{content}</span>
+                <span className="text-xs">{content}</span>
             </Button>
         );
     }

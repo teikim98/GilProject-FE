@@ -4,28 +4,14 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import Profile from "./profile"
 import { useState, useEffect } from "react"
 import { jwtDecode } from 'jwt-decode'
-import { subscribeUser, unsubscribeUser } from '@/api/subscribe'
 import { toast } from "@/hooks/use-toast"
-import { useDetailProfile, useSimpleProfile } from '@/hooks/queries/useUserQuery'
-import { useSubscribe, useUnsubscribe } from "@/hooks/queries/useSubscribe"
+import { useSimpleProfile } from '@/hooks/queries/useUserQuery'
+import { subscribeUser, unsubscribeUser } from "@/api/subscribe"
 
 interface ProfileDialogProps {
     userId: number;
     className?: string;
     onOpenChange?: (open: boolean) => void;
-}
-
-interface ProfileInfo {
-    id: number;
-    nickName: string;
-    imageUrl: string;
-    comment: string | null;
-    address: string | null;
-    postCount: number;
-    subscribeByCount: number;
-    pathCount: number;
-    isSubscribed?: boolean;
-    point: number;
 }
 
 interface JWTPayload {
@@ -35,21 +21,15 @@ interface JWTPayload {
 export default function ProfileDialog({ userId, className, onOpenChange }: ProfileDialogProps) {
     const [open, setOpen] = useState(false);
     const [isDetailView, setIsDetailView] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     const {
         data: simpleProfile,
-        isLoading: simpleLoading,
-        error: simpleError
+        isLoading: profileLoading,
+        error: profileError,
+        refetch
     } = useSimpleProfile(userId);
 
-    const {
-        data: detailProfile,
-        isLoading: detailLoading,
-        error: detailError
-    } = useDetailProfile();
-
-    const { mutate: subscribe, isPending: isSubscribing } = useSubscribe();
-    const { mutate: unsubscribe, isPending: isUnsubscribing } = useUnsubscribe();
 
 
     useEffect(() => {
@@ -65,38 +45,36 @@ export default function ProfileDialog({ userId, className, onOpenChange }: Profi
     }, [userId, open]);
 
     const handleSubscribeToggle = async () => {
-        if (!simpleProfile) return;
+        if (!simpleProfile || isLoading) return;
 
+        setIsLoading(true);
         try {
-            if (simpleProfile.isSubscribed === 0) {
-                await subscribe(simpleProfile.id);
+            // null이나 0이면 구독되지 않은 상태로 처리
+            if (!simpleProfile.isSubscribed) {
+                await subscribeUser(simpleProfile.id);
+                await refetch();
                 toast({
                     title: "구독 완료",
                     description: "내 길잡이로 등록했습니다",
                 });
-            } else {
-                await unsubscribe(simpleProfile.id);
+                // 1이면 구독된 상태로 처리
+            } else if (simpleProfile.isSubscribed === 1) {
+                await unsubscribeUser(simpleProfile.id);
+                await refetch();
                 toast({
                     title: "구독 취소",
                     description: "내 길잡이를 해제합니다.",
                 });
             }
         } catch (error) {
+            console.error("Subscribe error:", error);
             toast({
                 variant: "destructive",
                 title: "오류 발생",
                 description: "구독 상태 변경에 실패했습니다",
             });
-        }
-    };
-
-    const handleInteraction = (e: React.MouseEvent | React.TouchEvent) => {
-        console.log("clicked")
-        e.stopPropagation();
-        e.preventDefault();
-
-        if (!open) {
-            setOpen(true);
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -110,12 +88,11 @@ export default function ProfileDialog({ userId, className, onOpenChange }: Profi
             <DialogTrigger asChild>
                 <div
                     className="inline-block"
-                    onClick={handleInteraction}
-                    onMouseDown={handleInteraction}
-                    onTouchStart={handleInteraction}
-                    onPointerDown={(e) => {
+                    onClick={(e) => {
                         e.stopPropagation();
-                        e.preventDefault();
+                        if (!open) {
+                            setOpen(true);
+                        }
                     }}
                 >
                     <Avatar className={`cursor-pointer hover:opacity-80 transition-opacity ${className}`}>
@@ -128,15 +105,8 @@ export default function ProfileDialog({ userId, className, onOpenChange }: Profi
                 className="p-0 sm:max-w-[425px] flex flex-col min-h-[200px]"
                 onPointerDownOutside={(e) => {
                     e.preventDefault();
-                    e.stopPropagation();
-                    handleOpenChange(false);
                 }}
                 onInteractOutside={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                }}
-                onClick={(e) => {
-                    e.stopPropagation();
                     e.preventDefault();
                 }}
             >

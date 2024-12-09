@@ -14,6 +14,7 @@ import AddressChangePopup from "@/components/auth/AddressChangePopup";
 import PasswordChangePopup from "@/components/auth/PasswordChangePopup";
 import UpdateComment from "@/components/user/UpdateComment";
 import UpdateprofileImg from "@/components/user/updateprofileImg";
+import { useInvalidateUserQueries } from "@/hooks/queries/useUserQuery";
 
 export default function Page() {
   const [profileInfo, setProfileInfo] = useState<User | null>(null);
@@ -24,6 +25,8 @@ export default function Page() {
   const [isPasswordPopupOpen, setIsPasswordPopupOpen] = useState(false);
   const [isUpdateImgPopupOpen, setIsUpdateImgPopupOpen] = useState(false);
   const [isUpdateCommentPopupOpen, setIsUpdateCommentPopupOpen] = useState(false);
+  const invalidateUserQueries = useInvalidateUserQueries();
+
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -53,23 +56,26 @@ export default function Page() {
     setIsUpdateImgPopupOpen(true);
   }
 
-  const handleProfileImgVerified = (inputImgUrl: string) => {
+  const handleProfileImgVerified = async (inputImgUrl: string) => {
     if (inputImgUrl !== "") {
       // console.log(`입력된 프로필 이미지 Url: ${inputImgUrl}`);
       setProfileInfo(prev => prev ? { ...prev, imageUrl: inputImgUrl } : prev);
+      await invalidateUserQueries();
     }
   }
 
-  const handleCommentPopup = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
+  const handleCommentPopup = async (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
     //console.log("자기소개글 바꾸러 가쟈!!");
     e.preventDefault();
     setIsUpdateCommentPopupOpen(true);
+    await invalidateUserQueries();
   }
 
-  const handleCommentVerified = (inputComment: string) => {
+  const handleCommentVerified = async (inputComment: string) => {
     if (inputComment !== "") {
       //console.log(`입력된 자기소개글로 바꾸기 : ${inputComment}`);
       setProfileInfo(prev => prev ? { ...prev, comment: inputComment } : prev);
+      await invalidateUserQueries();
     }
   }
 
@@ -80,6 +86,7 @@ export default function Page() {
   const dataChangeComplete = async (data: string) => {
     console.log("변경된 data = " + data);
     setProfileInfo(await getDetailProfile());
+    await invalidateUserQueries();
   }
 
   if (error) {
@@ -183,15 +190,15 @@ export default function Page() {
             </div>
             <Separator className='my-4 border-t-2 border-muted-foreground' />
             <div className="flex flex-row justify-between items-center gap-2">
-            <div className="flex items-center gap-2">
-              <span className="font-bold text-base">자기소개</span>
-              <Input className='w-[70%] text-xs dark:bg-gray-700'
-                name="comment"
-                value={profileInfo?.comment || ""}
-                readOnly
-                onChange={(e) => setProfileInfo(prev => prev ? { ...prev, comment: e.target.value } : null)}
-                placeholder='자기소개가 없습니다'
-              /></div>
+              <div className="flex items-center gap-2">
+                <span className="font-bold text-base">자기소개</span>
+                <Input className='w-[70%] text-xs dark:bg-gray-700'
+                  name="comment"
+                  value={profileInfo?.comment || ""}
+                  readOnly
+                  onChange={(e) => setProfileInfo(prev => prev ? { ...prev, comment: e.target.value } : null)}
+                  placeholder='자기소개가 없습니다'
+                /></div>
               <Button
                 onClick={(e) => {
                   handleCommentPopup(e);
@@ -221,9 +228,10 @@ export default function Page() {
               </Button>
             </div>
             <Separator className='my-4 border-t-2 border-muted-foreground' />
-            <div className="flex flex-col items-center justify-center space-y-4">
+            
+            {/* <div className="flex flex-col items-center justify-center space-y-4">
 
-            </div>
+            </div> */}
           </div>
         </CardContent>
         <CardFooter className="px-6 pt-0 flex justify-center">

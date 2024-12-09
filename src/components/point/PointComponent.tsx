@@ -21,7 +21,7 @@ export default function PointDialog({ isOpen, onOpenChange }: PointDialogProps) 
                 console.error('포인트 조회 실패:', error);
             }
         };
-        
+
         if (isOpen) {
             getPoints();
         }
@@ -31,7 +31,7 @@ export default function PointDialog({ isOpen, onOpenChange }: PointDialogProps) 
         <Dialog open={isOpen} onOpenChange={onOpenChange}>
             <DialogContent className="max-h-[80vh] overflow-y-auto">
                 <DialogHeader>
-                    <DialogTitle>내 포인트</DialogTitle>
+                    <DialogTitle>내 발걸음</DialogTitle>
                 </DialogHeader>
                 <div className="grid w-full items-center gap-4">
                     <div className="flex flex-col space-y-1.5">

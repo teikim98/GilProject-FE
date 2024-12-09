@@ -3,7 +3,6 @@ import axios from "axios";
 import { cookies } from "next/headers";
 import { GetUserPostsResponse } from "@/types/types";
 import { customInterceptors } from "./interceptors";
-import { removeLoginChecker } from "@/util/loginChecker";
 
 //유저(마이페이지) 관련 API///////////////
 
@@ -119,7 +118,7 @@ export const logout = async () => {
     );
     localStorage.removeItem("access");
     localStorage.removeItem("address-popup");
-    removeLoginChecker();
+    // removeLoginChecker();
   } catch (error) {
     console.error("로그아웃 실패:", error);
   }

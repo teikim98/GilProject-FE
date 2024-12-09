@@ -107,12 +107,7 @@ export default function BoardList() {
                 </div>
             ))}
 
-            {postsWithDistance.length === 0 && !isLoading && (
-                <div className='flex justify-center items-center h-40'>
-                    <p className="text-gray-500">게시물이 없습니다...</p>
-                </div>
-            )}
-
+            {/* 초기 로딩 상태이거나 다음 페이지 로딩 중일 때 스켈레톤 표시 */}
             {(isLoading || isFetchingNextPage) && (
                 Array(3).fill(0).map((_, index) => (
                     <div key={index}>
@@ -121,17 +116,26 @@ export default function BoardList() {
                 ))
             )}
 
+            {/* 에러 상태 표시 */}
             {isError && (
                 <div className="flex justify-center items-center h-40">
                     <p className="text-red-500">게시글을 불러오는데 실패했습니다.</p>
                 </div>
             )}
 
+            {/* 검색 결과가 없을 때 표시 */}
             {!isLoading && !isError && postsWithDistance.length === 0 && (query || tagParam) && (
                 <div className="flex flex-col items-center justify-center py-10 text-gray-500">
                     <Search className="w-12 h-12 mb-4" />
                     <p className="text-lg mb-2">검색 결과가 없습니다</p>
                     <p className="text-sm">다른 키워드로 검색해보세요</p>
+                </div>
+            )}
+
+            {/* 게시물이 없을 때 표시 (로딩 중이 아니고, 에러가 아니고, 검색 중이 아닐 때만) */}
+            {!isLoading && !isError && postsWithDistance.length === 0 && !query && !tagParam && (
+                <div className='flex justify-center items-center h-40'>
+                    <p className="text-gray-500">게시물이 없습니다...</p>
                 </div>
             )}
         </div>

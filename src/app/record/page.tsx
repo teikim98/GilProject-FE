@@ -7,13 +7,12 @@ import { RecordingMap } from '@/components/map/RecordingMap';
 import { CurrentLocationMap } from '@/components/map/CurrentLocationMap';
 import BackHeader from '@/components/layout/BackHeader';
 import { useState } from 'react';
-import { PreventRefreshAndBack } from '@/util/preventRefreshAndBack';
 
 export default function RecordPage() {
     const router = useRouter();
     const { isRecording, startRecording, stopRecording } = useRecordStore();
     const [isTransitioning, setIsTransitioning] = useState(false);
-    PreventRefreshAndBack(); //새로고침, 뒤로가기 방지
+    // PreventRefreshAndBack(); //새로고침, 뒤로가기 방지
 
     const handleRecording = async () => {
         if (isRecording) {

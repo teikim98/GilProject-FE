@@ -71,49 +71,49 @@ export default function Page() {
         <div className='animate-fade-in flex flex-col pb-20'>
             <BackHeader content='마이 페이지' />
             <Card className="w-full border-0 shadow-none">
-            <CardHeader className="pt-0 px-6 pb-3">
-    <div className="flex flex-row justify-between items-center">
-        <div className="flex flex-row items-center">
-            <div className="relative">
-                <div className={`medal w-16 h-16 rounded-full p-1
+                <CardHeader className="pt-0 px-6 pb-3">
+                    <div className="flex flex-row gap-2 justify-between items-center">
+                        <div className="flex flex-row items-center">
+                            <div className="relative">
+                                <div className={`medal w-16 h-16 rounded-full p-1
                 ${profileInfo.point >= 500 ? 'bg-[url(/medal/gold.png)]' : profileInfo.point >= 300 ? 'bg-[url(/medal/silver.png)]' : profileInfo.point >= 100 ? 'bg-[url(/medal/bronze.png)]' : null} bg-cover bg-center`}>
-                    <div className="absolute inset-0 flex items-center justify-center">
-                        {profileInfo?.imageUrl ? (
-                            <img
-                                src={profileInfo.imageUrl}
-                                alt="Profile"
-                                className="w-10 h-10 rounded-full object-cover"
-                                style={{ position: "absolute", transform: "translate(-50%, -50%)", top: "60%", left: "50%" }}
+                                    <div className="absolute inset-0 flex items-center justify-center">
+                                        {profileInfo?.imageUrl ? (
+                                            <img
+                                                src={profileInfo.imageUrl}
+                                                alt="Profile"
+                                                className="w-10 h-10 rounded-full object-cover"
+                                                style={{ position: "absolute", transform: "translate(-50%, -50%)", top: "60%", left: "50%" }}
+                                            />
+                                        ) : (
+                                            <Camera className="w-10 h-10 p-2 bg-muted rounded-full" style={{ position: "absolute", transform: "translate(-50%, -50%)", top: "60%", left: "50%" }} />
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="flex flex-col">
+                                <div className="flex flex-row items-center">
+                                    <p className="font-bold text-lg text-foreground">
+                                        {profileInfo.nickName}
+                                    </p>
+                                </div>
+                                <p className="text-sm text-muted-foreground">
+                                    {profileInfo.address || '주소 미설정'}
+                                </p>
+                            </div>
+                        </div>
+                        <div className="pl-10 pb-7">
+                            <PointBtn
+                                link='point'
+                                content={`발걸음`}
+                                onClick={() => setIsPointOpen(true)}
                             />
-                        ) : (
-                            <Camera className="w-10 h-10 p-2 bg-muted rounded-full" style={{ position: "absolute", transform: "translate(-50%, -50%)", top: "60%", left: "50%" }} />
-                        )}
+                        </div>
                     </div>
-                </div>
-            </div>
-            <div className="flex flex-col">
-                <div className="flex flex-row items-center">
-                    <p className="font-bold text-lg text-foreground">
-                        {profileInfo.nickName}
+                    <p className="text-base text-muted-foreground mt-3">
+                        {profileInfo.comment || '자기소개가 없습니다'}
                     </p>
-                </div>
-                <p className="text-sm text-muted-foreground">
-                    {profileInfo.address || '주소 미설정'}
-                </p>
-            </div>
-        </div>
-        <div className="pl-10 pb-7"> 
-            <PointBtn 
-                link='point'
-                content={`포인트`}
-                onClick={() => setIsPointOpen(true)}
-            />
-        </div>
-    </div>
-    <p className="text-sm text-muted-foreground mt-3">
-        {profileInfo.comment || '자기소개가 없습니다'}
-    </p>
-</CardHeader>
+                </CardHeader>
                 <CardContent className="px-6 pb-3">
                     <div className="w-full flex flex-row justify-between border rounded-lg p-4 bg-muted/50">
                         <div className="flex flex-col items-center">
@@ -149,13 +149,13 @@ export default function Page() {
             <MypageBtn link='myRoute' content='나의 경로 기록' /> <br />
             <MypageBtn link='myPost' content='내가 작성한 산책길' /> <br />
             <MypageBtn link='myWishListPost' content='내가 찜한 산책길' /> <br />
-            <MypageBtn 
-                link='mySubscribers' 
-                content='나의 길잡이' 
+            <MypageBtn
+                link='mySubscribers'
+                content='나의 길잡이'
                 onClick={() => setIsSubscriberOpen(true)}
             />
             <br />
-            
+
 
             {/* Dialog 컴포넌트들 */}
             <SubscriberDialog
