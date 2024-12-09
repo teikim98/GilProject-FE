@@ -71,7 +71,9 @@ export function ViewingMap({ route, width, height }: ViewingMapProps) {
                         image={{
                             src: createStartMarker(),
                             size: { width: 32, height: 32 },
-                            options: { offset: { x: 0, y: 0 } },
+                            options: {
+                                offset: { x: 16, y: 16 }  // 이미지 크기의 절반,전체
+                            },
                         }}
                     />
                 )}
@@ -81,7 +83,9 @@ export function ViewingMap({ route, width, height }: ViewingMapProps) {
                         image={{
                             src: createEndMarker(),
                             size: { width: 32, height: 32 },
-                            options: { offset: { x: 0, y: 0 } },
+                            options: {
+                                offset: { x: 16, y: 16 }
+                            },
                         }}
                     />
                 )}
