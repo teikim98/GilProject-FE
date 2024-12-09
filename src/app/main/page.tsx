@@ -11,13 +11,14 @@ import { useEffect, useState } from "react";
 import AnimatedCards from "@/components/layout/AnimatedCards";
 import { verifiRefreshToken } from "@/api/auth";
 import AddressChangePopup from "@/components/auth/AddressChangePopup";
-import { getDetailProfile, logout } from "@/api/user";
+import { getDetailProfile } from "@/api/user";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import NoticeContainer from "@/components/notice/NoticeContainer";
 import { usePWAStore } from "@/store/usePwaStore";
+import { handleLogout } from "@/api/interceptors";
 
 export default function Page() {
 
@@ -64,7 +65,7 @@ export default function Page() {
         console.error("Error fetching data:", error);
         console.log("access 토큰의 재발급을 실패했습니다");
         alert("로그인 정보가 만료되었습니다. 로그인 페이지로 돌아갑니다");
-        logout();
+        handleLogout();
       }
     };
 
