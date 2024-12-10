@@ -31,37 +31,6 @@ export function RecordingMap({ width, height }: SizeProps) {
         }
     };
 
-    // //테스트
-    // useEffect(() => {
-    //     // 시작점 (서울 시청 근처)
-    //     const startPosition = { lat: 37.5665, lng: 126.9780 };
-    //     setUserPosition(startPosition);
-    //     setCenter(startPosition);
-
-    //     // 가상의 경로 포인트들 (시계방향으로 약간의 움직임)
-    //     const testPath = [
-    //         { lat: 37.5665, lng: 126.9780 }, // 시작점
-    //         { lat: 37.5668, lng: 126.9785 }, // 우측 상단으로
-    //         { lat: 37.5670, lng: 126.9788 }, // 더 우측 상단으로
-    //         { lat: 37.5668, lng: 126.9790 }, // 우측 하단으로
-    //         { lat: 37.5665, lng: 126.9788 }, // 좌측 하단으로
-    //         { lat: 37.5663, lng: 126.9785 }, // 시작점 근처로
-    //     ];
-
-    //     // 경로 포인트들을 순차적으로 추가
-    //     testPath.forEach((point, index) => {
-    //         setTimeout(() => {
-    //             setUserPosition(point);
-    //             setCenter(point);
-    //             addPathPosition({
-    //                 latitude: point.lat.toString(),
-    //                 longitude: point.lng.toString()
-    //             });
-    //         }, index * 200); // 각 포인트를 0.2초 간격으로 추가
-    //     });
-
-    // }, []); // 컴포넌트 마운트 시 한 번만 실행
-
 
     useEffect(() => {
         if (!navigator.geolocation) return;

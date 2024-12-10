@@ -190,88 +190,88 @@ const HomePage = () => {
   };
 
   return (
-    <div className="w-full max-w-screen-md p-2 space-y-2 animate-fade-in">
-      {/* Card Component */}
-      <Card
-        className="w-[80vw] h-[95vh] overflow-auto no-scrollbar"
-      >
-        <CardHeader>
-          <CardTitle>회원 가입</CardTitle>
-          <CardDescription>필요한 정보를 입력하세요.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form>
-            <div className="grid w-full items-center gap-4">
-              <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="name">이름</Label>
-                <Input
-                  name="name"
-                  value={name}
-                  onChange={(e) => {
-                    let value = e.target.value;
-                    setName(value);
-                    nameValidation(value, setIsNameValid, setNameValidMessage);
-                  }}
-                  placeholder="이름을 입력해주세요"
-                  onInput={(e: any) => {
-                    e.target.value = e.target.value.replace(/\s/g, ""); // 공백 제거
-                  }}
-                />
-                <ValidateMessage validCondition={isNameValid} message={nameValidMessage} />
-              </div>
-              <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="name">닉네임</Label>
-                <Input name="nickName" value={nickName} onChange={(e) => nickNameValidation(e)} placeholder="닉네임을 입력해주세요" />
-                <Button
-                  name="nickNameCheckBtn"
-                  variant="outline"
-                  className="w-auto"
-                  onClick={(e) => {
-                    checkNickname(e);
-                  }}
-                  disabled={!isNickNameValid || isNickNameDuplicationValid}
-                >
-                  닉네임 중복 확인
-                </Button>
-                <ValidateMessage validCondition={isNickNameValid && isNickNameDuplicationValid} message={nickNameValidMessage} />
-              </div>
-              <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="name">이메일</Label>
-                {/* 기존 */}
-                {/* <EmailCertification parentSetEmail={setEmail} parentSetEmailValid={setIsEmailValid}/> */}
-                {/* 수정 */}
-                <Button
-                  name="nickNameCheckBtn"
-                  variant="outline"
-                  className="w-auto"
-                  onClick={(e) => {
-                    handleEmailPopup(e);
-                  }}
-                >
-                  {!isEmailValid ? "이메일 인증" : "이메일 변경"}
-                </Button>
-                <EmailPopup isPopupOpen={isEmailPopupOpen} setIsPopupOpen={setIsEmailPopupOpen} callback={handleEmailVerified} duplicateCheck={true} />
-                <ValidateMessage validCondition={isEmailValid} message={emailValidMessage} />
-              </div>
+    <div className="w-full h-screen flex items-center justify-center">
+      <div className="w-full max-w-screen-md p-2 animate-fade-in flex items-center justify-center">
+        <Card className="w-[80vw] max-h-[95vh] overflow-auto no-scrollbar">
 
-              <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="name">비밀번호</Label>
-                <Input name="password" type="password" value={password} onChange={(e) => passwordValidation(e)} placeholder="비밀번호를 입력해주세요" />
+          <CardHeader>
+            <CardTitle>회원 가입</CardTitle>
+            <CardDescription>필요한 정보를 입력하세요.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form>
+              <div className="grid w-full items-center gap-4">
+                <div className="flex flex-col space-y-1.5">
+                  <Label htmlFor="name">이름</Label>
+                  <Input
+                    name="name"
+                    value={name}
+                    onChange={(e) => {
+                      let value = e.target.value;
+                      setName(value);
+                      nameValidation(value, setIsNameValid, setNameValidMessage);
+                    }}
+                    placeholder="이름을 입력해주세요"
+                    onInput={(e: any) => {
+                      e.target.value = e.target.value.replace(/\s/g, ""); // 공백 제거
+                    }}
+                  />
+                  <ValidateMessage validCondition={isNameValid} message={nameValidMessage} />
+                </div>
+                <div className="flex flex-col space-y-1.5">
+                  <Label htmlFor="name">닉네임</Label>
+                  <Input name="nickName" value={nickName} onChange={(e) => nickNameValidation(e)} placeholder="닉네임을 입력해주세요" />
+                  <Button
+                    name="nickNameCheckBtn"
+                    variant="outline"
+                    className="w-auto"
+                    onClick={(e) => {
+                      checkNickname(e);
+                    }}
+                    disabled={!isNickNameValid || isNickNameDuplicationValid}
+                  >
+                    닉네임 중복 확인
+                  </Button>
+                  <ValidateMessage validCondition={isNickNameValid && isNickNameDuplicationValid} message={nickNameValidMessage} />
+                </div>
+                <div className="flex flex-col space-y-1.5">
+                  <Label htmlFor="name">이메일</Label>
+                  {/* 기존 */}
+                  {/* <EmailCertification parentSetEmail={setEmail} parentSetEmailValid={setIsEmailValid}/> */}
+                  {/* 수정 */}
+                  <Button
+                    name="nickNameCheckBtn"
+                    variant="outline"
+                    className="w-auto"
+                    onClick={(e) => {
+                      handleEmailPopup(e);
+                    }}
+                  >
+                    {!isEmailValid ? "이메일 인증" : "이메일 변경"}
+                  </Button>
+                  <EmailPopup isPopupOpen={isEmailPopupOpen} setIsPopupOpen={setIsEmailPopupOpen} callback={handleEmailVerified} duplicateCheck={true} />
+                  <ValidateMessage validCondition={isEmailValid} message={emailValidMessage} />
+                </div>
+
+                <div className="flex flex-col space-y-1.5">
+                  <Label htmlFor="name">비밀번호</Label>
+                  <Input name="password" type="password" value={password} onChange={(e) => passwordValidation(e)} placeholder="비밀번호를 입력해주세요" />
+                </div>
+                <div className="flex flex-col space-y-1.5">
+                  <Label htmlFor="name">비밀번호 확인</Label>
+                  <Input type="password" value={passwordConfirm} onChange={(e) => passwordConfirmValidation(e)} placeholder="비밀번호를 다시 입력해주세요" />
+                  <ValidateMessage validCondition={isPasswordValid} message={passwordValidMessage} />
+                </div>
               </div>
-              <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="name">비밀번호 확인</Label>
-                <Input type="password" value={passwordConfirm} onChange={(e) => passwordConfirmValidation(e)} placeholder="비밀번호를 다시 입력해주세요" />
-                <ValidateMessage validCondition={isPasswordValid} message={passwordValidMessage} />
-              </div>
-            </div>
-          </form>
-        </CardContent>
-        <CardFooter className="flex justify-center flex-col">
-          <Button variant="outline" className="w-full bg-purple-400 hover:bg-purple-500" onClick={handleJoin} disabled={!(isNameValid && isNickNameValid && isNickNameDuplicationValid && isEmailValid && isPasswordValid)}>
-            Sign up
-          </Button>
-        </CardFooter>
-      </Card>
+            </form>
+          </CardContent>
+          <CardFooter className="flex justify-center flex-col">
+            <Button variant="outline" className="w-full bg-purple-400 hover:bg-purple-500" onClick={handleJoin} disabled={!(isNameValid && isNickNameValid && isNickNameDuplicationValid && isEmailValid && isPasswordValid)}>
+              Sign up
+            </Button>
+          </CardFooter>
+        </Card>
+      </div>
       {isCompletePopupOpen && <CustomDialoguePopup popupData={popupData} />}
     </div>
   );
