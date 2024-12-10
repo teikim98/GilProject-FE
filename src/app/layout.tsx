@@ -9,13 +9,13 @@ import { PWAEventHandler } from "@/components/layout/PwaEventHandler";
 
 
 export const metadata: Metadata = {
-  title: 'My Next.js PWA',
-  description: 'My Progressive Web App using Next.js 14',
+  title: '길따라',
+  description: '경로 기록 및 공유 플랫폼 길따라입니다.',
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'My Next.js PWA',
+    title: '길따라',
   },
   formatDetection: {
     telephone: false
@@ -38,7 +38,6 @@ export default function RootLayout({
         <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
         <meta name="theme-color" content="#121927" media="(prefers-color-scheme: dark)" />
         <link rel="apple-touch-icon" href="/icons/icon-192x192.j" />
-        <title>길따라</title>
       </head>
       <body className="font-pretendard">
         <Suspense

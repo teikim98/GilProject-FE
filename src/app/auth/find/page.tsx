@@ -38,6 +38,7 @@ const HomePage = () => {
     nameValidation(value, setIsNameValid, setNameValidMessage);
   };
 
+
   /**
    * 이메일 인증 Button
    * @param e
@@ -63,7 +64,7 @@ const HomePage = () => {
     if (result === 1) {
       setPopupData({
         title: "성공",
-        description : "새 비밀빈호가 이메일로 발급되었습니다.",
+        description: "새 비밀빈호가 이메일로 발급되었습니다.",
         content: "로그인 후 반드시 비밀번호를 변경해주세요",
         onConfirm: () => {
           setIsPopupOpen(false);
@@ -142,7 +143,7 @@ const HomePage = () => {
         <CardFooter className="flex justify-center flex-col">
           <Button
             variant="outline"
-            className="w-full w-full bg-purple-400 hover:bg-purple-500"
+            className="w-full h-full bg-purple-400 hover:bg-purple-500"
             onClick={(e) => {
               handleAuthFind(e);
             }}
