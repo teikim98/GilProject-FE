@@ -1,8 +1,9 @@
+"use client"
+
 import { useRecordStore } from "@/store/useRecordStore";
 import { Pin, RouteCoordinate, KakaoPosition, SizeProps, MarkerForOverlay } from "@/types/types";
 import { getCurrentPosition } from "@/util/getCurrentPosition";
-import { LocationSmoother } from "@/util/locationSmoother";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { BaseKakaoMap } from "./BaseKakaoMap";
 import { CurrentLocationMarker } from "./CurrentLocationMarker";
 import MarkerForm from "./MarkerForm";
@@ -17,20 +18,6 @@ export function RecordingMap({ width, height }: SizeProps) {
     const [selectedPosition, setSelectedPosition] = useState<KakaoPosition | null>(null);
     const [showMarkerForm, setShowMarkerForm] = useState(false);
     const [isGettingLocation, setIsGettingLocation] = useState(false);
-    const locationSmootherRef = useRef(new LocationSmoother(20, 5, 3));
-
-    const processNewPosition = (rawPosition: KakaoPosition, accuracy?: number) => {
-        const smoothedPosition = locationSmootherRef.current.smooth(rawPosition, accuracy);
-        if (smoothedPosition) {
-            setUserPosition(smoothedPosition);
-            setCenter(smoothedPosition);
-            addPathPosition({
-                latitude: smoothedPosition.lat.toString(),
-                longitude: smoothedPosition.lng.toString()
-            });
-        }
-    };
-
 
     useEffect(() => {
         if (!navigator.geolocation) return;
@@ -47,11 +34,10 @@ export function RecordingMap({ width, height }: SizeProps) {
             (error) => console.error("Error getting initial position:", error),
             {
                 enableHighAccuracy: true,
-                timeout: 10000,  // 초기 위치를 위한 타임아웃 증가
+                timeout: 10000,
                 maximumAge: 1000
             }
         );
-
 
         const watchId = navigator.geolocation.watchPosition(
             (position) => {
@@ -59,7 +45,12 @@ export function RecordingMap({ width, height }: SizeProps) {
                     lat: position.coords.latitude,
                     lng: position.coords.longitude,
                 };
-                processNewPosition(newPosition, position.coords.accuracy);
+                setUserPosition(newPosition);
+                setCenter(newPosition);
+                addPathPosition({
+                    latitude: newPosition.lat.toString(),
+                    longitude: newPosition.lng.toString()
+                });
             },
             (error) => console.error("Error watching location:", error),
             {
