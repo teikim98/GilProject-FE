@@ -35,7 +35,8 @@ export default function RootLayout({
           strategy="beforeInteractive"
         />
         <GoogleAnalytics gaId={`${process.env.NEXT_PUBLIC_GA_ID}`} />
-
+        <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+        <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
         <link rel="apple-touch-icon" href="/icons/icon-192x192.j" />
         <title>길따라</title>
       </head>

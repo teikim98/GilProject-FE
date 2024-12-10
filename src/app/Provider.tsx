@@ -27,8 +27,10 @@ export default function Provider({
     useEffect(() => {
         if (isDarkMode) {
             document.documentElement.classList.add('dark');
+            document.querySelector('meta[name="theme-color"]')?.setAttribute('content', '#000000');
         } else {
             document.documentElement.classList.remove('dark');
+            document.querySelector('meta[name="theme-color"]')?.setAttribute('content', '#ffffff');
         }
     }, [isDarkMode]);
 
