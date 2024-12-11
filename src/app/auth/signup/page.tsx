@@ -144,7 +144,7 @@ const HomePage = () => {
           content: "[길따라]에 오신 걸 환영합니다",
           onConfirm: () => {
             setIsCompletePopupOpen(false);
-            router.push("http://localhost:3000/auth/login");
+            router.push("/auth/login");
           },
         });
         setIsCompletePopupOpen(true);
