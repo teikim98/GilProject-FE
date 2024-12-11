@@ -102,7 +102,7 @@ const WalkingPathBackground: React.FC<BackgroundProps> = () => {
         </motion.div>
     );
 };
-const MyRouteBackground: React.FC<BackgroundProps> = () => {
+const MyPostBackground: React.FC<BackgroundProps> = () => {
     return (
         <motion.div className="absolute inset-0 bg-green-200">
             <div className="absolute w-full top-[15%] flex justify-center space-x-20">
@@ -305,9 +305,9 @@ const AnimatedCards: React.FC = () => {
                     className="w-[48%] block"
                 />
                 <AnimatedCard
-                    href="/main/mypage/myRoute"
-                    title={<span className="whitespace-pre-line">내가 기록한{'\n'}산책길 {'\n'}보러가기</span>}
-                    Background={MyRouteBackground}
+                    href="/main/mypage/myPost"
+                    title={<span className="whitespace-pre-line">내가 작성한{'\n'}산책길 {'\n'}보러가기</span>}
+                    Background={MyPostBackground}
                     className="w-[48%] block"
                 />
             </div>
