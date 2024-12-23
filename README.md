@@ -52,14 +52,22 @@
   - 단계적 구현을 통한 기능 완성
 
 ## 📱 주요 화면
+<img width="321" alt="image" src="https://github.com/user-attachments/assets/ea921e76-1db0-4333-8a39-64395d8297af" />
+
 - 로그인
 - 메인 화면
 - 산책길 공유
 - 따라 걷기
 
 ## 📋 산출물
+<img width="128" alt="image" src="https://github.com/user-attachments/assets/a24c9e6e-0831-4468-b314-20d91a4fd18b" />
+
 - 요구사항명세서
+  <img width="125" alt="image" src="https://github.com/user-attachments/assets/6282a77b-9a7f-4994-8853-fb872b987533" />
+
 - 데이터베이스 모델링
+  <img width="128" alt="image" src="https://github.com/user-attachments/assets/1d0e37cf-38aa-4d03-9f84-9fdc8df4a4a3" />
+
 - 레이아웃 정의서
 
 ## 💻 실행 방법
@@ -70,4 +78,3 @@ $ npm install
 $ npm start
 ```
 
-이런 식으로 정리해보았는데, 어떠신가요? 필요한 부분이 있다면 더 추가하거나 수정할 수 있습니다!
