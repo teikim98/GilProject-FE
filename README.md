@@ -116,7 +116,7 @@ We would like to provide a service that allows users to conveniently find and re
 * 메인 페이지(Main page)
   * 산책길 게시물들 보러가기(Going to see the posts on walkway)
   * 내가 쓴 글 보러가기(Going to see what I wrote)
-  * 지금 산책길 게시물 공유하러가기(Go to share your walkway post now)
+  * 지금 산책길 게시물 공유하러가기(Go to share my walkway post now)
 * 경로 기록페이지(Path Recording Page)
   * 경로 녹화하기(Path Recording)
   * 경로 저장하기 및 마커 편집(Save Paths and Edit Markers)
