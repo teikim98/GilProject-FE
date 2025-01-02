@@ -17,9 +17,9 @@ Kosta 286기 Final Project
 
 ## 📑 Project Overview
 - **Project Name:** 길따라 (산책길 공유 플랫폼) (Gilddara (Walkway Sharing Platform)) 
-- **Development Period:**
+- **Development Period:** 2024.10.28 ~ 2024.12.13
 - **Team Members:** 정형우, 김태휘, 김호석, 염진, 최재구, 한은미 (6명)
-- **Project Description:** 2024.10.28 ~ 2024.12.13
+- **Project Description:** 
 
   우리 주변의 산책길을 재발견함으로써, 일상에서도 짧은 시간 안에 힐링을 느낄 수 있는 기회를 제공합니다.  
 사용자가 편리하게 산책길을 찾아보고 기록할 수 있으며, 다른 유저의 산책길을 따라걷는 활동을 통해 산책 경험을 공유할 수 있는 서비스를 제공합니다.  
