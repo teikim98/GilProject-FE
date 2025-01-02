@@ -2,13 +2,13 @@
 (Gilddara | Walkway Recording and Sharing Service)
 
 ## 📌 목차(Table of Contents)
-* [프로젝트 소개(Introduction to the Project)](#프로젝트-소개(introduction-to-the-project))
-* [개발 기간(Development Period)](#개발-기간(development-period))
-* [개발 인원(Development Members)](#개발-인원(development-members))
-* [주요 기능(Key Features)](#주요-기능(key-features))
-* [기술 스택(Tech Stack)](#기술-스택(tech-stack))
+* [프로젝트 소개(Introduction to the Project)](#프로젝트-소개-introduction-to-the-project)
+* [개발 기간(Development Period)](#개발-기간-development-period)
+* [개발 인원(Development Members)](#개발-인원-development-members)
+* [주요 기능(Key Features)](#주요-기능-key-features)
+* [기술 스택(Tech Stack)](#기술-스택-tech-stack)
 * [구현 기능(Implementation Features)](#구현-기능)
-* [트러블 슈팅(Troubleshooting)](#트러블-슈팅(troubleshooting))
+* [트러블 슈팅(Troubleshooting)](#트러블-슈팅-troubleshooting)
 
 ## 프로젝트 소개(Introduction to the Project)
 내 주변 산책길을 기록, 공유하고, 이웃의 산책길을 따라 걸으며 소통하는 산책을 통한 힐링 제공 서비스  
