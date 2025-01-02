@@ -107,6 +107,33 @@ We would like to provide a service that allows users to conveniently find and re
 
 ---
 
+## 주요 기능(Key Features)
+* 상단 헤더(Top Header)
+  * 다크모드 토글 버튼(Dark Mode toggle button)
+  * 알림 개수 및 확인버튼(Notification count and OK button)
+  * 햄버거 내비게이터(Hamburger Navigator)
+* 메인 페이지(Main page)
+  * 산책길 게시물들 보러가기(Going to see the posts on walkway)
+  * 내가 쓴 글 보러가기(Going to see what I wrote)
+  * 지금 산책길 게시물 공유하러가기(Go to share your walkway post now)
+* 경로 기록페이지(Path Recording Page)
+  * 경로 녹화하기(Path Recording)
+  * 경로 저장하기 및 마커 편집(Save Paths and Edit Markers)
+* 산책길 게시글 페이지(Walkway Post Page)
+  * 내 현재위치 , 내 집주변 기반의 게시물 불러오기(Bringing up posts based around my current location, my home)
+  * 검색으로 해당하는 키워드에 맞는 산책길 찾기(Search to find the right walking path for the corresponding keyword)
+* 산책길 게시글 상세보기(Read more about the walkway post)
+  * 게시글 찜 , 좋아요 , 댓글달기(Features for Post favorite, like, comment)
+  * 산책길 따라걷기(Walking along the path)
+* 마이페이지(My page)
+  * 내 경로기록 확인하기(Check my path history)
+  * 내가 찜한 게시물 확인하기(Check out my posts)
+  * 내가 구독한 사람들 리스트 보기(See the list of people I subscribed to)
+  * 내 포인트 보기(Look at my point)
+  * 내가 쓴 게시물 보기(See the post I wrote)
+
+ ---
+
 ### Final Outcome 
 ![사용프로세스1(산책길 기록 및 공유)222](https://github.com/user-attachments/assets/e7658e43-f2c5-4408-ae4c-50ef6bcf8450)
 ![사용프로세스2(산책길 따라걷기)222](https://github.com/user-attachments/assets/d6a01f08-b9bb-44e2-a0d5-2fb6b3943707)
@@ -132,29 +159,3 @@ We would like to provide a service that allows users to conveniently find and re
 ![요구사항명세서](https://github.com/user-attachments/assets/e3495e8a-8a20-4134-bee5-43e70722a9c5)
 
 ---
-
-## 주요 기능(Key Features)
-* 상단 헤더(Top Header)
-  * 다크모드 토글 버튼(Dark Mode toggle button)
-  * 알림 개수 및 확인버튼(Notification count and OK button)
-  * 햄버거 내비게이터(Hamburger Navigator)
-* 메인 페이지(Main page)
-  * 산책길 게시물들 보러가기(Going to see the posts on walkway)
-  * 내가 쓴 글 보러가기(Going to see what I wrote)
-  * 지금 산책길 게시물 공유하러가기(Go to share your walkway post now)
-* 경로 기록페이지(Path Recording Page)
-  * 경로 녹화하기(Path Recording)
-  * 경로 저장하기 및 마커 편집(Save Paths and Edit Markers)
-* 산책길 게시글 페이지(Walkway Post Page)
-  * 내 현재위치 , 내 집주변 기반의 게시물 불러오기(Bringing up posts based around my current location, my home)
-  * 검색으로 해당하는 키워드에 맞는 산책길 찾기(Search to find the right walking path for the corresponding keyword)
-* 산책길 게시글 상세보기(Read more about the walkway post)
-  * 게시글 찜 , 좋아요 , 댓글달기(Features for Post favorite, like, comment)
-  * 산책길 따라걷기(Walking along the path)
-* 마아페이지(My page)
-  * 내 경로기록 확인하기(Check my path history)
-  * 내가 찜한 게시물 확인하기(Check out my posts)
-  * 내가 구독한 사람들 리스트 보기(See the list of people I subscribed to)
-  * 내 포인트 보기(Look at my point)
-  * 내가 쓴 게시물 보기(See the post I wrote)
- 
