@@ -121,8 +121,10 @@ We would like to provide a service that allows users to conveniently find and re
   * 경로 녹화하기(Path Recording)
   * 경로 저장하기 및 마커 편집(Save Paths and Edit Markers)
 * 산책길 게시글 페이지(Walkway Post Page)
-  * 내 현재위치 , 내 집주변 기반의 게시물 불러오기(Bringing up posts based around my current location, my home)
-  * 검색으로 해당하는 키워드에 맞는 산책길 찾기(Search to find the right walking path for the corresponding keyword)
+  * 내 현재위치 , 내 집주변 기반의 게시물 불러오기  
+    (Bringing up posts based around my current location, my home)
+  * 검색으로 해당하는 키워드에 맞는 산책길 찾기  
+    (Search to find the right walking path for the corresponding keyword)
 * 산책길 게시글 상세보기(Read more about the walkway post)
   * 게시글 찜 , 좋아요 , 댓글달기(Features for Post favorite, like, comment)
   * 산책길 따라걷기(Walking along the path)
